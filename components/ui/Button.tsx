@@ -17,7 +17,7 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(({ onPress, titl
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#6366F1',
+    backgroundColor: 'gold',
     borderRadius: 24,
     elevation: 5,
     flexDirection: 'row',
@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: 'black',
+    fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
   },
