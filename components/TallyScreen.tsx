@@ -118,12 +118,12 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
   }
 
   React.useEffect(() => {
-    socket?.on('SHOW_FINAL_TALLY', () => {
-      // updateScoreForRound();
-      // const totalPoints = getPointsForPlayer({ player, opponents });
-      // setScoreForRound(totalPoints);
-      setViewingFinalTally(true);
-    });
+    // socket?.on('SHOW_FINAL_TALLY', () => {
+    //   // updateScoreForRound();
+    //   // const totalPoints = getPointsForPlayer({ player, opponents });
+    //   // setScoreForRound(totalPoints);
+    //   setViewingFinalTally(true);
+    // });
 
     socket?.on('PLAYER_BUSTED', (data) => {
       const { username, type } = data;
@@ -154,7 +154,6 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
     });
 
     return () => {
-      socket?.off('SHOW_FINAL_TALLY');
       socket?.off('PLAYER_BUSTED');
       socket?.off('START_COUNTDOWN');
       socket?.off('ALL_PLAYERS_SUBMITTED');
@@ -170,7 +169,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
         open={inspectionModalOpen}
         player={playerToInspect as playerProps}
       />
-      <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} />
+      {/* <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} /> */}
       <SafeAreaView style={styles.alphabetScreencontainer}>
         <View style={{ paddingHorizontal: 10, gap: 20 }}>
           <HUD socket={socket} />
