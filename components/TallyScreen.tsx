@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { getPointsForPlayer, useGameStore } from 'models/gameStore';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
@@ -53,15 +53,16 @@ const OpponentCard = ({
   );
 };
 
-const FinalTallYModal = ({
-  open,
-  handleClose,
-  scoreForRound,
-}: {
-  open: boolean;
-  handleClose: () => void;
-  scoreForRound: number;
-}) => {
+const FinalTallYModal = ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
+  const [scoreForRound, setScoreForRound] = React.useState(0);
+  const { player, opponents } = useGameStore();
+
+  useEffect(() => {
+    if (!open) return;
+    const totalPoints = getPointsForPlayer({ player, opponents });
+    setScoreForRound(totalPoints);
+  }, [open]);
+
   return (
     <Modal animationType="fade" statusBarTranslucent visible={open}>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }}>
@@ -119,8 +120,8 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
   React.useEffect(() => {
     socket?.on('SHOW_FINAL_TALLY', () => {
       // updateScoreForRound();
-      const totalPoints = getPointsForPlayer({ player, opponents });
-      setScoreForRound(totalPoints);
+      // const totalPoints = getPointsForPlayer({ player, opponents });
+      // setScoreForRound(totalPoints);
       setViewingFinalTally(true);
     });
 
@@ -156,6 +157,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
       socket?.off('SHOW_FINAL_TALLY');
       socket?.off('PLAYER_BUSTED');
       socket?.off('START_COUNTDOWN');
+      socket?.off('ALL_PLAYERS_SUBMITTED');
     };
   }, [socket]);
 
@@ -168,11 +170,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
         open={inspectionModalOpen}
         player={playerToInspect as playerProps}
       />
-      <FinalTallYModal
-        scoreForRound={scoreForRound}
-        open={viewingFinalTally}
-        handleClose={() => handleCloseTallyScreen()}
-      />
+      <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} />
       <SafeAreaView style={styles.alphabetScreencontainer}>
         <View style={{ paddingHorizontal: 10, gap: 20 }}>
           <HUD socket={socket} />
