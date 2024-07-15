@@ -16,7 +16,8 @@ type GameProps = {
   updateScoreForRound: () => void;
   updateOpponents: (opponents: playerProps[]) => void;
   confirmLetterSelection: (letter: string) => void;
-  readyTallyMode: (answers: answerProps) => void;
+  updateAnswers: ({ answer, field }: { answer: string; field: string }) => void;
+  readyTallyMode: () => void;
   handleBustedPlayer: ({
     username,
     type,
@@ -139,6 +140,17 @@ export const useGameStore = create<GameProps>((set, state) => ({
       activeLetter: letter,
     }));
   },
+  updateAnswers: ({ answer, field }: { answer: string; field: string }) => {
+    set((state) => ({
+      player: {
+        ...state.player,
+        answers: {
+          ...state.player.answers,
+          [field]: answer,
+        },
+      },
+    }));
+  },
   updateScoreForRound: () => {
     const { player, opponents } = state();
     const totalPoints = getPointsForPlayer({ player, opponents });
@@ -155,14 +167,14 @@ export const useGameStore = create<GameProps>((set, state) => ({
       opponents,
     }));
   },
-  readyTallyMode: (answers: answerProps) => {
+  readyTallyMode: () => {
     set((state) => ({
       tallying: true,
       playing: false,
-      player: {
-        ...state.player,
-        answers,
-      },
+      // player: {
+      //   ...state.player,
+      //   answers,
+      // },
     }));
   },
   handleBustedPlayer: ({

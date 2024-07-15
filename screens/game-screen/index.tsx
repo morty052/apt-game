@@ -67,6 +67,7 @@ export const GameScreen = ({ route }: any) => {
       readyNextRound();
     });
     socket?.on('START_COUNTDOWN', (data) => {
+      console.log('Timer Started');
       console.log(data);
     });
 

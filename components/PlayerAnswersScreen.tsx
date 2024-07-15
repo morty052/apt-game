@@ -126,7 +126,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
     Thing: '',
   });
 
-  const { readyTallyMode } = useGameStore();
+  const { readyTallyMode, updateAnswers, player } = useGameStore();
 
   const color = useSharedValue(backgroundColors[0]);
 
@@ -155,7 +155,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
         answers,
       },
     });
-    readyTallyMode(answers);
+    readyTallyMode();
   }
 
   function handleAnswerSubmit(title: string, value: string) {
@@ -163,6 +163,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
     if (!value) {
       //* update value to "FORFEITED"
       setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
+      updateAnswers({ answer: 'FORFEITED', field: title });
     }
 
     // * handle last answer
@@ -172,21 +173,34 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
         console.log('title is', title);
         //* update value to "FORFEITED"
         setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
+        updateAnswers({ answer: 'FORFEITED', field: title });
       }
       handlePlayerFinish();
       return;
     }
 
+    console.log({ title, value });
+    updateAnswers({ answer: value, field: title });
     handleIndexChange();
   }
 
+  // * Watch for clock
   React.useEffect(() => {
     socket?.on('TIME_UP', () => {
-      console.log("Time's up");
-      // socket?.emit('START_COUNTDOWN', { room })
-      readyTallyMode(answers);
+      console.log("Time's up", answers);
+      // * here because socket does not get updated answers
+      const answerObject = Object.assign({}, answers);
+
+      socket?.emit('SUBMIT_ANSWERS', {
+        room,
+        player: {
+          username: getItem('USERNAME'),
+          answerObject,
+        },
+      });
+      readyTallyMode();
     });
-  }, [socket]);
+  }, [socket, answers]);
 
   return (
     <AnimatedSafeAreaView style={[{ flex: 1, gap: 20, paddingTop: 10 }, animatedStyles]}>
