@@ -187,15 +187,21 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
   // * Watch for clock
   React.useEffect(() => {
     socket?.on('TIME_UP', () => {
-      console.log("Time's up", answers);
       // * here because socket does not get updated answers
       const answerObject = Object.assign({}, answers);
 
+      Object.keys(answerObject).forEach((key) => {
+        if (answerObject[key as keyof typeof answerObject] === '') {
+          answerObject[key as keyof typeof answerObject] = 'FORFEITED';
+        }
+      });
+
+      console.log("Time's up", answerObject);
       socket?.emit('SUBMIT_ANSWERS', {
         room,
         player: {
           username: getItem('USERNAME'),
-          answerObject,
+          answers: answerObject,
         },
       });
       readyTallyMode();

@@ -118,13 +118,6 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
   }
 
   React.useEffect(() => {
-    // socket?.on('SHOW_FINAL_TALLY', () => {
-    //   // updateScoreForRound();
-    //   // const totalPoints = getPointsForPlayer({ player, opponents });
-    //   // setScoreForRound(totalPoints);
-    //   setViewingFinalTally(true);
-    // });
-
     socket?.on('PLAYER_BUSTED', (data) => {
       const { username, type } = data;
 
@@ -140,23 +133,10 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
       console.log(data);
     });
 
-    socket?.on('ALL_PLAYERS_SUBMITTED', (data: { updatedPlayers: playerProps[] }) => {
-      const { updatedPlayers } = data;
-      const currentPlayerusername = getItem('USERNAME');
-
-      console.log('All players submitted');
-
-      const opponents = updatedPlayers.filter(
-        (player) => player.username !== currentPlayerusername
-      );
-
-      updateOpponents(opponents);
-    });
-
     return () => {
       socket?.off('PLAYER_BUSTED');
       socket?.off('START_COUNTDOWN');
-      socket?.off('ALL_PLAYERS_SUBMITTED');
+      // socket?.off('ALL_PLAYERS_SUBMITTED');
     };
   }, [socket]);
 

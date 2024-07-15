@@ -39,13 +39,13 @@ const checkForDuplicateAnswers = ({
   opponents: playerProps[];
 }) => {
   const opponentAnswers = opponents
-    .map((opponent) => Object.values(opponent.answers))
+    .map((opponent) => Object.values(opponent?.answers))
     .flat()
     .map((answer) => answer.toLowerCase())
     .filter((a) => a !== '');
 
   // * All answers unique to player in this round
-  const uniqueAnswers = validAnswers.filter(
+  const uniqueAnswers = validAnswers?.filter(
     (answer) => !opponentAnswers.includes(answer.toLowerCase())
   );
 
@@ -68,7 +68,9 @@ export const getPointsForPlayer = ({
   player: playerProps;
   opponents: playerProps[];
 }) => {
-  //* Maximum points player can get per answer
+  if (!opponents || !player) {
+    return 0;
+  }
 
   const halfPoint = 25;
   const validAnswers = Object.values(player.answers)

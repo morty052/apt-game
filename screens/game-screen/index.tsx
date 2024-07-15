@@ -27,6 +27,7 @@ export const GameScreen = ({ route }: any) => {
     readyNextRound,
     updateOpponents,
     confirmLetterSelection,
+    player,
   } = useGameStore();
 
   React.useEffect(() => {
@@ -46,7 +47,7 @@ export const GameScreen = ({ route }: any) => {
       const opponents = updatedPlayers.filter(
         (player) => player.username !== currentPlayerusername
       );
-      // updateOpponents(opponents);
+      updateOpponents(opponents);
     });
 
     // socket?.on('ALL_PLAYERS_SUBMITTED', (data: { updatedPlayers: playerProps[] }) => {
@@ -71,6 +72,22 @@ export const GameScreen = ({ route }: any) => {
       console.log(data);
     });
 
+    socket?.on('ALL_PLAYERS_SUBMITTED', (data: { updatedPlayers: playerProps[] }) => {
+      const { updatedPlayers } = data;
+      const currentPlayerusername = getItem('USERNAME');
+
+      console.log('All players submitted');
+
+      const opponents = updatedPlayers.filter(
+        (player) => player.username !== currentPlayerusername
+      );
+
+      // const player = updatedPlayers.find((player) => player.username === currentPlayerusername);
+
+      // console.log({ player, opponents });
+
+      updateOpponents(opponents);
+    });
     // socket?.on('READY_NEXT_ROUND', () => {
     //   readyNextRound();
     // });
