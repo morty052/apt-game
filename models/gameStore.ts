@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { MAX_POINTS_PER_ANSWER, ALPHABETS } from '../constants';
-import { answerProps, playerProps } from '../types';
+import { playerProps } from '../types';
 
 type GameProps = {
   player: playerProps;
@@ -54,9 +54,9 @@ const checkForDuplicateAnswers = ({
     .filter((answer) => opponentAnswers.includes(answer.toLowerCase()))
     .filter((a) => a !== '');
 
-  console.log('opponentAnswers', opponentAnswers);
-  console.log('uniqueAnswers', uniqueAnswers);
-  console.log('duplicates', duplicates);
+  // console.log('opponentAnswers', opponentAnswers);
+  // console.log('uniqueAnswers', uniqueAnswers);
+  // console.log('duplicates', duplicates);
 
   return { uniqueAnswers, duplicates };
 };
@@ -240,6 +240,10 @@ export const useGameStore = create<GameProps>((set, state) => ({
       opponents: resetOpponents,
       activeLetter: '',
       totalScore: newScore,
+      player: {
+        ...state.player,
+        answers: { Name: '', Animal: '', Place: '', Thing: '' },
+      },
     }));
   },
 }));

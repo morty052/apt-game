@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { useGameStore } from 'models/gameStore';
 
-const Timer = ({}: { seconds: number }) => {
+const Timer = () => {
   const [seconds, setSeconds] = React.useState(10);
   const [timeUp, setTimeUp] = React.useState(false);
 

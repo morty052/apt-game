@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SocketProps } from 'types';
+import { answerProps, SocketProps } from 'types';
 import { getItem } from 'utils/storage';
 
 import HUD from './Hud';
@@ -19,6 +19,49 @@ const backgroundColors = {
 };
 
 const AnimatedSafeAreaView = Animated.createAnimatedComponent(SafeAreaView);
+
+const GameTextInput = ({
+  value,
+  setValue,
+  title,
+}: {
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<answerProps>>;
+  title: string;
+}) => {
+  const { activeLetter } = useGameStore();
+
+  const startsWithActiveletter = (value: string) => {
+    if (!value) {
+      setValue((prev) => ({ ...prev, [title]: '' }));
+      return;
+    }
+
+    if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
+      return;
+      // setValue((prev) => ({ ...prev, [title]: '' }));
+    }
+
+    setValue((prev) => ({ ...prev, [title]: value }));
+  };
+
+  return (
+    <TextInput
+      style={{
+        height: 50,
+        borderColor: 'white',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        color: 'white',
+        fontSize: 20,
+        width: '100%',
+      }}
+      value={value}
+      onChangeText={(value) => startsWithActiveletter(value)}
+    />
+  );
+};
 
 const AnswerView = ({
   title,
@@ -57,18 +100,6 @@ const AnswerView = ({
             width: '100%',
             paddingBottom: 20,
           }}>
-          {/* <Ionicons
-              name="chevron-back"
-              size={24}
-              color="white"
-              onPress={() => {
-                if (index - 1 < 0) {
-                  setIndex(3);
-                  return;
-                }
-                setIndex(index - 1);
-              }}
-            /> */}
           <Text
             style={{
               color: 'white',
@@ -78,20 +109,8 @@ const AnswerView = ({
             }}>
             {title}
           </Text>
-          {/* <Ionicons
-              name="chevron-forward"
-              size={24}
-              color="white"
-              onPress={() => {
-                if (index + 1 > 3) {
-                  setIndex(0);
-                  return;
-                }
-                setIndex(index + 1);
-              }}
-            /> */}
         </View>
-        <TextInput
+        {/* <TextInput
           style={{
             height: 50,
             borderColor: 'white',
@@ -104,7 +123,8 @@ const AnswerView = ({
           }}
           value={value}
           onChangeText={(value) => setValue((prev) => ({ ...prev, [title]: value }))}
-        />
+        /> */}
+        <GameTextInput title={title} value={value} setValue={setValue} />
         <View style={{ alignSelf: 'center', paddingTop: 20 }}>
           {/* @ts-ignore */}
           <Mic />
@@ -175,11 +195,11 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
         setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
         updateAnswers({ answer: 'FORFEITED', field: title });
       }
+      updateAnswers({ answer: value, field: title });
       handlePlayerFinish();
       return;
     }
 
-    console.log({ title, value });
     updateAnswers({ answer: value, field: title });
     handleIndexChange();
   }
@@ -190,13 +210,13 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
       // * here because socket does not get updated answers
       const answerObject = Object.assign({}, answers);
 
+      // * handle empty answers
       Object.keys(answerObject).forEach((key) => {
         if (answerObject[key as keyof typeof answerObject] === '') {
           answerObject[key as keyof typeof answerObject] = 'FORFEITED';
         }
       });
 
-      console.log("Time's up", answerObject);
       socket?.emit('SUBMIT_ANSWERS', {
         room,
         player: {
@@ -204,8 +224,12 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
           answers: answerObject,
         },
       });
-      readyTallyMode();
+      // readyTallyMode();
     });
+
+    return () => {
+      socket?.off('TIME_UP');
+    };
   }, [socket, answers]);
 
   return (

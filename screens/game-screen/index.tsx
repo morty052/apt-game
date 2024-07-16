@@ -33,6 +33,7 @@ export const GameScreen = ({ route }: any) => {
   React.useEffect(() => {
     socket?.on('LETTER_SELECTED', (data: { letter: string }) => {
       confirmLetterSelection(data.letter);
+      setViewingFinalTally(false);
     });
 
     socket?.on('PLAYER_SUBMITTED', (data: { username: string; updatedPlayers: playerProps[] }) => {
@@ -41,7 +42,7 @@ export const GameScreen = ({ route }: any) => {
       const isPlayer = username === currentPlayerusername;
 
       if (isPlayer) {
-        console.log('you submitted');
+        console.log('you submitted', currentPlayerusername);
         return;
       }
       const opponents = updatedPlayers.filter(
@@ -78,15 +79,11 @@ export const GameScreen = ({ route }: any) => {
 
       console.log('All players submitted');
 
-      const opponents = updatedPlayers.filter(
-        (player) => player.username !== currentPlayerusername
-      );
+      // const opponents = updatedPlayers.filter(
+      //   (player) => player.username !== currentPlayerusername
+      // );
 
-      // const player = updatedPlayers.find((player) => player.username === currentPlayerusername);
-
-      // console.log({ player, opponents });
-
-      updateOpponents(opponents);
+      // updateOpponents(opponents);
     });
     // socket?.on('READY_NEXT_ROUND', () => {
     //   readyNextRound();

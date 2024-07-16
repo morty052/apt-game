@@ -1,26 +1,26 @@
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Socket } from 'socket.io-client';
 
 import Timer from './Timer';
+import { SocketProps } from 'types';
 
-const HUD = ({ socket }: { socket: Socket | null }) => {
+const HUD = ({ socket }: { socket: SocketProps | null }) => {
   const [seconds, setSeconds] = React.useState(30);
   const { activeLetter, playing, totalScore } = useGameStore();
 
-  React.useEffect(() => {
-    socket?.on('DECREASE_SECONDS', (data) => {
-      const { seconds } = data;
-      setSeconds(seconds);
-    });
-  }, [socket]);
+  // React.useEffect(() => {
+  //   socket?.on('DECREASE_SECONDS', (data) => {
+  //     const { seconds } = data;
+  //     setSeconds(seconds);
+  //   });
+  // }, [socket]);
 
   return (
     <View style={styles.container}>
       <Text>{activeLetter}</Text>
       <Text>{totalScore}</Text>
-      {playing && <Timer seconds={seconds} />}
+      {playing && <Timer />}
     </View>
   );
 };
