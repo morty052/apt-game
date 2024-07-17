@@ -54,26 +54,8 @@ export const GameScreen = ({ route }: any) => {
       updateOpponents(opponents);
     });
 
-    // socket?.on('ALL_PLAYERS_SUBMITTED', (data: { updatedPlayers: playerProps[] }) => {
-    //   const { updatedPlayers } = data;
-    //   const currentPlayerusername = getItem('USERNAME');
-
-    //   console.log('All players submitted');
-
-    //   const opponents = updatedPlayers.filter(
-    //     (player) => player.username !== currentPlayerusername
-    //   );
-
-    //   updateOpponents(opponents);
-    // });
-
     socket?.on('SHOW_FINAL_TALLY', ({ nextRound }) => {
       console.log({ nextRound, round });
-
-      // if (nextRound === 11) {
-      //   setGameOver(true);
-      //   return;
-      // }
 
       // * ignore event if players are already playing
       if (playing) {
@@ -90,19 +72,6 @@ export const GameScreen = ({ route }: any) => {
     socket?.on('START_COUNTDOWN', (data) => {
       console.log('Timer Started');
       // console.log(data);
-    });
-
-    socket?.on('ALL_PLAYERS_SUBMITTED', (data: { updatedPlayers: playerProps[] }) => {
-      const { updatedPlayers } = data;
-      const currentPlayerusername = getItem('USERNAME');
-
-      console.log('All players submitted');
-
-      // const opponents = updatedPlayers.filter(
-      //   (player) => player.username !== currentPlayerusername
-      // );
-
-      // updateOpponents(opponents);
     });
 
     socket?.on('PLAYER_DIED', (data: { deadPlayer: string; updatedPlayers: playerProps[] }) => {
@@ -123,10 +92,6 @@ export const GameScreen = ({ route }: any) => {
     socket?.on('GAME_OVER', () => {
       setGameOver(true);
     });
-
-    // socket?.on('READY_NEXT_ROUND', () => {
-    //   readyNextRound();
-    // });
   }, [socket]);
 
   return (
