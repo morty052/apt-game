@@ -4,6 +4,7 @@ import { Modal, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
 import { Button } from './ui/Button';
+import Wizard from './rive/Wizard';
 
 type VerdictProps = { isReal: boolean; description: string };
 
@@ -25,8 +26,8 @@ const PlayerAnswerBar = ({
         justifyContent: 'space-between',
         gap: 10,
       }}>
-      <Text>{title}</Text>
-      <Text>{value}</Text>
+      <Text style={{ color: 'white' }}>{title}</Text>
+      <Text style={{ color: 'white' }}>{value}</Text>
     </Pressable>
   );
 };
@@ -50,13 +51,21 @@ const VerdictView = ({
         borderTopRightRadius: 20,
         paddingTop: 20,
         marginTop: 40,
+        paddingBottom: 30,
+        justifyContent: 'space-between',
       }}>
-      <Text>{isReal ? 'Real' : 'Fake'}</Text>
-      <Text>{description}</Text>
+      <View style={{ gap: 20 }}>
+        <Text>{isReal ? 'Real' : 'Fake'}</Text>
+        <Text style={{ fontSize: 20 }}>{description}</Text>
+      </View>
       <Button onPress={handleClose} title="Accept" />
     </View>
   );
 };
+
+// const useInspection = () => {
+
+// }
 
 const PlayerInspectModal = ({
   player,
@@ -110,13 +119,14 @@ const PlayerInspectModal = ({
   return (
     <Modal animationType="fade" statusBarTranslucent visible={open}>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }}>
+        <Text>{username}</Text>
         {!verdict && (
           <View
             style={{
               flex: 1,
               paddingHorizontal: 10,
               gap: 30,
-              backgroundColor: 'white',
+              backgroundColor: '#00c4ee',
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
               padding: 10,
@@ -129,7 +139,6 @@ const PlayerInspectModal = ({
               style={{ alignSelf: 'flex-end' }}
               color="red"
             />
-            <Text>{username}</Text>
 
             {!verifyingAnswer && (
               <View style={{ gap: 30 }}>
@@ -155,11 +164,7 @@ const PlayerInspectModal = ({
                 />
               </View>
             )}
-            {verifyingAnswer && (
-              <View>
-                <Text style={{ fontSize: 50 }}>Verifying...</Text>
-              </View>
-            )}
+            {verifyingAnswer && <Wizard />}
           </View>
         )}
 

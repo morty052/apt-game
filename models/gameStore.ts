@@ -6,6 +6,7 @@ import { playerProps } from '../types';
 type GameProps = {
   player: playerProps;
   opponents: playerProps[];
+  round: number;
   totalScore: number;
   activeLetter: string;
   alphabets: string[];
@@ -27,7 +28,7 @@ type GameProps = {
     type: string;
     self: boolean;
   }) => void;
-  readyNextRound: () => void;
+  readyNextRound: (round: number) => void;
   initGame: (player: playerProps, opponents: playerProps[]) => void;
 };
 
@@ -118,8 +119,11 @@ export const useGameStore = create<GameProps>((set, state) => ({
     score: 0,
     inTallyMode: false,
     turn: 0,
+    strikes: 0,
+    doneTallying: false,
   },
   opponents: [],
+  round: 0,
   activeLetter: 'A',
   totalScore: 0,
   alphabets: ALPHABETS,
@@ -221,7 +225,7 @@ export const useGameStore = create<GameProps>((set, state) => ({
 
     console.log(state().opponents);
   },
-  readyNextRound: () => {
+  readyNextRound: (round: number) => {
     const { player, opponents } = state();
     const totalPoints = getPointsForPlayer({ player, opponents });
     const newScore = state().totalScore + totalPoints;
@@ -244,6 +248,7 @@ export const useGameStore = create<GameProps>((set, state) => ({
         ...state.player,
         answers: { Name: '', Animal: '', Place: '', Thing: '' },
       },
+      round,
     }));
   },
 }));

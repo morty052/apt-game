@@ -15,4 +15,6 @@ export type playerProps = {
   turn: number;
   score: number;
   inTallyMode: boolean;
+  doneTallying: boolean;
+  strikes: number;
 };

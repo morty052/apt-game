@@ -1,7 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import { getPointsForPlayer, useGameStore } from 'models/gameStore';
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Modal, Pressable } from 'react-native';
+import { useGameStore } from 'models/gameStore';
+import React from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
 import { getItem } from 'utils/storage';
@@ -9,6 +8,7 @@ import { getItem } from 'utils/storage';
 import HUD from './Hud';
 import PlayerInspectModal from './PlayerInspectModal';
 import { Button } from './ui/Button';
+import { useTallyTime } from './Timer';
 
 const PlayerCard = ({
   username,
@@ -53,54 +53,13 @@ const OpponentCard = ({
   );
 };
 
-const FinalTallYModal = ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
-  const [scoreForRound, setScoreForRound] = React.useState(0);
-  const { player, opponents } = useGameStore();
-
-  useEffect(() => {
-    if (!open) return;
-    const totalPoints = getPointsForPlayer({ player, opponents });
-    setScoreForRound(totalPoints);
-  }, [open]);
-
-  return (
-    <Modal animationType="fade" statusBarTranslucent visible={open}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }}>
-        <View
-          style={{
-            flex: 1,
-            paddingHorizontal: 10,
-            gap: 30,
-            backgroundColor: 'white',
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            padding: 10,
-            marginTop: 40,
-          }}>
-          <Ionicons
-            name="close"
-            size={24}
-            onPress={handleClose}
-            style={{ alignSelf: 'flex-end' }}
-            color="red"
-          />
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Text style={{ fontSize: 20 }}>You scored</Text>
-            <Text style={{ fontSize: 30, fontWeight: '700' }}>{scoreForRound}</Text>
-          </View>
-        </View>
-      </SafeAreaView>
-    </Modal>
-  );
-};
-
 const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: string }) => {
   const [playerToInspect, setPlayerToInspect] = React.useState<playerProps | null>();
   const [inspectionModalOpen, setInspectionModalOpen] = React.useState(false);
-  const [viewingFinalTally, setViewingFinalTally] = React.useState(false);
-  const [scoreForRound, setScoreForRound] = React.useState(0);
 
-  const { player, opponents, readyNextRound, handleBustedPlayer, updateOpponents } = useGameStore();
+  const { player, opponents, handleBustedPlayer } = useGameStore();
+
+  const { seconds, setPaused } = useTallyTime();
 
   function handlePlayerInspect(player: any) {
     setPlayerToInspect(player);
@@ -110,11 +69,6 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
   function handleCloseInspectionModal() {
     setInspectionModalOpen(false);
     setPlayerToInspect(null);
-  }
-
-  function handleCloseTallyScreen() {
-    readyNextRound();
-    setViewingFinalTally(false);
   }
 
   React.useEffect(() => {
@@ -129,14 +83,31 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
       handleBustedPlayer({ username, type, self: false });
     });
 
-    socket?.on('START_COUNTDOWN', (data) => {
+    // socket?.on('START_COUNTDOWN', (data) => {
+    //   console.log(data);
+    // });
+
+    socket?.on('START_EXIT_TALLY_COUNTDOWN', (data) => {
       console.log(data);
+      setPaused(false);
+    });
+
+    socket?.on('WAITING_VERDICT', (data) => {
+      console.log(data);
+      setPaused(true);
+    });
+
+    socket?.on('VERDICT_RECEIVED', (data) => {
+      console.log(data);
+      setPaused(false);
     });
 
     return () => {
       socket?.off('PLAYER_BUSTED');
-      socket?.off('START_COUNTDOWN');
-      // socket?.off('ALL_PLAYERS_SUBMITTED');
+      // socket?.off('START_COUNTDOWN');
+      socket?.off('START_EXIT_TALLY_COUNTDOWN');
+      socket?.off('WAITING_VERDICT');
+      socket?.off('VERDICT_RECEIVED');
     };
   }, [socket]);
 
@@ -152,7 +123,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
       {/* <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} /> */}
       <SafeAreaView style={styles.alphabetScreencontainer}>
         <View style={{ paddingHorizontal: 10, gap: 20 }}>
-          <HUD socket={socket} />
+          <HUD seconds={seconds} />
           <PlayerCard
             inTallyMode
             onPress={() => handlePlayerInspect(player)}

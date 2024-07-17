@@ -1,10 +1,59 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
 import { useGameStore } from 'models/gameStore';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+export const usePlayingTime = () => {
+  const [seconds, setSeconds] = React.useState(10);
+  const [timeUp] = React.useState(false);
+  const [paused, setPaused] = React.useState(false);
+
+  const { playing } = useGameStore();
+
+  React.useEffect(() => {
+    if (!playing || paused) {
+      return;
+    }
+    const dec = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+      if (seconds === 0) {
+        // setTimeUp(true);
+        setSeconds(10);
+      }
+    }, 1000);
+
+    return () => clearInterval(dec);
+  }, [seconds, playing, paused]);
+
+  return { seconds, timeUp, setPaused, paused };
+};
+
+export const useTallyTime = () => {
+  const [seconds, setSeconds] = React.useState(30);
+  const [timeUp] = React.useState(false);
+  const [paused, setPaused] = React.useState(true);
+
+  const { tallying } = useGameStore();
+
+  React.useEffect(() => {
+    if (!tallying || paused) {
+      return;
+    }
+    const dec = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+      if (seconds === 0) {
+        // setTimeUp(true);
+        setSeconds(30);
+      }
+    }, 1000);
+
+    return () => clearInterval(dec);
+  }, [seconds, tallying, paused]);
+
+  return { seconds, timeUp, setPaused, paused };
+};
 
 const Timer = () => {
   const [seconds, setSeconds] = React.useState(10);
-  const [timeUp, setTimeUp] = React.useState(false);
 
   const { playing } = useGameStore();
 

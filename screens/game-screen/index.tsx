@@ -6,11 +6,14 @@ import { Button } from 'components/ui/Button';
 import SocketContext from 'contexts/SocketContext';
 import { getPointsForPlayer, useGameStore } from 'models/gameStore';
 import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
+import { Text } from 'react-native';
 
 export const GameScreen = ({ route }: any) => {
   const [viewingFinalTally, setViewingFinalTally] = React.useState(false);
+  const [gameOver, setGameOver] = React.useState(false);
   const room = route.params.room;
 
   const { socket } = React.useContext(SocketContext);
@@ -27,7 +30,7 @@ export const GameScreen = ({ route }: any) => {
     readyNextRound,
     updateOpponents,
     confirmLetterSelection,
-    player,
+    round,
   } = useGameStore();
 
   React.useEffect(() => {
@@ -64,13 +67,29 @@ export const GameScreen = ({ route }: any) => {
     //   updateOpponents(opponents);
     // });
 
-    socket?.on('SHOW_FINAL_TALLY', () => {
+    socket?.on('SHOW_FINAL_TALLY', ({ nextRound }) => {
+      console.log({ nextRound, round });
+
+      // if (nextRound === 11) {
+      //   setGameOver(true);
+      //   return;
+      // }
+
+      // * ignore event if players are already playing
+      if (playing) {
+        return;
+      }
       setViewingFinalTally(true);
-      readyNextRound();
+      readyNextRound(nextRound);
     });
+
+    socket?.on('TALLY_TIME_EXPIRED', ({ nextRound }) => {
+      console.log('TALLY_TIME_EXPIRED', { nextRound });
+    });
+
     socket?.on('START_COUNTDOWN', (data) => {
       console.log('Timer Started');
-      console.log(data);
+      // console.log(data);
     });
 
     socket?.on('ALL_PLAYERS_SUBMITTED', (data: { updatedPlayers: playerProps[] }) => {
@@ -85,6 +104,26 @@ export const GameScreen = ({ route }: any) => {
 
       // updateOpponents(opponents);
     });
+
+    socket?.on('PLAYER_DIED', (data: { deadPlayer: string; updatedPlayers: playerProps[] }) => {
+      const { deadPlayer, updatedPlayers } = data;
+      const currentPlayerusername = getItem('USERNAME');
+      const isPlayer = deadPlayer === currentPlayerusername;
+      console.log('player died', deadPlayer);
+      if (isPlayer) {
+        console.log('you died', currentPlayerusername);
+        return;
+      }
+      const opponents = updatedPlayers.filter(
+        (player) => player.username !== currentPlayerusername
+      );
+      updateOpponents(opponents);
+    });
+
+    socket?.on('GAME_OVER', () => {
+      setGameOver(true);
+    });
+
     // socket?.on('READY_NEXT_ROUND', () => {
     //   readyNextRound();
     // });
@@ -92,11 +131,17 @@ export const GameScreen = ({ route }: any) => {
 
   return (
     <>
-      {selectingLetter && <AlphabetSelectScreen socket={socket} room={room} />}
-      {playing && <PlayerAnswersView socket={socket} room={room} />}
-      {tallying && <TallyScreen socket={socket} room={room} />}
+      {selectingLetter && !gameOver && <AlphabetSelectScreen socket={socket} room={room} />}
+      {playing && !gameOver && <PlayerAnswersView socket={socket} room={room} />}
+      {tallying && !gameOver && <TallyScreen socket={socket} room={room} />}
       <ScoreForRoundModal open={viewingFinalTally} handleClose={() => handleCloseScoreModal()} />
       {/* <Button onPress={() => socket?.emit('START_COUNTDOWN', { room })} /> */}
+
+      {gameOver && (
+        <SafeAreaView style={{ flex: 1 }}>
+          <Text>Game Over</Text>
+        </SafeAreaView>
+      )}
     </>
   );
 };

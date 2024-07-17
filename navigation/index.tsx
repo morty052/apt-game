@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Home, ModeScreen, RegistrationScreen } from 'screens';
 import { GameScreen } from 'screens/game-screen';
+import UserAvatar from 'screens/user-avatar-creator/UserAvatar';
 
 export type RootTabsParamList = {
   Home: undefined;
@@ -39,6 +40,7 @@ export default function RootStack({ onboarded }: { onboarded: boolean | null }) 
         initialRouteName={!onboarded ? 'OnboardingStack' : 'GameStack'}>
         <Stack.Screen name="OnboardingStack" component={RegistrationScreen} />
         <Stack.Screen name="GameStack" component={GameStack} />
+        {/* <Stack.Screen name="GameStack" component={UserAvatar} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

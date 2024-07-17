@@ -10,7 +10,7 @@ export type ISocketContextComponentProps = PropsWithChildren;
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = (props) => {
   const { children } = props;
 
-  const socket = useSocket(`https://6333-102-216-11-2.ngrok-free.app/user`, {
+  const socket = useSocket(`https://7c20-102-216-10-2.ngrok-free.app/user`, {
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     autoConnect: false,

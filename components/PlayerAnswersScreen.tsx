@@ -8,6 +8,7 @@ import { getItem } from 'utils/storage';
 
 import HUD from './Hud';
 import { Mic } from './Mic';
+import { usePlayingTime } from './Timer';
 import { Button } from './ui/Button';
 
 // * All background colors
@@ -146,7 +147,9 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
     Thing: '',
   });
 
-  const { readyTallyMode, updateAnswers, player } = useGameStore();
+  const { readyTallyMode, updateAnswers } = useGameStore();
+
+  const { seconds } = usePlayingTime();
 
   const color = useSharedValue(backgroundColors[0]);
 
@@ -224,7 +227,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
           answers: answerObject,
         },
       });
-      // readyTallyMode();
+      readyTallyMode();
     });
 
     return () => {
@@ -235,7 +238,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
   return (
     <AnimatedSafeAreaView style={[{ flex: 1, gap: 20, paddingTop: 10 }, animatedStyles]}>
       <View style={{ paddingHorizontal: 10 }}>
-        <HUD socket={socket} />
+        <HUD seconds={seconds} />
       </View>
       <>
         {index === 0 && (
