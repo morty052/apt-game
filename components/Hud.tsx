@@ -15,7 +15,7 @@ const HUD = ({ seconds }: { seconds: number }) => {
   return (
     <View style={styles.container}>
       <Text>{activeLetter}</Text>
-      <Text>{round}</Text>
+      <Text>{totalScore}</Text>
       {/* {playing && <Timer />} */}
       <Text>{seconds}</Text>
     </View>

@@ -4,13 +4,16 @@ import { Text } from 'react-native';
 import { defaultSocketContextState, SocketContextProvider, SocketReducer } from './SocketContext';
 import { useSocket } from '../hooks/useSocket';
 import { getItem } from '../utils/storage';
+import { useAppStore } from 'models/appStore';
 
 export type ISocketContextComponentProps = PropsWithChildren;
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = (props) => {
   const { children } = props;
 
-  const socket = useSocket(`https://7c20-102-216-10-2.ngrok-free.app/user`, {
+  const { setConnected } = useAppStore();
+
+  const socket = useSocket(`https://apt-server.onrender.com/user`, {
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     autoConnect: false,
@@ -65,6 +68,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     const username = getItem('USERNAME');
     socket.emit('handshake', username, (uid: string, users: string[]) => {
       console.info('User handshake callback message received');
+      setConnected(true);
     });
 
     setLoading(false);

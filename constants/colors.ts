@@ -1,5 +1,5 @@
 export const Colors = {
-  primary: 'rgb(145,70,255)',
+  primary: '#00c4ee',
   dark: '#000000',
   tertiary: '#1F2937',
   muted: 'rgba(255,255,255,0.5)',

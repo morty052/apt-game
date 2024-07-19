@@ -1,13 +1,24 @@
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { GameStackParamList } from 'Routes/GameStack';
+import CharacterSelectWindow, { Character } from 'components/CharacterSelectWindow';
 import { Button } from 'components/ui/Button';
 import SocketContext from 'contexts/SocketContext';
+import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ModeScreen, ModeSelectWindow } from 'screens/modes-screen';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
+
+function CharacterSelectButton({ onPress }: { onPress: () => void }) {
+  return <Pressable onPress={onPress} style={styles.actionButton} />;
+}
+
+function ModeSelectButton({ onPress }: { onPress: () => void }) {
+  return <Pressable onPress={onPress} style={styles.actionButton} />;
+}
 
 export function Lobby({
   navigation,
@@ -16,25 +27,30 @@ export function Lobby({
   navigation: NavigationProp<GameStackParamList>;
   route: RouteProp<GameStackParamList, 'Lobby'>;
 }) {
+  const [selectingCharacter, setSelectingCharacter] = React.useState(false);
+  const [selectingMode, setSelectingMode] = React.useState(false);
   const [findingMatch, setFindingMatch] = React.useState(false);
   const { mode } = route.params;
   const { socket } = React.useContext(SocketContext);
   const { initGame } = useGameStore();
 
-  function handleFindMatch() {
+  const { character } = useAppStore();
+
+  const handleFindMatch = React.useCallback(() => {
     socket?.emit(
       'FIND_MATCH',
       {
         lobbyType: mode,
         player: {
           username: getItem('USERNAME'),
+          character: character.name,
         },
       },
       (data: { matchId?: string }) => {
         setFindingMatch(true);
       }
     );
-  }
+  }, [character, mode, socket]);
 
   function mockhandleFindMatch(username: string) {
     socket?.emit(
@@ -71,10 +87,33 @@ export function Lobby({
   }, [socket]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>{mode}</Text>
-      {!findingMatch && <Button onPress={handleFindMatch} title="Find Match" />}
-      {findingMatch && <Button onPress={() => mockhandleFindMatch('doc')} title="Finding Match" />}
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'skyblue' }}>
+      <View style={styles.container}>
+        {!selectingCharacter && !selectingMode && (
+          <View style={styles.actionButtonsContainer}>
+            <CharacterSelectButton onPress={() => setSelectingCharacter(true)} />
+            <ModeSelectButton onPress={() => setSelectingMode(true)} />
+            <CharacterSelectButton onPress={() => setSelectingCharacter(true)} />
+          </View>
+        )}
+        {selectingCharacter && (
+          <CharacterSelectWindow
+            selectingCharacter={selectingCharacter}
+            setSelectingCharacter={setSelectingCharacter}
+          />
+        )}
+        {selectingMode && (
+          <ModeSelectWindow selectingMode={selectingMode} setSelectingMode={setSelectingMode} />
+        )}
+        {!selectingCharacter && !selectingMode && (
+          <View style={{ gap: 40 }}>
+            <Character url={character.url} />
+            <Button onPress={handleFindMatch} title="Find Match" />
+          </View>
+        )}
+        {/* {!findingMatch && <Button onPress={handleFindMatch} title="Find Match" />}
+      {findingMatch && <Button onPress={() => mockhandleFindMatch('doc')} title="Finding Match" />} */}
+      </View>
     </SafeAreaView>
   );
 }
@@ -82,9 +121,36 @@ export function Lobby({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     backgroundColor: 'skyblue',
     gap: 20,
-    paddingTop: 20,
+    paddingBottom: 20,
+    position: 'relative',
+    justifyContent: 'flex-end',
+  },
+  actionButton: {
+    height: 40,
+    width: 40,
+    borderRadius: 40,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+  },
+  actionButtonsContainer: {
+    position: 'absolute',
+    top: 30,
+    right: 10,
+    width: 80,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    borderWidth: 1,
+    borderColor: 'black',
+    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    gap: 10,
+    borderRadius: 20,
   },
 });

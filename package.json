@@ -42,7 +42,9 @@
     "react-native-screens": "3.31.1",
     "rive-react-native": "^7.2.0",
     "socket.io-client": "^4.7.5",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "expo-av": "~14.0.6",
+    "expo-font": "~12.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -5,7 +5,15 @@ import { RiveRef } from 'rive-react-native';
 
 import { RiveAvatarComponent, setStateMachineInput } from './rive/RiveAvatarComponent';
 
-function Avatar({ avatarObject }: { avatarObject: avatarStateProps['riveAvatarSelections'] }) {
+type avatarObject = {
+  BodyColor: number;
+  BodySize: number;
+  BodyEyes: number;
+  BodyHair: number;
+  BodyFaceHair: number;
+  BackgroundColor: number;
+};
+function Avatar({ avatarObject }: { avatarObject: avatarObject }) {
   // const { setAvatar } = useAvatarStateContext();
 
   const riveRef = React.useRef<RiveRef>(null);
@@ -25,7 +33,7 @@ function Avatar({ avatarObject }: { avatarObject: avatarStateProps['riveAvatarSe
 
   return (
     <View>
-      <View style={{ width: 45, height: 45 }}>
+      <View style={{ width: 75, height: 75 }}>
         <RiveAvatarComponent ref={riveRef} />
       </View>
     </View>

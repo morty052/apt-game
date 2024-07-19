@@ -83,10 +83,6 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
       handleBustedPlayer({ username, type, self: false });
     });
 
-    // socket?.on('START_COUNTDOWN', (data) => {
-    //   console.log(data);
-    // });
-
     socket?.on('START_EXIT_TALLY_COUNTDOWN', (data) => {
       console.log(data);
       setPaused(false);

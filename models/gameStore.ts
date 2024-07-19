@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { MAX_POINTS_PER_ANSWER, ALPHABETS } from '../constants';
-import { playerProps } from '../types';
+import { CharacterNames, playerProps } from '../types';
 
 type GameProps = {
   player: playerProps;
@@ -28,8 +28,20 @@ type GameProps = {
     type: string;
     self: boolean;
   }) => void;
+  handleBonusPoints: (character: CharacterNames) => void;
   readyNextRound: (round: number) => void;
   initGame: (player: playerProps, opponents: playerProps[]) => void;
+};
+
+const checkForLongWords = (uniqueAnswers: string[]) => {
+  if (uniqueAnswers.length === 0) {
+    return [];
+  }
+
+  const longWords = uniqueAnswers
+    .filter((answer) => answer.length > 4)
+    .map((answer) => answer.toLowerCase());
+  return longWords;
 };
 
 const checkForDuplicateAnswers = ({
@@ -90,6 +102,35 @@ export const getPointsForPlayer = ({
   // * Points for non unique answers
   const duplicateAnswersPoints = duplicates.length * halfPoint;
 
+  // * Handle RacoonPoints
+  if (player.character === 'RACOON') {
+    // * Points for racoon player
+    const duplicateAnswersPoints = duplicates.length * MAX_POINTS_PER_ANSWER;
+    const totalPoints = uniqueAnswerPoints + duplicateAnswersPoints;
+    console.log('Racoon not affected by deduction', totalPoints);
+    return totalPoints;
+  }
+
+  // * handleGeniusPoints
+  if (player.character === 'GENIUS') {
+    const longAnswers = checkForLongWords(uniqueAnswers);
+
+    // * points for long answer
+    const longAnswerPoints = longAnswers.length * halfPoint;
+
+    // * points for unique answers
+    const uniqueAnswerPoints = uniqueAnswers.length * MAX_POINTS_PER_ANSWER;
+
+    // * Points for non unique answers
+    const duplicateAnswersPoints = duplicates.length * halfPoint;
+
+    // * Sum of points unique and non unique answers
+    const totalPoints = uniqueAnswerPoints + duplicateAnswersPoints + longAnswerPoints;
+    console.log('totalPoints for genius', totalPoints);
+
+    return totalPoints;
+  }
+
   // * Sum of points unique and non unique answers
   const totalPoints = uniqueAnswerPoints + duplicateAnswersPoints;
 
@@ -121,6 +162,7 @@ export const useGameStore = create<GameProps>((set, state) => ({
     turn: 0,
     strikes: 0,
     doneTallying: false,
+    character: null,
   },
   opponents: [],
   round: 0,
@@ -131,14 +173,14 @@ export const useGameStore = create<GameProps>((set, state) => ({
   playing: false,
   tallying: false,
   currentTurn: 0,
-  initGame: (player: playerProps, opponents: playerProps[]) => {
+  initGame: (player, opponents) => {
     set({
       player,
       opponents,
     });
-    console.log({ opponents: state().opponents, player: state().player });
+    console.log({ player: state().player });
   },
-  confirmLetterSelection: (letter: string) => {
+  confirmLetterSelection: (letter) => {
     set((state) => ({
       selectingLetter: false,
       playing: true,
@@ -168,7 +210,7 @@ export const useGameStore = create<GameProps>((set, state) => ({
       totalScore: newScore,
     }));
   },
-  updateOpponents: (opponents: playerProps[]) => {
+  updateOpponents: (opponents) => {
     set((state) => ({
       opponents,
     }));
@@ -222,8 +264,20 @@ export const useGameStore = create<GameProps>((set, state) => ({
     set(() => ({
       opponents: updatedOpponentsList,
     }));
+  },
+  handleBonusPoints: (character) => {
+    switch (character) {
+      case 'DETECTIVE':
+        console.log('extra fifty points for', state().player.username);
+        set((state) => ({
+          totalScore: state.totalScore + 50,
+        }));
 
-    console.log(state().opponents);
+        break;
+
+      default:
+        break;
+    }
   },
   readyNextRound: (round: number) => {
     const { player, opponents } = state();

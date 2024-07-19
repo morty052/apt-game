@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
 import { Button } from './ui/Button';
 import Wizard from './rive/Wizard';
+import { useGameStore } from 'models/gameStore';
 
 type VerdictProps = { isReal: boolean; description: string };
 
@@ -83,6 +84,10 @@ const PlayerInspectModal = ({
   const [verifyingAnswer, setVerifyingAnswer] = React.useState(false);
   const [verdict, setVerdict] = React.useState<null | VerdictProps>(null);
 
+  const { handleBonusPoints, player: accuser } = useGameStore();
+
+  const { character } = accuser;
+
   const { answers, username } = player ?? {};
   const { Animal, Name, Place, Thing } = answers ?? {};
 
@@ -103,7 +108,12 @@ const PlayerInspectModal = ({
             return;
           }
 
-          console.log('Fake stuff');
+          // * handle detective character
+          if (character === 'DETECTIVE') {
+            handleBonusPoints(character);
+          }
+
+          console.log('Fake stuff', character);
           setVerifyingAnswer(false);
           socket?.emit('BUST_PLAYER', { username, room, answer: query, type });
         }

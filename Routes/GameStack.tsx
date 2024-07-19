@@ -1,16 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import CharacterSelectWindow from 'components/CharacterSelectWindow';
+import LoadingScreen from 'components/LoadingScreen';
+import { BackButton } from 'components/ui/BackButton';
 import { Colors } from 'constants/colors';
 import SocketContextComponent from 'contexts/SocketContextComponent';
+import { useAppStore } from 'models/appStore';
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Home, ModeScreen, Lobby } from 'screens';
 import { GameScreen } from 'screens/game-screen';
 
 export type GameStackParamList = {
   GameTabs: undefined;
   ModeSelectScreen: undefined;
+  CharacterSelect: undefined;
+  SettingsScreen: undefined;
+  LeaderBoard: undefined;
+  FriendsList: undefined;
   GameScreen: { room: string };
   Lobby: { mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH' };
 };
@@ -73,6 +82,14 @@ function TabBarIcon({
 }
 
 function GameTabs({ navigation }: any) {
+  const { connected } = useAppStore();
+
+  console.log({ connected });
+
+  if (!connected) {
+    return <LoadingScreen />;
+  }
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -160,7 +177,7 @@ function GameTabs({ navigation }: any) {
                   width: 70,
                   borderRadius: 40,
                   backgroundColor: 'white',
-                  borderWidth: 2,
+                  // borderWidth: 2,
                   elevation: 10,
                 }}>
                 <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 22 }}>Play</Text>
@@ -208,10 +225,10 @@ function GameTabs({ navigation }: any) {
   );
 }
 
-export default function GameStack() {
+export default function GameStack({ navigation }: any) {
   return (
     <SocketContextComponent>
-      <Stack.Navigator
+      {/* <Stack.Navigator
         screenOptions={{
           headerShown: false,
         }}>
@@ -228,7 +245,25 @@ export default function GameStack() {
           component={ModeScreen}
         />
         <Stack.Screen name="GameScreen" component={GameScreen} />
-        <Stack.Screen name="Lobby" component={Lobby} />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+            headerTitle: '',
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerStyle: { backgroundColor: 'skyblue' },
+            headerShadowVisible: false,
+          }}
+          name="Lobby"
+          component={Lobby}
+        />
+      </Stack.Navigator> */}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="GameTabs" component={Home} />
+        <Stack.Screen name="CharacterSelect" component={CharacterSelectWindow} />
+        <Stack.Screen name="LeaderBoard" component={CharacterSelectWindow} />
+        <Stack.Screen name="FriendsList" component={CharacterSelectWindow} />
+        <Stack.Screen name="GameScreen" component={GameScreen} />
+        <Stack.Screen name="SettingsScreen" component={GameScreen} />
       </Stack.Navigator>
     </SocketContextComponent>
   );

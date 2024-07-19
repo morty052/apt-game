@@ -1,15 +1,18 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Rive from 'rive-react-native';
+import Rive, { Alignment } from 'rive-react-native';
 
 export default function Wizard() {
+  const { height, width } = useWindowDimensions();
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <Rive
-          url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1720973212/uz8qqy9d6gkgjyeui8nl.riv"
-          style={{ height: 400, width: 400 }}
+          alignment={Alignment.Center}
+          url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1721390706/owrshkzykhnxy9qj6hjm.riv"
+          style={{ width: width * 0.95, backgroundColor: 'transparent' }}
         />
       </View>
     </SafeAreaView>
@@ -17,5 +20,5 @@ export default function Wizard() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'transparent' },
+  container: { flex: 1, backgroundColor: 'transparent', alignItems: 'center' },
 });

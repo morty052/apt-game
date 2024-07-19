@@ -51,6 +51,8 @@ export const GameScreen = ({ route }: any) => {
       const opponents = updatedPlayers.filter(
         (player) => player.username !== currentPlayerusername
       );
+
+      console.log(JSON.stringify(opponents, null, 2));
       updateOpponents(opponents);
     });
 
