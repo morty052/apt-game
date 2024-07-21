@@ -7,19 +7,25 @@ type AppStoreProps = {
   matchmaking: boolean;
   mode: GameModes;
   character: CharacterProps;
-  setCharacter: (character: CharacterProps) => void;
   connected: boolean;
+  matchFound: boolean;
   setConnected: (connected: boolean) => void;
+  setCharacter: (character: CharacterProps) => void;
   setGameMode: (mode: GameModes) => void;
+  setMatchmaking: (matchmaking: boolean) => void;
+  setMatchFound: (matchFound: boolean) => void;
 };
 
 export const useAppStore = create<AppStoreProps>((set) => ({
-  connected: false,
   online: false,
-  matchmaking: false,
   mode: 'HEAD_TO_HEAD',
   character: charactersArray[0],
+  matchmaking: false,
+  connected: false,
+  matchFound: false,
   setCharacter: (character: CharacterProps) => set({ character }),
   setConnected: (connected: boolean) => set({ connected }),
   setGameMode: (mode: GameModes) => set({ mode }),
+  setMatchmaking: (matchmaking: boolean) => set({ matchmaking }),
+  setMatchFound: (matchFound: boolean) => set({ matchFound }),
 }));

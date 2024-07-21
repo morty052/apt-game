@@ -2,10 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import BottomNav from 'components/BottomNav';
 import { Character } from 'components/CharacterSelectWindow';
 import LoadingScreen from 'components/LoadingScreen';
+import TopNav from 'components/TopNav';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
 import GameModeButton from 'components/action-buttons/GameModeButton';
 import HelpButton from 'components/action-buttons/HelpButton';
-
 import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
@@ -16,7 +16,6 @@ import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
-import TopNav from 'components/TopNav';
 
 function RightNav() {
   return (
@@ -31,18 +30,20 @@ function RightNav() {
 }
 
 export const Home = () => {
-  const [selectingCharacter, setSelectingCharacter] = React.useState(false);
-  const [selectingMode, setSelectingMode] = React.useState(false);
   const [findingMatch, setFindingMatch] = React.useState(false);
 
   const { socket } = useContext(SocketContext);
 
   const { initGame } = useGameStore();
-  const { character, mode, connected } = useAppStore();
+  const { character, mode, connected, setMatchFound } = useAppStore();
 
   const navigation = useNavigation<any>();
 
   const handleFindMatch = React.useCallback(() => {
+    if (findingMatch) {
+      return;
+    }
+    setFindingMatch(true);
     socket?.emit(
       'FIND_MATCH',
       {
@@ -53,22 +54,20 @@ export const Home = () => {
         },
       },
       (data: { matchId?: string }) => {
-        setFindingMatch(true);
+        console.log('joined queue');
       }
     );
-  }, [character, mode, socket]);
+  }, [character, mode, socket, findingMatch, setFindingMatch]);
 
   function handleMatchFound(queue: playerProps[], room: string) {
-    // * get current player from queue
-    const player = queue.filter((player) => player.username === getItem('USERNAME'))[0];
+    //* save current player room and opponents to state
+    initGame({ queue, room });
 
-    // * get opponents from queue
-    const opponents = queue.filter((player) => player.username !== getItem('USERNAME'));
+    // open match found modal
+    setMatchFound(true);
 
-    //* save current player and opponents to state
-    initGame(player, opponents);
-
-    navigation.navigate('GameScreen', { room });
+    setFindingMatch(false);
+    // navigation.navigate('GameScreen', { room });
   }
 
   React.useEffect(() => {
@@ -76,10 +75,6 @@ export const Home = () => {
       handleMatchFound(data.queue, data.room);
     });
   }, [socket]);
-
-  // useEffect(() => {
-  //   navigation.setOptions({ tabBarStyle: { display: 'none' } });
-  // }, []);
 
   if (!connected) {
     return <LoadingScreen />;
@@ -91,7 +86,7 @@ export const Home = () => {
         <TopNav />
         <RightNav />
         <Character url={character.url} />
-        <BottomNav onPressPlay={handleFindMatch} />
+        <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />
       </SafeAreaView>
     </ImageBackground>
   );

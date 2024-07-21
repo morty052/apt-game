@@ -4,15 +4,18 @@ import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react
 type ButtonProps = {
   onPress?: TouchableOpacityProps['onPress'];
   title?: string;
+  style?: any;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<TouchableOpacity, ButtonProps>(({ onPress, title }, ref) => {
-  return (
-    <TouchableOpacity ref={ref} style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
-    </TouchableOpacity>
-  );
-});
+export const Button = forwardRef<TouchableOpacity, ButtonProps>(
+  ({ onPress, title, style }, ref) => {
+    return (
+      <TouchableOpacity ref={ref} style={[styles.button, style]} onPress={onPress}>
+        <Text style={styles.buttonText}>{title}</Text>
+      </TouchableOpacity>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   button: {
@@ -34,7 +37,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'black',
     fontSize: 20,
-    fontWeight: '600',
+    fontFamily: 'Crispy-Tofu',
     textAlign: 'center',
   },
 });

@@ -2,8 +2,10 @@ import { create } from 'zustand';
 
 import { MAX_POINTS_PER_ANSWER, ALPHABETS } from '../constants';
 import { CharacterNames, playerProps } from '../types';
+import { getItem } from 'utils/storage';
 
 type GameProps = {
+  room: string;
   player: playerProps;
   opponents: playerProps[];
   round: number;
@@ -30,7 +32,7 @@ type GameProps = {
   }) => void;
   handleBonusPoints: (character: CharacterNames) => void;
   readyNextRound: (round: number) => void;
-  initGame: (player: playerProps, opponents: playerProps[]) => void;
+  initGame: ({ room, queue }: { room: string; queue: playerProps[] }) => void;
 };
 
 const checkForLongWords = (uniqueAnswers: string[]) => {
@@ -154,8 +156,9 @@ const getNextTurn = (state: () => GameProps): number => {
 };
 
 export const useGameStore = create<GameProps>((set, state) => ({
+  room: '',
   player: {
-    username: '',
+    username: getItem('USERNAME') || 'Guest',
     answers: { Name: '', Animal: '', Place: '', Thing: '' },
     score: 0,
     inTallyMode: false,
@@ -173,12 +176,16 @@ export const useGameStore = create<GameProps>((set, state) => ({
   playing: false,
   tallying: false,
   currentTurn: 0,
-  initGame: (player, opponents) => {
+  initGame: ({ queue, room }) => {
+    const player = queue.find((player) => player.username === state().player.username);
+
+    // * get opponents from queue
+    const opponents = queue.filter((player) => player.username !== state().player.username);
     set({
       player,
       opponents,
+      room,
     });
-    console.log({ player: state().player });
   },
   confirmLetterSelection: (letter) => {
     set((state) => ({

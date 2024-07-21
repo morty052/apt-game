@@ -1,15 +1,59 @@
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Dimensions } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { SocketProps } from 'types';
 
 import { Button } from './ui/Button';
 
-const AlphabetButton = ({ alphabet, onPress }: { alphabet: string; onPress: () => void }) => {
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const AlphabetButton = ({
+  alphabet,
+  onPress,
+  activeLetter,
+}: {
+  alphabet: string;
+  onPress: () => void;
+  activeLetter: string;
+}) => {
+  const isSelected = React.useMemo(() => alphabet === activeLetter, [activeLetter]);
+  const buttonColor = useSharedValue('white');
+
+  const buttonStyles = useAnimatedStyle(() => {
+    return {
+      backgroundColor: withSpring(isSelected ? 'gold' : buttonColor.value),
+    };
+  });
+
+  const textStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: withSpring(isSelected ? 1.1 : 1),
+        },
+        {
+          rotateZ: withSpring(isSelected ? '-10deg' : '0deg'),
+        },
+      ],
+    };
+  });
+
+  // React.useEffect(() => {
+  //   if (isSelected) {
+  //     buttonColor.value = withSpring('gold', { damping: 15 });
+  //   } else {
+  //     buttonColor.value = 'white';
+  //   }
+  // }, [isSelected]);
+
   return (
-    <Pressable onPress={onPress} style={styles.alphabetButton}>
-      <Text style={styles.alphabet}>{alphabet}</Text>
-    </Pressable>
+    <AnimatedPressable
+      onPress={onPress}
+      style={[styles.alphabetButton, { borderColor: 'white' }, buttonStyles]}>
+      <Animated.Text style={[styles.alphabet, textStyles]}>{alphabet}</Animated.Text>
+    </AnimatedPressable>
   );
 };
 
@@ -26,34 +70,51 @@ const AlphabetSelectScreen = ({ socket, room }: { socket: SocketProps | null; ro
   return (
     <View style={styles.alphabetScreencontainer}>
       {currentTurn === turn && (
-        <>
-          <View style={{ gap: 20, justifyContent: 'center', flex: 1, paddingBottom: 100 }}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <View
+            style={{
+              rowGap: 15,
+              justifyContent: 'space-between',
+              flex: 1,
+              paddingBottom: 0,
+              paddingHorizontal: 10,
+            }}>
             {/* HEADER TEXT */}
-            <View style={{ paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color: 'white', fontSize: 28, fontWeight: '700' }}>
-                Select an alphabet
-              </Text>
-            </View>
-            {/* ALPHABETS */}
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 28,
+                fontFamily: 'Crispy-Tofu',
+                textAlign: 'center',
+              }}>
+              Select an alphabet
+            </Text>
+
             <View>
+              {/* ALPHABETS */}
               <FlatList
-                showsHorizontalScrollIndicator={false}
-                horizontal
-                contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
+                showsVerticalScrollIndicator={false}
+                numColumns={4}
+                columnWrapperStyle={{ gap: 10 }}
+                contentContainerStyle={{
+                  rowGap: 10,
+                  paddingHorizontal: 10,
+                  alignItems: 'center',
+                  backgroundColor: 'transparent',
+                }}
                 data={alphabets}
                 renderItem={({ item }) => (
-                  <AlphabetButton onPress={() => setLetter(item)} alphabet={item} />
+                  <AlphabetButton
+                    activeLetter={letter}
+                    onPress={() => setLetter(item)}
+                    alphabet={item}
+                  />
                 )}
               />
             </View>
-            <Text style={{ color: 'white', fontSize: 50, textAlign: 'center', fontWeight: 'bold' }}>
-              {letter}
-            </Text>
-          </View>
-          <View style={{ paddingHorizontal: 10 }}>
             <Button onPress={confirmLetter} title="Confirm" />
           </View>
-        </>
+        </SafeAreaView>
       )}
       {currentTurn !== turn && (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -77,24 +138,22 @@ const styles = StyleSheet.create({
   },
   alphabetScreencontainer: {
     flex: 1,
-    backgroundColor: '#00c4ee',
+    backgroundColor: 'pink',
     gap: 20,
-    paddingTop: 10,
+    paddingTop: 20,
     justifyContent: 'space-between',
     paddingBottom: 30,
   },
   alphabetButton: {
     height: 80,
-    width: 80,
-    backgroundColor: 'gold',
+    width: Dimensions.get('window').width / 5,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'white',
   },
   alphabet: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 40,
+    fontFamily: 'Crispy-Tofu',
   },
 });

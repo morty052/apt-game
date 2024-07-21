@@ -1,18 +1,8 @@
 import { View, Text, Image } from 'react-native';
 import Avatar from './Avatar';
-import { Ionicons } from '@expo/vector-icons';
 
 import coin from '../assets/icons/alph-a--min.png';
 import EnergyBar from '../assets/icons/thunderbolt-icon--min.png';
-
-const avatarObject = {
-  BodyColor: 1,
-  BodySize: 1,
-  BodyEyes: 2,
-  BodyHair: 1,
-  BodyFaceHair: 2,
-  BackgroundColor: 0,
-};
 
 function CoinsBalance() {
   return (
@@ -29,7 +19,9 @@ function CoinsBalance() {
         paddingHorizontal: 10,
       }}>
       <Image source={coin} style={{ height: 30, width: 30, borderWidth: 1, borderRadius: 15 }} />
-      <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center', fontSize: 20 }}>900</Text>
+      <Text style={{ flex: 1, fontFamily: 'Crispy-Tofu', textAlign: 'center', fontSize: 16 }}>
+        900
+      </Text>
     </View>
   );
 }
@@ -52,7 +44,9 @@ function EnergyBalance() {
         source={EnergyBar}
         style={{ height: 30, width: 30, borderWidth: 1, borderRadius: 15 }}
       />
-      <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center', fontSize: 20 }}>900</Text>
+      <Text style={{ flex: 1, fontFamily: 'Crispy-Tofu', textAlign: 'center', fontSize: 16 }}>
+        900
+      </Text>
     </View>
   );
 }
@@ -60,7 +54,6 @@ function EnergyBalance() {
 function TopNav() {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Avatar avatarObject={avatarObject} />
       <View style={{ flexDirection: 'row', gap: 10, flex: 1, justifyContent: 'flex-end' }}>
         <CoinsBalance />
         <EnergyBalance />

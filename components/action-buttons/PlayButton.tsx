@@ -1,9 +1,15 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
+import { Pressable, StyleSheet, Text } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function PlayButton({ onPress }: { onPress: () => void }) {
+  const width = useSharedValue(100);
+
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable onPress={onPress} style={[styles.container]}>
       <Text style={styles.playText}>Play</Text>
     </Pressable>
   );
@@ -25,5 +31,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     // fontWeight: 'bold',
     fontFamily: 'Crispy-Tofu',
+    textAlign: 'center',
   },
 });

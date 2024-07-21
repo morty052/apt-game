@@ -9,7 +9,7 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 export const GameScreen = ({ route }: any) => {
   const [viewingFinalTally, setViewingFinalTally] = React.useState(false);
@@ -97,7 +97,7 @@ export const GameScreen = ({ route }: any) => {
   }, [socket]);
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       {selectingLetter && !gameOver && <AlphabetSelectScreen socket={socket} room={room} />}
       {playing && !gameOver && <PlayerAnswersView socket={socket} room={room} />}
       {tallying && !gameOver && <TallyScreen socket={socket} room={room} />}
@@ -109,6 +109,6 @@ export const GameScreen = ({ route }: any) => {
           <Text>Game Over</Text>
         </SafeAreaView>
       )}
-    </>
+    </View>
   );
 };

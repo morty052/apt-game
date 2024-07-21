@@ -111,20 +111,6 @@ const AnswerView = ({
             {title}
           </Text>
         </View>
-        {/* <TextInput
-          style={{
-            height: 50,
-            borderColor: 'white',
-            borderWidth: 1,
-            borderRadius: 10,
-            paddingHorizontal: 10,
-            color: 'white',
-            fontSize: 20,
-            width: '100%',
-          }}
-          value={value}
-          onChangeText={(value) => setValue((prev) => ({ ...prev, [title]: value }))}
-        /> */}
         <GameTextInput title={title} value={value} setValue={setValue} />
         <View style={{ alignSelf: 'center', paddingTop: 20 }}>
           {/* @ts-ignore */}
@@ -220,14 +206,17 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
         }
       });
 
-      socket?.emit('SUBMIT_ANSWERS', {
-        room,
-        player: {
-          username: getItem('USERNAME'),
-          answers: answerObject,
-        },
-      });
-      readyTallyMode();
+      // * send answers to server
+      // socket?.emit('SUBMIT_ANSWERS', {
+      //   room,
+      //   player: {
+      //     username: getItem('USERNAME'),
+      //     answers: answerObject,
+      //   },
+      // });
+
+      // * change ui to tally ui
+      // readyTallyMode();
     });
 
     return () => {

@@ -6,6 +6,7 @@ import { FlatList, Pressable, StyleSheet, Text, View, useWindowDimensions } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Rive, { Alignment, Fit } from 'rive-react-native';
 import { CharacterProps } from 'types';
+import { Button } from './ui/Button';
 
 export function Character({ url }: { url: string }) {
   const { height, width } = useWindowDimensions();
@@ -55,17 +56,35 @@ function CharacterControlBar({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'gold',
-        padding: 10,
+        // backgroundColor: 'gold',
         borderRadius: 20,
+        height: 60,
       }}>
-      <Pressable onPress={scrollLeft}>
+      <Pressable
+        style={{
+          height: 60,
+          width: 60,
+          borderRadius: 60,
+          borderWidth: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'gold',
+        }}
+        onPress={scrollLeft}>
         <Ionicons name="chevron-back" size={24} color="white" />
       </Pressable>
-      <View>
-        <Text>Wizard</Text>
-      </View>
-      <Pressable onPress={scrollRight}>
+
+      <Pressable
+        style={{
+          height: 60,
+          width: 60,
+          borderRadius: 60,
+          borderWidth: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'gold',
+        }}
+        onPress={scrollRight}>
         <Ionicons name="chevron-forward" size={24} color="white" />
       </Pressable>
     </View>
@@ -77,16 +96,18 @@ function CharacterDescription({ character }: { character: CharacterProps }) {
     <View>
       <Text
         style={{
-          fontSize: 20,
-          fontWeight: '500',
+          fontSize: 24,
+          fontFamily: 'Crispy-Tofu',
           marginBottom: 10,
         }}>
         {character.name}
       </Text>
-      <Text>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat doloribus laborum optio
-        repudiandae, itaque, ut dignissimos ipsam laboriosam molestiae doloremque cumque ratione
-        impedit totam aliquam nisi facilis animi veniam saepe!
+      <Text
+        style={{
+          fontSize: 20,
+          fontFamily: 'Crispy-Tofu',
+        }}>
+        {character.description}
       </Text>
     </View>
   );
@@ -151,29 +172,39 @@ export default function CharacterSelectWindow({ navigation }: { navigation: any 
   }, [index]);
 
   return (
-    <View
-      style={{ flex: 1, borderWidth: 1, position: 'relative', justifyContent: 'space-between' }}>
-      <CharacterConfirmButton confirmCharacter={confirmCharacter} />
-      <FlatList
-        ref={flatListRef}
-        scrollEnabled={false}
-        contentContainerStyle={{ backgroundColor: 'transparent', height: height * 0.65 }}
-        style={{ backgroundColor: 'transparent', maxHeight: height * 0.65 }}
-        horizontal
-        data={charactersArray}
-        renderItem={({ item }) => <Character url={item.url} />}
-      />
-      <View
+    <View style={{ flex: 1, borderWidth: 1 }}>
+      <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: 'white',
+          position: 'relative',
           justifyContent: 'space-between',
-          padding: 10,
+          backgroundColor: 'transparent',
         }}>
-        {/* <CharacterInfoButtons /> */}
-        <CharacterDescription character={activeCharacter} />
-        <CharacterControlBar index={index} setIndex={setIndex} />
-      </View>
+        <View>
+          {/* <CharacterConfirmButton confirmCharacter={confirmCharacter} /> */}
+          <FlatList
+            ref={flatListRef}
+            scrollEnabled={false}
+            contentContainerStyle={{ backgroundColor: 'transparent', height: height * 0.65 }}
+            style={{ backgroundColor: 'transparent', maxHeight: height * 0.65 }}
+            horizontal
+            data={charactersArray}
+            renderItem={({ item }) => <Character url={item.url} />}
+          />
+        </View>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'white',
+            justifyContent: 'space-between',
+            padding: 10,
+          }}>
+          {/* <CharacterInfoButtons /> */}
+          <CharacterDescription character={activeCharacter} />
+          <CharacterControlBar index={index} setIndex={setIndex} />
+          <Button onPress={confirmCharacter} title="Confirm" />
+        </View>
+      </SafeAreaView>
     </View>
   );
 }

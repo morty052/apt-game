@@ -15,20 +15,34 @@ function NavBarButton({ screenName, icon }: { screenName: string; icon: any }) {
   );
 }
 
-export default function BottomNav({ onPressPlay }: { onPressPlay: () => void }) {
+export default function BottomNav({
+  onPressPlay,
+  findingMatch,
+}: {
+  onPressPlay: () => void;
+  findingMatch: boolean;
+}) {
   return (
     <View
       style={{
         alignItems: 'center',
         paddingTop: 0,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: findingMatch ? 'center' : 'space-between',
       }}>
-      <NavBarButton icon={friendsIcon} screenName="FriendsList" />
-      <NavBarButton icon={marketIcon} screenName="Home" />
+      {!findingMatch && (
+        <>
+          <NavBarButton icon={friendsIcon} screenName="FriendsList" />
+          <NavBarButton icon={marketIcon} screenName="Home" />
+        </>
+      )}
       <PlayButton onPress={onPressPlay} />
-      <NavBarButton icon={leaderBordIcon} screenName="LeaderBoard" />
-      <NavBarButton icon={settingsIcon} screenName="SettingsScreen" />
+      {!findingMatch && (
+        <>
+          <NavBarButton icon={leaderBordIcon} screenName="LeaderBoard" />
+          <NavBarButton icon={settingsIcon} screenName="SettingsScreen" />
+        </>
+      )}
     </View>
   );
 }

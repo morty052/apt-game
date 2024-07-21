@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import CharacterSelectWindow from 'components/CharacterSelectWindow';
 import LoadingScreen from 'components/LoadingScreen';
+import MatchConfirmationModal from 'components/MatchConfirmationModal';
 import { BackButton } from 'components/ui/BackButton';
 import { Colors } from 'constants/colors';
 import SocketContextComponent from 'contexts/SocketContextComponent';
@@ -265,6 +266,7 @@ export default function GameStack({ navigation }: any) {
         <Stack.Screen name="GameScreen" component={GameScreen} />
         <Stack.Screen name="SettingsScreen" component={GameScreen} />
       </Stack.Navigator>
+      <MatchConfirmationModal />
     </SocketContextComponent>
   );
 }
