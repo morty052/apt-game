@@ -1,6 +1,6 @@
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View, TextInput } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { answerProps, SocketProps } from 'types';
@@ -10,6 +10,8 @@ import HUD from './Hud';
 import { Mic } from './Mic';
 import { usePlayingTime } from './Timer';
 import { Button } from './ui/Button';
+import { Text } from './ui/Text';
+import useSound from 'hooks/useSound';
 
 // * All background colors
 const backgroundColors = {
@@ -20,6 +22,7 @@ const backgroundColors = {
 };
 
 const AnimatedSafeAreaView = Animated.createAnimatedComponent(SafeAreaView);
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 const GameTextInput = ({
   value,
@@ -30,36 +33,64 @@ const GameTextInput = ({
   setValue: React.Dispatch<React.SetStateAction<answerProps>>;
   title: string;
 }) => {
+  const [error, setError] = React.useState(false);
+
   const { activeLetter } = useGameStore();
 
-  const startsWithActiveletter = (value: string) => {
-    if (!value) {
-      setValue((prev) => ({ ...prev, [title]: '' }));
-      return;
-    }
+  const { playSound, sound } = useSound();
 
-    if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
-      return;
-      // setValue((prev) => ({ ...prev, [title]: '' }));
-    }
+  const borderColor = useSharedValue('white');
 
-    setValue((prev) => ({ ...prev, [title]: value }));
-  };
+  const textStyles = useAnimatedStyle(() => {
+    return {
+      borderColor: withTiming(!error ? borderColor.value : 'red', { duration: 100 }),
+    };
+  });
+
+  const handlePlayerInput = React.useCallback(
+    async (value: string) => {
+      if (!value) {
+        setValue((prev) => ({ ...prev, [title]: '' }));
+        return;
+      }
+
+      if (value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
+        setError(false);
+      }
+
+      if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
+        setError(true);
+        await playSound();
+        await sound?.unloadAsync();
+        return;
+        // setValue((prev) => ({ ...prev, [title]: '' }));
+      }
+
+      setValue((prev) => ({ ...prev, [title]: value }));
+    },
+    [activeLetter, title, setValue, value]
+  );
 
   return (
-    <TextInput
-      style={{
-        height: 50,
-        borderColor: 'white',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        color: 'white',
-        fontSize: 20,
-        width: '100%',
-      }}
+    <AnimatedTextInput
+      onFocus={() => setError(false)}
+      style={[
+        {
+          height: 50,
+          borderColor: 'white',
+          borderWidth: 4,
+          borderRadius: 10,
+          paddingHorizontal: 10,
+          color: 'white',
+          fontSize: 20,
+          width: '100%',
+          fontFamily: 'Crispy-Tofu',
+          textAlign: 'center',
+        },
+        textStyles,
+      ]}
       value={value}
-      onChangeText={(value) => startsWithActiveletter(value)}
+      onChangeText={(value) => handlePlayerInput(value)}
     />
   );
 };
@@ -104,8 +135,7 @@ const AnswerView = ({
           <Text
             style={{
               color: 'white',
-              fontSize: 28,
-              fontWeight: '700',
+              fontSize: 30,
               textAlign: 'center',
             }}>
             {title}
