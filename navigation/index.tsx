@@ -1,16 +1,9 @@
-import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import GameStack from 'Routes/GameStack';
-import { Colors } from 'constants/colors';
-import SocketContextComponent from 'contexts/SocketContextComponent';
-import { View, Text, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Home, ModeScreen, RegistrationScreen } from 'screens';
-import { GameScreen } from 'screens/game-screen';
-import UserAvatar from 'screens/user-avatar-creator/UserAvatar';
+import RegistrationScreen from 'screens/registration';
 
 export type RootTabsParamList = {
   Home: undefined;

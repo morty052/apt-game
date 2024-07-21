@@ -17,7 +17,7 @@ export function Mic({
   listening: boolean;
   setListening: (value: boolean) => void;
   setResults: (text: string | undefined) => void;
-  results: string;
+  results: string | undefined;
 }) {
   const [recognized, setRecognized] = useState('');
   const [volume, setVolume] = useState('');

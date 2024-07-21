@@ -61,7 +61,7 @@ const EmailAndPasswordScreen = ({ navigation }: any) => {
   );
 };
 
-export const RegistrationScreen = () => {
+const RegistrationScreen = () => {
   return (
     <Stack.Navigator initialRouteName="EmailAndPassword" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="EmailAndPassword" component={EmailAndPasswordScreen} />
@@ -69,5 +69,7 @@ export const RegistrationScreen = () => {
     </Stack.Navigator>
   );
 };
+
+export default RegistrationScreen;
 
 const styles = StyleSheet.create({});

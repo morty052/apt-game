@@ -1,43 +1,34 @@
-import useSound from 'hooks/useSound';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View, Button } from 'react-native';
-import Animated, { useSharedValue } from 'react-native-reanimated';
-import { Audio } from 'expo-av';
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-function Test() {
-  const [sound, setSound] = React.useState<null | Audio.Sound>(null);
-
-  async function playSound() {
-    console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync(require('../../assets/sounds/wrongletter.mp3'));
-    setSound(sound);
-
-    console.log('Playing Sound');
-    await sound.playAsync();
-  }
-
-  React.useEffect(() => {
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
-
-  return (
-    <View style={styles.container}>
-      <Button title="Play Sound" onPress={playSound} />
-    </View>
-  );
-}
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable);
 
 export default function PlayButton({ onPress }: { onPress: () => void }) {
+  const buttonScale = useSharedValue(1);
+
+  const tapGesture = Gesture.Tap()
+    .onBegin(() => {
+      buttonScale.value = 0.8;
+    })
+    .onEnd(() => {
+      buttonScale.value = 1;
+    });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      // opacity: pressedIn ? 0.5 : 1,
+      transform: [{ scale: buttonScale.value }],
+    };
+  });
+
   return (
-    <Pressable onPress={onPress} style={[styles.container]}>
-      <Text style={styles.playText}>Play</Text>
-    </Pressable>
+    <GestureDetector gesture={tapGesture}>
+      <AnimatedTouchableOpacity onPress={onPress} style={[styles.container, animatedStyles]}>
+        <Text style={styles.playText}>Play</Text>
+      </AnimatedTouchableOpacity>
+    </GestureDetector>
   );
 }
 

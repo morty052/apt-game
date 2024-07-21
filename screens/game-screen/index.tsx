@@ -2,16 +2,15 @@ import AlphabetSelectScreen from 'components/AlphabetSelectScreen';
 import PlayerAnswersView from 'components/PlayerAnswersScreen';
 import ScoreForRoundModal from 'components/ScoreForRoundModal';
 import TallyScreen from 'components/TallyScreen';
-import { Button } from 'components/ui/Button';
 import SocketContext from 'contexts/SocketContext';
-import { getPointsForPlayer, useGameStore } from 'models/gameStore';
+import { useGameStore } from 'models/gameStore';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 import { Text, View } from 'react-native';
 
-export const GameScreen = ({ route }: any) => {
+const GameScreen = ({ route }: any) => {
   const [viewingFinalTally, setViewingFinalTally] = React.useState(false);
   const [gameOver, setGameOver] = React.useState(false);
   const room = route.params.room;
@@ -112,3 +111,5 @@ export const GameScreen = ({ route }: any) => {
     </View>
   );
 };
+
+export default GameScreen;

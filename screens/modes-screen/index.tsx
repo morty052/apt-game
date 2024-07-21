@@ -122,6 +122,8 @@ export const ModeScreen = ({ navigation }: any) => {
   );
 };
 
+export default ModeScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

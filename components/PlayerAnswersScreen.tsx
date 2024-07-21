@@ -28,17 +28,17 @@ const GameTextInput = ({
   value,
   setValue,
   title,
+  handlePlayerInput,
+  error,
+  setError,
 }: {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<answerProps>>;
   title: string;
+  handlePlayerInput: (value: string) => void;
+  error: boolean;
+  setError: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [error, setError] = React.useState(false);
-
-  const { activeLetter } = useGameStore();
-
-  const { playSound, sound } = useSound();
-
   const borderColor = useSharedValue('white');
 
   const textStyles = useAnimatedStyle(() => {
@@ -46,30 +46,6 @@ const GameTextInput = ({
       borderColor: withTiming(!error ? borderColor.value : 'red', { duration: 100 }),
     };
   });
-
-  const handlePlayerInput = React.useCallback(
-    async (value: string) => {
-      if (!value) {
-        setValue((prev) => ({ ...prev, [title]: '' }));
-        return;
-      }
-
-      if (value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
-        setError(false);
-      }
-
-      if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
-        setError(true);
-        await playSound();
-        await sound?.unloadAsync();
-        return;
-        // setValue((prev) => ({ ...prev, [title]: '' }));
-      }
-
-      setValue((prev) => ({ ...prev, [title]: value }));
-    },
-    [activeLetter, title, setValue, value]
-  );
 
   return (
     <AnimatedTextInput
@@ -108,6 +84,39 @@ const AnswerView = ({
   >;
   handleSubmit: (title: string, value: string) => void;
 }) => {
+  const [listening, setListening] = React.useState(false);
+  const [results, setResults] = React.useState<string | undefined>('');
+
+  const [error, setError] = React.useState(false);
+
+  const { activeLetter } = useGameStore();
+
+  const { playSound, sound } = useSound();
+
+  const handlePlayerInput = React.useCallback(
+    async (value: string) => {
+      if (!value) {
+        setValue((prev) => ({ ...prev, [title]: '' }));
+        return;
+      }
+
+      if (value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
+        setError(false);
+      }
+
+      if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
+        setError(true);
+        await playSound();
+        await sound?.unloadAsync();
+        return;
+        // setValue((prev) => ({ ...prev, [title]: '' }));
+      }
+
+      setValue((prev) => ({ ...prev, [title]: value }));
+    },
+    [activeLetter, title, setValue, value]
+  );
+
   return (
     <View
       style={{
@@ -141,10 +150,21 @@ const AnswerView = ({
             {title}
           </Text>
         </View>
-        <GameTextInput title={title} value={value} setValue={setValue} />
+        <GameTextInput
+          error={error}
+          setError={setError}
+          handlePlayerInput={handlePlayerInput}
+          title={title}
+          value={value}
+          setValue={setValue}
+        />
         <View style={{ alignSelf: 'center', paddingTop: 20 }}>
-          {/* @ts-ignore */}
-          <Mic />
+          <Mic
+            results={results}
+            setResults={(results) => handlePlayerInput(results as string)}
+            listening={listening}
+            setListening={setListening}
+          />
         </View>
       </View>
       <View>

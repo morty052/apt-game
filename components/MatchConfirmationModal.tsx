@@ -1,12 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Platform, StyleSheet, Text, View } from 'react-native';
 import { playerProps } from 'types';
 
 import Avatar from './Avatar';
 import { Button } from './ui/Button';
+import useSound from 'hooks/useSound';
 
 const avatarObject = {
   BodyColor: 1,
@@ -72,11 +73,17 @@ function GroupMatchUi() {
 }
 
 const MatchConfirmationModal = () => {
+  const { playSound } = useSound();
+
   const { matchFound, mode } = useAppStore();
 
   const { player, opponents, room } = useGameStore();
 
   const navigation = useNavigation<any>();
+
+  useEffect(() => {
+    if (matchFound) playSound();
+  }, [matchFound]);
 
   return (
     <Modal
@@ -88,12 +95,12 @@ const MatchConfirmationModal = () => {
       <View
         style={{
           flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.4)',
+          backgroundColor: 'rgba(0,0,0,0.6)',
           justifyContent: 'flex-end',
         }}>
         <View
           style={{
-            flex: 0.9,
+            flex: 0.8,
             backgroundColor: '#00c4ee',
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
