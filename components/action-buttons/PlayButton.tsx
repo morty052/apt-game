@@ -17,14 +17,14 @@ function Test() {
     await sound.playAsync();
   }
 
-  // React.useEffect(() => {
-  //   return sound
-  //     ? () => {
-  //         console.log('Unloading Sound');
-  //         sound.unloadAsync();
-  //       }
-  //     : undefined;
-  // }, [sound]);
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   return (
     <View style={styles.container}>
@@ -34,14 +34,10 @@ function Test() {
 }
 
 export default function PlayButton({ onPress }: { onPress: () => void }) {
-  const { playSound } = useSound();
-  const width = useSharedValue(100);
-
   return (
-    // <Pressable onPress={onPress} style={[styles.container]}>
-    //   <Text style={styles.playText}>Play</Text>
-    // </Pressable>
-    <Test />
+    <Pressable onPress={onPress} style={[styles.container]}>
+      <Text style={styles.playText}>Play</Text>
+    </Pressable>
   );
 }
 
