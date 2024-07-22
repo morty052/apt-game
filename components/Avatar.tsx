@@ -5,7 +5,7 @@ import { RiveRef } from 'rive-react-native';
 
 import { RiveAvatarComponent, setStateMachineInput } from './rive/RiveAvatarComponent';
 
-type avatarObject = {
+export type AvatarObject = {
   BodyColor: number;
   BodySize: number;
   BodyEyes: number;
@@ -13,7 +13,7 @@ type avatarObject = {
   BodyFaceHair: number;
   BackgroundColor: number;
 };
-function Avatar({ avatarObject }: { avatarObject: avatarObject }) {
+function Avatar({ avatarObject }: { avatarObject: AvatarObject }) {
   // const { setAvatar } = useAvatarStateContext();
 
   const riveRef = React.useRef<RiveRef>(null);

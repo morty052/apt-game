@@ -15,6 +15,5 @@ const styles = StyleSheet.create({
     // color: 'black',
     fontSize: 20,
     fontFamily: 'Crispy-Tofu',
-    textAlign: 'center',
   },
 });

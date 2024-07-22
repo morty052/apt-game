@@ -1,9 +1,15 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { GameStackParamList } from 'Routes/GameStack';
+import { Colors } from 'constants/colors';
 import { useAppStore } from 'models/appStore';
 
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { Text } from 'components/ui/Text';
+import { BackButton } from 'components/ui/BackButton';
+import { Ionicons } from '@expo/vector-icons';
 
 type gameModeProps = {
   value: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
@@ -67,7 +73,7 @@ function LimitedTimeMode() {
         height: 150,
         backgroundColor: 'white',
       }}>
-      <Text>ModeSelectBox</Text>
+      <Text>Limited Time Mode</Text>
     </View>
   );
 }
@@ -104,20 +110,37 @@ export const ModeSelectWindow = ({
 
 export const ModeScreen = ({ navigation }: any) => {
   return (
-    <View style={styles.container}>
-      <LimitedTimeMode />
-      {/* <ModeSelectBox title="Head to Head" />
-      <ModeSelectBox title="Full House" />
-      <ModeSelectBox title="Private Match" />
-      <ModeSelectBox title="Survival Match" /> */}
-      {gameModes.map((mode, index) => (
-        <ModeSelectBox
-          setSelectingMode={() => {}}
-          key={index}
-          title={mode.title}
-          value={mode.value}
-        />
-      ))}
+    <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <BackButton onPress={() => navigation.goBack()} />
+            <Text style={{ textAlign: 'center', color: 'white', fontSize: 24, flex: 1 }}>
+              Game Mode
+            </Text>
+            <Pressable
+              style={{
+                height: 40,
+                width: 40,
+                backgroundColor: 'yellow',
+                borderRadius: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Ionicons name="help" size={24} color="black" />
+            </Pressable>
+          </View>
+          <LimitedTimeMode />
+          {gameModes.map((mode, index) => (
+            <ModeSelectBox
+              setSelectingMode={() => {}}
+              key={index}
+              title={mode.title}
+              value={mode.value}
+            />
+          ))}
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -128,7 +151,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    backgroundColor: 'skyblue',
+    backgroundColor: Colors.backGround,
     gap: 20,
     paddingTop: 20,
   },

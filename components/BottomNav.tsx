@@ -33,7 +33,7 @@ export default function BottomNav({
       {!findingMatch && (
         <>
           <NavBarButton icon={friendsIcon} screenName="FriendsList" />
-          <NavBarButton icon={marketIcon} screenName="Home" />
+          <NavBarButton icon={marketIcon} screenName="Market" />
         </>
       )}
       <PlayButton onPress={onPressPlay} />

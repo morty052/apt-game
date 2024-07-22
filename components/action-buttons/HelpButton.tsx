@@ -1,16 +1,18 @@
-import { StyleSheet, Image, View } from 'react-native';
-import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 export default function HelpButton() {
+  const navigation = useNavigation<any>();
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity onPress={() => navigation.navigate('HelpScreen')} style={styles.container}>
       <Image
         style={styles.icon}
         source={{
           uri: 'https://res.cloudinary.com/dg6bgaasp/image/upload/v1721391927/gxpgqp0xwbpofeqjkqge.png',
         }}
       />
-    </View>
+    </TouchableOpacity>
   );
 }
 

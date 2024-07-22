@@ -1,16 +1,20 @@
-import { StyleSheet, Image, View, Pressable } from 'react-native';
-import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-export default function HelpButton() {
+export default function GameModeButton() {
+  const navigation = useNavigation<any>();
+
   return (
-    <Pressable style={styles.container}>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('ModeSelectScreen')}
+      style={styles.container}>
       <Image
         style={styles.icon}
         source={{
           uri: 'https://res.cloudinary.com/dg6bgaasp/image/upload/v1721392338/x0kqlfzqakpcbckyzphi.png',
         }}
       />
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 
