@@ -6,6 +6,8 @@ import { getItem } from 'utils/storage';
 // import { Audio, AVPlaybackSource } from 'expo-av';
 
 import RootStack from './navigation';
+import PlayerLevel from 'components/PlayerLevel';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // const LoadAudio = async (source: AVPlaybackSource) => {
 //   const { sound } = await Audio.Sound.createAsync(source, {
@@ -40,7 +42,11 @@ export default function App() {
     return null;
   }
 
-  // return <TestScreen />;
+  // return (
+  //   <SafeAreaView style={{ flex: 1 }}>
+  //     <PlayerLevel />
+  //   </SafeAreaView>
+  // );
 
   return <RootStack onboarded={onboarded} />;
 }

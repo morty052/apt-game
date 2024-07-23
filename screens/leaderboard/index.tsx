@@ -1,11 +1,12 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from 'constants/colors';
 import { BackButton } from 'components/ui/BackButton';
 import { Text } from 'components/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import Avatar, { AvatarObject } from 'components/Avatar';
+import { getLeaderBoard } from 'utils/supabase';
 
 const players = [
   {
@@ -74,6 +75,20 @@ const PlayerRankingCard = ({
 };
 
 const LeaderBoard = ({ navigation }: any) => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getLeaderBoard()
+      .then((data) => {
+        console.log(data);
+        setLoading(false);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
       <SafeAreaView style={{ flex: 1 }}>

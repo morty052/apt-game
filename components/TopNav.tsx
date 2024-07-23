@@ -2,18 +2,7 @@ import { View, Text, Image } from 'react-native';
 
 import coin from '../assets/icons/alph-a--min.png';
 import EnergyBar from '../assets/icons/thunderbolt-icon--min.png';
-import Rive from 'rive-react-native';
-
-// import { Canvas, Circle } from '@shopify/react-native-skia';
-
-// const CircleDemo = () => {
-//   const r = 128;
-//   return (
-//     <Canvas style={{ flex: 1 }}>
-//       <Circle cx={r} cy={r} r={r} color="lightblue" />
-//     </Canvas>
-//   );
-// };
+import PlayerLevel from './PlayerLevel';
 
 function CoinsBalance() {
   return (
@@ -58,23 +47,6 @@ function EnergyBalance() {
       <Text style={{ flex: 1, fontFamily: 'Crispy-Tofu', textAlign: 'center', fontSize: 16 }}>
         900
       </Text>
-    </View>
-  );
-}
-
-function PlayerLevel() {
-  return (
-    <View
-      style={{
-        height: 80,
-        width: 80,
-        borderRadius: 80,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 0,
-        backgroundColor: 'white',
-      }}>
-      <Text>700</Text>
     </View>
   );
 }
