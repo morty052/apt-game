@@ -1,8 +1,19 @@
 import { View, Text, Image } from 'react-native';
-import Avatar from './Avatar';
 
 import coin from '../assets/icons/alph-a--min.png';
 import EnergyBar from '../assets/icons/thunderbolt-icon--min.png';
+import Rive from 'rive-react-native';
+
+// import { Canvas, Circle } from '@shopify/react-native-skia';
+
+// const CircleDemo = () => {
+//   const r = 128;
+//   return (
+//     <Canvas style={{ flex: 1 }}>
+//       <Circle cx={r} cy={r} r={r} color="lightblue" />
+//     </Canvas>
+//   );
+// };
 
 function CoinsBalance() {
   return (
@@ -51,10 +62,34 @@ function EnergyBalance() {
   );
 }
 
+function PlayerLevel() {
+  return (
+    <View
+      style={{
+        height: 80,
+        width: 80,
+        borderRadius: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 0,
+        backgroundColor: 'white',
+      }}>
+      <Text>700</Text>
+    </View>
+  );
+}
+
 function TopNav() {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-      <View style={{ flexDirection: 'row', gap: 10, flex: 1, justifyContent: 'flex-end' }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: 0,
+      }}>
+      <PlayerLevel />
+      <View style={{ flexDirection: 'row', columnGap: 10 }}>
         <CoinsBalance />
         <EnergyBalance />
       </View>

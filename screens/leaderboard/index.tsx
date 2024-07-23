@@ -56,8 +56,10 @@ const PositionBadge = ({ number }: { number: number }) => {
 
 const PlayerRankingCard = ({
   player,
+  position,
 }: {
   player: { username: string; totalPoints: number; avatarObject: AvatarObject };
+  position: number;
 }) => {
   return (
     <Pressable style={styles.playerRankingCard}>
@@ -66,7 +68,7 @@ const PlayerRankingCard = ({
         <Text>{player.username}</Text>
         <Text>{player.totalPoints}</Text>
       </View>
-      <PositionBadge number={1} />
+      <PositionBadge number={position} />
     </Pressable>
   );
 };
@@ -95,7 +97,7 @@ const LeaderBoard = ({ navigation }: any) => {
           </View>
 
           {players.map((player, index) => (
-            <PlayerRankingCard player={player} key={index} />
+            <PlayerRankingCard key={index} player={player} position={index + 1} />
           ))}
         </View>
       </SafeAreaView>

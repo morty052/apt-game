@@ -2,10 +2,18 @@ import 'react-native-gesture-handler';
 
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
-import { TestScreen } from 'screens/testscreen';
 import { getItem } from 'utils/storage';
+// import { Audio, AVPlaybackSource } from 'expo-av';
 
 import RootStack from './navigation';
+
+// const LoadAudio = async (source: AVPlaybackSource) => {
+//   const { sound } = await Audio.Sound.createAsync(source, {
+//     shouldPlay: false,
+//   });
+
+//   return sound;
+// };
 
 SplashScreen.preventAutoHideAsync();
 
