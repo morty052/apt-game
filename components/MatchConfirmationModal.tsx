@@ -47,7 +47,13 @@ function HeadtoHeadUi({ player, opponents }: { player: playerProps; opponents: p
           style={{ fontFamily: 'Crispy-Tofu', fontSize: 60, color: 'white', textAlign: 'center' }}>
           VS
         </Text>
-        <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+        <View
+          style={{
+            justifyContent: 'flex-end',
+            flexDirection: 'row',
+            // backgroundColor: 'red',
+            marginTop: -0,
+          }}>
           {opponents.map((opponent) => (
             <View style={{ alignItems: 'center' }} key={opponent.username}>
               <Avatar avatarObject={avatarObject} />

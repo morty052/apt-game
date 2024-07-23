@@ -1,6 +1,7 @@
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from './ui/Text';
 
 const HUD = ({ seconds }: { seconds: number }) => {
   const { activeLetter, totalScore, round } = useGameStore();
@@ -14,10 +15,38 @@ const HUD = ({ seconds }: { seconds: number }) => {
 
   return (
     <View style={styles.container}>
-      <Text>{activeLetter}</Text>
-      <Text>{totalScore}</Text>
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 10,
+          backgroundColor: 'gold',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text style={{ color: 'black' }}>{activeLetter}</Text>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'transparent',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text style={{ color: 'white' }}>{totalScore}</Text>
+      </View>
       {/* {playing && <Timer />} */}
-      <Text>{seconds}</Text>
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 10,
+          backgroundColor: 'gold',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text style={{ color: 'black' }}>{seconds}</Text>
+      </View>
     </View>
   );
 };

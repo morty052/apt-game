@@ -1,32 +1,16 @@
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
 import { getItem } from 'utils/storage';
 
 import HUD from './Hud';
+import PlayerCard from './PlayerCard';
 import PlayerInspectModal from './PlayerInspectModal';
-import { Button } from './ui/Button';
 import { useTallyTime } from './Timer';
-
-const PlayerCard = ({
-  username,
-  onPress,
-  inTallyMode,
-}: {
-  username: string;
-  onPress: () => void;
-  inTallyMode: boolean;
-}) => {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={{ borderColor: 'white', borderWidth: 1, borderRadius: 10, padding: 10, height: 60 }}>
-      <Text>{username}</Text>
-    </Pressable>
-  );
-};
+import { Button } from './ui/Button';
+import { Text } from './ui/Text';
 
 const OpponentCard = ({
   username,

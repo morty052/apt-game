@@ -1,7 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
 import BottomNav from 'components/BottomNav';
 import { Character } from 'components/CharacterSelectWindow';
 import LoadingScreen from 'components/LoadingScreen';
+import MatchMakingStatusBar from 'components/MatchMakingStatusBar';
 import TopNav from 'components/TopNav';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
 import GameModeButton from 'components/action-buttons/GameModeButton';
@@ -10,7 +10,7 @@ import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useContext } from 'react';
-import { StyleSheet, View, Text, ImageBackground } from 'react-native';
+import { StyleSheet, View, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
@@ -36,8 +36,6 @@ export const Home = () => {
 
   const { initGame } = useGameStore();
   const { character, mode, connected, setMatchFound } = useAppStore();
-
-  const navigation = useNavigation<any>();
 
   const handleFindMatch = React.useCallback(() => {
     if (findingMatch) {
@@ -86,7 +84,8 @@ export const Home = () => {
         <TopNav />
         <RightNav />
         <Character url={character.url} />
-        <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />
+        {!findingMatch && <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />}
+        {findingMatch && <MatchMakingStatusBar />}
       </SafeAreaView>
     </ImageBackground>
   );
