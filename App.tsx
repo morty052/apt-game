@@ -1,23 +1,15 @@
 import 'react-native-gesture-handler';
-
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { getItem } from 'utils/storage';
-// import { Audio, AVPlaybackSource } from 'expo-av';
-
 import RootStack from './navigation';
-import PlayerLevel from 'components/PlayerLevel';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-// const LoadAudio = async (source: AVPlaybackSource) => {
-//   const { sound } = await Audio.Sound.createAsync(source, {
-//     shouldPlay: false,
-//   });
-
-//   return sound;
-// };
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import FriendListScreen from 'screens/friendslist';
 
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function App() {
   const [onboarded, setonboarded] = React.useState<boolean | null>(null);
@@ -48,5 +40,9 @@ export default function App() {
   //   </SafeAreaView>
   // );
 
-  return <RootStack onboarded={onboarded} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootStack onboarded={onboarded} />
+    </QueryClientProvider>
+  );
 }

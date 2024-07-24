@@ -1,51 +1,13 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from 'constants/colors';
+import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
+import Avatar, { AvatarObject } from 'components/Avatar';
 import { BackButton } from 'components/ui/BackButton';
 import { Text } from 'components/ui/Text';
-import { Ionicons } from '@expo/vector-icons';
-import Avatar, { AvatarObject } from 'components/Avatar';
+import { Colors } from 'constants/colors';
+import React from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getLeaderBoard } from 'utils/supabase';
-
-const players = [
-  {
-    username: 'player1',
-    totalPoints: 100,
-    avatarObject: {
-      BodyColor: 0,
-      BodySize: 1,
-      BodyEyes: 2,
-      BodyHair: 3,
-      BodyFaceHair: 4,
-      BackgroundColor: 5,
-    },
-  },
-  {
-    username: 'player2',
-    totalPoints: 100,
-    avatarObject: {
-      BodyColor: 0,
-      BodySize: 1,
-      BodyEyes: 2,
-      BodyHair: 3,
-      BodyFaceHair: 4,
-      BackgroundColor: 5,
-    },
-  },
-  {
-    username: 'player3',
-    totalPoints: 100,
-    avatarObject: {
-      BodyColor: 0,
-      BodySize: 1,
-      BodyEyes: 2,
-      BodyHair: 3,
-      BodyFaceHair: 4,
-      BackgroundColor: 5,
-    },
-  },
-];
 
 const PositionBadge = ({ number }: { number: number }) => {
   return (
@@ -59,15 +21,15 @@ const PlayerRankingCard = ({
   player,
   position,
 }: {
-  player: { username: string; totalPoints: number; avatarObject: AvatarObject };
+  player: { username: string; totalscore: number; avatar: AvatarObject };
   position: number;
 }) => {
   return (
     <Pressable style={styles.playerRankingCard}>
-      <Avatar avatarObject={player.avatarObject} />
+      <Avatar avatarObject={player.avatar} />
       <View style={{ paddingTop: 10 }}>
         <Text>{player.username}</Text>
-        <Text>{player.totalPoints}</Text>
+        <Text>{player.totalscore}</Text>
       </View>
       <PositionBadge number={position} />
     </Pressable>
@@ -75,17 +37,12 @@ const PlayerRankingCard = ({
 };
 
 const LeaderBoard = ({ navigation }: any) => {
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    getLeaderBoard()
-      .then((data) => {
-        console.log(data);
-        setLoading(false);
-      })
-      .catch((error) => console.log(error));
-  }, []);
+  const { data: players, isLoading } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: getLeaderBoard,
+  });
 
-  if (loading) {
+  if (isLoading) {
     return null;
   }
 
@@ -111,7 +68,7 @@ const LeaderBoard = ({ navigation }: any) => {
             </Pressable>
           </View>
 
-          {players.map((player, index) => (
+          {players?.map((player, index) => (
             <PlayerRankingCard key={index} player={player} position={index + 1} />
           ))}
         </View>
@@ -150,5 +107,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 5,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
   },
 });
