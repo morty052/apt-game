@@ -12,6 +12,7 @@ import { usePlayingTime } from './Timer';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
 import useSound from 'hooks/useSound';
+import * as Haptics from 'expo-haptics';
 
 // * All background colors
 const backgroundColors = {
@@ -106,6 +107,7 @@ const AnswerView = ({
 
       if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
         setError(true);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         await playSound();
         await sound?.unloadAsync();
         return;
@@ -257,16 +259,16 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
       });
 
       // * send answers to server
-      // socket?.emit('SUBMIT_ANSWERS', {
-      //   room,
-      //   player: {
-      //     username: getItem('USERNAME'),
-      //     answers: answerObject,
-      //   },
-      // });
+      socket?.emit('SUBMIT_ANSWERS', {
+        room,
+        player: {
+          username: getItem('USERNAME'),
+          answers: answerObject,
+        },
+      });
 
       // * change ui to tally ui
-      // readyTallyMode();
+      readyTallyMode();
     });
 
     return () => {

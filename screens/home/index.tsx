@@ -81,11 +81,19 @@ export const Home = () => {
   return (
     <ImageBackground source={GameBackgroundImage} style={styles.container}>
       <SafeAreaView style={{ flex: 1, gap: 20 }}>
-        <TopNav />
-        <RightNav />
-        <Character url={character.url} />
-        {!findingMatch && <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />}
-        {findingMatch && <MatchMakingStatusBar />}
+        <View
+          style={{
+            paddingTop: 5,
+            justifyContent: 'space-between',
+            flex: 1,
+            paddingBottom: 20,
+          }}>
+          <TopNav />
+          <RightNav />
+          <Character url={character.url} />
+          {!findingMatch && <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />}
+          {findingMatch && <MatchMakingStatusBar />}
+        </View>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -100,7 +108,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'skyblue',
     paddingBottom: 0,
     position: 'relative',
-    gap: 20,
   },
   actionButton: {
     height: 50,

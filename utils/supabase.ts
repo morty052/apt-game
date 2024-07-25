@@ -11,7 +11,7 @@ export async function getLeaderBoard() {
     const { data, error } = await supabase
       .from('users')
       .select('*, avatar(*)')
-      .order('totalscore', { ascending: false })
+      .order('total_score', { ascending: false })
       .limit(20);
     if (error) {
       throw error;
@@ -46,7 +46,7 @@ export async function getUserFriends() {
     if (error) {
       throw error;
     }
-    console.log(data);
+
     return data;
   } catch (error) {
     console.error(error);

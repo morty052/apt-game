@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export const usePlayingTime = () => {
-  const [seconds, setSeconds] = React.useState(10);
+  const [seconds, setSeconds] = React.useState(30);
   const [timeUp] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
 
@@ -17,7 +17,7 @@ export const usePlayingTime = () => {
       setSeconds((prev) => prev - 1);
       if (seconds === 0) {
         // setTimeUp(true);
-        setSeconds(10);
+        setSeconds(30);
       }
     }, 1000);
 

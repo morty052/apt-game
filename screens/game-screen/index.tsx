@@ -1,14 +1,14 @@
 import AlphabetSelectScreen from 'components/AlphabetSelectScreen';
+import GameOverModal from 'components/GameOverModal';
 import PlayerAnswersView from 'components/PlayerAnswersScreen';
 import ScoreForRoundModal from 'components/ScoreForRoundModal';
 import TallyScreen from 'components/TallyScreen';
 import SocketContext from 'contexts/SocketContext';
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
-import { Text, View } from 'react-native';
 
 const GameScreen = ({ route }: any) => {
   const [viewingFinalTally, setViewingFinalTally] = React.useState(false);
@@ -103,11 +103,7 @@ const GameScreen = ({ route }: any) => {
       <ScoreForRoundModal open={viewingFinalTally} handleClose={() => handleCloseScoreModal()} />
       {/* <Button onPress={() => socket?.emit('START_COUNTDOWN', { room })} /> */}
 
-      {gameOver && (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Text>Game Over</Text>
-        </SafeAreaView>
-      )}
+      {gameOver && <GameOverModal />}
     </View>
   );
 };

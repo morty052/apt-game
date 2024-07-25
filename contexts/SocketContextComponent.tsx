@@ -13,7 +13,12 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 
   const { setConnected } = useAppStore();
 
-  const socket = useSocket(`https://apt-server.onrender.com/user`, {
+  // const socket = useSocket(`https://apt-server.onrender.com/user`, {
+  //   reconnectionAttempts: 5,
+  //   reconnectionDelay: 1000,
+  //   autoConnect: false,
+  // });
+  const socket = useSocket(`https://2818-102-216-10-2.ngrok-free.app/user`, {
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     autoConnect: false,

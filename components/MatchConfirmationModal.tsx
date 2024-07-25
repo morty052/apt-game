@@ -23,10 +23,9 @@ function HeadtoHeadUi({ player, opponents }: { player: playerProps; opponents: p
     <View
       style={{
         flex: 1,
-        paddingTop: 20,
+        paddingTop: 50,
         paddingBottom: 50,
         gap: 20,
-        justifyContent: 'center',
       }}>
       <View style={{ gap: 20 }}>
         <View style={{ alignItems: 'flex-start' }}>
@@ -43,15 +42,21 @@ function HeadtoHeadUi({ player, opponents }: { player: playerProps; opponents: p
             </Text>
           </View>
         </View>
-        <Text
-          style={{ fontFamily: 'Crispy-Tofu', fontSize: 60, color: 'white', textAlign: 'center' }}>
-          VS
-        </Text>
+        <View style={{ paddingTop: 20, transform: [{ rotate: '10deg' }] }}>
+          <Text
+            style={{
+              fontFamily: 'Crispy-Tofu',
+              fontSize: 70,
+              color: 'white',
+              textAlign: 'center',
+            }}>
+            VS
+          </Text>
+        </View>
         <View
           style={{
             justifyContent: 'flex-end',
             flexDirection: 'row',
-            // backgroundColor: 'red',
             marginTop: -0,
           }}>
           {opponents.map((opponent) => (

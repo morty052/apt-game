@@ -1,20 +1,21 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getUserFriends } from 'utils/supabase';
-import { Text } from 'components/ui/Text';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { BackButton } from 'components/ui/BackButton';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from 'constants/colors';
+import { useQuery } from '@tanstack/react-query';
 import Avatar, { AvatarObject } from 'components/Avatar';
+import { BackButton } from 'components/ui/BackButton';
+import { Text } from 'components/ui/Text';
+import { Colors } from 'constants/colors';
+import { useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { getUserFriends } from 'utils/supabase';
 
 const FriendCard = ({
   player,
-  position,
+  online,
 }: {
   player: { username: string; totalscore: number; avatar: AvatarObject };
-  position: number;
+  online: boolean;
 }) => {
   return (
     <Pressable style={styles.playerRankingCard}>
@@ -28,6 +29,8 @@ const FriendCard = ({
 };
 
 export default function FriendListScreen({ navigation }: any) {
+  const [query, setQuery] = useState('');
+
   const { data: friends, isLoading } = useQuery({
     queryKey: ['friendlist'],
     queryFn: getUserFriends,
@@ -58,10 +61,21 @@ export default function FriendListScreen({ navigation }: any) {
               <Ionicons name="help" size={24} color="black" />
             </Pressable>
           </View>
-
-          {friends?.map((friend, index) => (
-            <FriendCard key={friend.username} player={friend} position={index + 1} />
-          ))}
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholderTextColor="rgba(255,255,255,0.8)"
+            cursorColor="white"
+            placeholder="Search Friend or players"
+            style={styles.searchInput}
+          />
+          {!query && (
+            <View style={{ gap: 10 }}>
+              {friends?.map((friend, index) => (
+                <FriendCard key={friend.username} player={friend} online={false} />
+              ))}
+            </View>
+          )}
         </View>
       </SafeAreaView>
     </View>
@@ -84,22 +98,14 @@ const styles = StyleSheet.create({
     columnGap: 5,
     position: 'relative',
   },
-  badgeContainer: {
-    position: 'absolute',
-    top: -10,
-    right: -5,
-    backgroundColor: 'white',
-    padding: 5,
-    zIndex: 1,
-    height: 40,
-    width: 40,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
+  searchInput: {
+    height: 50,
+    borderColor: 'white',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    // textAlign: 'center',
+    fontFamily: 'Crispy-Tofu',
+    color: 'white',
   },
 });

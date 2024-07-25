@@ -31,7 +31,7 @@ export default function GameStack({ navigation }: any) {
     <SocketContextComponent>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="GameTabs" component={Home} />
-        {/* <Stack.Screen name="CharacterSelect" component={CharacterSelectWindow} /> */}
+        <Stack.Screen name="CharacterSelect" component={CharacterSelectWindow} />
         <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
         <Stack.Screen name="FriendsList" component={FriendListScreen} />
         <Stack.Screen name="GameScreen" component={GameScreen} />

@@ -6,6 +6,9 @@ import RootStack from './navigation';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import FriendListScreen from 'screens/friendslist';
+import Market from 'screens/market';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import TopNav from 'components/TopNav';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,8 +38,8 @@ export default function App() {
   }
 
   // return (
-  //   <SafeAreaView style={{ flex: 1 }}>
-  //     <PlayerLevel />
+  //   <SafeAreaView style={{ flex: 1, backgroundColor: '#00c4ee' }}>
+  //     <TopNav />
   //   </SafeAreaView>
   // );
 
