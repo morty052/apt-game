@@ -3,8 +3,20 @@ import { getPointsForPlayer, useGameStore } from 'models/gameStore';
 import { useEffect, useState } from 'react';
 import { Modal, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SocketProps } from 'types';
+import { getItem } from 'utils/storage';
 
-const ScoreForRoundModal = ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
+const ScoreForRoundModal = ({
+  open,
+  handleClose,
+  socket,
+  room,
+}: {
+  open: boolean;
+  handleClose: () => void;
+  socket: SocketProps | null;
+  room: string;
+}) => {
   const [scoreForRound, setScoreForRound] = useState(0);
   const { player, opponents } = useGameStore();
 
@@ -12,6 +24,11 @@ const ScoreForRoundModal = ({ open, handleClose }: { open: boolean; handleClose:
     if (!open) return;
     const totalPoints = getPointsForPlayer({ player, opponents });
     setScoreForRound(totalPoints);
+    socket?.emit('UPDATE_SCORES', {
+      player: { username: getItem('USERNAME') },
+      scoreForRound: totalPoints,
+      room,
+    });
   }, [open]);
 
   return (

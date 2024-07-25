@@ -20,6 +20,8 @@ export type GameStackParamList = {
   FriendsList: undefined;
   Market: undefined;
   HelpScreen: undefined;
+  Profile: undefined;
+  PlayerScreen: undefined;
   GameScreen: { room: string };
   Lobby: { mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH' };
 };
@@ -39,6 +41,8 @@ export default function GameStack({ navigation }: any) {
         <Stack.Screen name="ModeSelectScreen" component={ModeScreen} />
         <Stack.Screen name="Market" component={MarketScreen} />
         <Stack.Screen name="HelpScreen" component={HelpScreen} />
+        <Stack.Screen name="PlayerScreen" component={HelpScreen} />
+        <Stack.Screen name="Profile" component={HelpScreen} />
       </Stack.Navigator>
       <MatchConfirmationModal />
     </SocketContextComponent>

@@ -6,11 +6,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
 import { ArcSlider } from './ArcSlider';
+import { getItem } from 'utils/storage';
 
-function WinOrLoseView({ totalScore, onContinue }: { totalScore: number; onContinue: () => void }) {
+function WinOrLoseView({
+  totalScore,
+  onContinue,
+  isWinner,
+}: {
+  totalScore: number;
+  onContinue: () => void;
+  isWinner: boolean;
+}) {
   return (
     <View style={styles.container}>
-      <Text style={{ textAlign: 'center' }}>You Win</Text>
+      <Text style={{ textAlign: 'center' }}>{isWinner ? 'You Win' : 'Better luck next time'}</Text>
       <View style={{ gap: 20, flex: 1 }}>
         <Image
           style={{ height: 300, width: 300, alignSelf: 'center' }}
@@ -46,7 +55,10 @@ function PerformanceView({ totalScore }: { totalScore: number }) {
 
 export default function GameOverModal() {
   const [viewingPerformance, setViewingPerformance] = useState(false);
-  const { totalScore } = useGameStore();
+  const { totalScore, winner } = useGameStore();
+
+  const isWinner = winner?.username == getItem('USERNAME');
+  console.log({ winner, isWinner });
 
   return (
     <View style={{ flex: 1 }}>
@@ -54,7 +66,11 @@ export default function GameOverModal() {
         {viewingPerformance ? (
           <PerformanceView totalScore={totalScore} />
         ) : (
-          <WinOrLoseView onContinue={() => setViewingPerformance(true)} totalScore={totalScore} />
+          <WinOrLoseView
+            isWinner={isWinner}
+            onContinue={() => setViewingPerformance(true)}
+            totalScore={totalScore}
+          />
         )}
       </SafeAreaView>
     </View>

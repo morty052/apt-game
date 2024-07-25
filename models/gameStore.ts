@@ -10,6 +10,7 @@ type GameProps = {
   opponents: playerProps[];
   round: number;
   totalScore: number;
+  winner: null | playerProps;
   activeLetter: string;
   alphabets: string[];
   selectingLetter: boolean;
@@ -168,6 +169,7 @@ export const useGameStore = create<GameProps>((set, state) => ({
     character: null,
   },
   opponents: [],
+  winner: null,
   round: 0,
   activeLetter: 'A',
   totalScore: 0,

@@ -30,6 +30,8 @@ const GameScreen = ({ route }: any) => {
     updateOpponents,
     confirmLetterSelection,
     round,
+    player,
+    opponents,
   } = useGameStore();
 
   React.useEffect(() => {
@@ -60,8 +62,10 @@ const GameScreen = ({ route }: any) => {
 
       // * ignore event if players are already playing
       if (playing) {
+        console.log('call to show final tally was ignored');
         return;
       }
+
       setViewingFinalTally(true);
       readyNextRound(nextRound);
     });
@@ -90,8 +94,12 @@ const GameScreen = ({ route }: any) => {
       updateOpponents(opponents);
     });
 
-    socket?.on('GAME_OVER', () => {
+    socket?.on('GAME_OVER', (data) => {
+      console.log(data);
       setGameOver(true);
+      useGameStore.setState((state) => ({
+        winner: data.winner,
+      }));
     });
   }, [socket]);
 
@@ -100,7 +108,12 @@ const GameScreen = ({ route }: any) => {
       {selectingLetter && !gameOver && <AlphabetSelectScreen socket={socket} room={room} />}
       {playing && !gameOver && <PlayerAnswersView socket={socket} room={room} />}
       {tallying && !gameOver && <TallyScreen socket={socket} room={room} />}
-      <ScoreForRoundModal open={viewingFinalTally} handleClose={() => handleCloseScoreModal()} />
+      <ScoreForRoundModal
+        room={room}
+        socket={socket}
+        open={viewingFinalTally}
+        handleClose={() => handleCloseScoreModal()}
+      />
       {/* <Button onPress={() => socket?.emit('START_COUNTDOWN', { room })} /> */}
 
       {gameOver && <GameOverModal />}

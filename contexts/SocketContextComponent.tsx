@@ -18,7 +18,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
   //   reconnectionDelay: 1000,
   //   autoConnect: false,
   // });
-  const socket = useSocket(`https://2818-102-216-10-2.ngrok-free.app/user`, {
+  const socket = useSocket(`https://12ea-102-216-10-2.ngrok-free.app/user`, {
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
     autoConnect: false,
