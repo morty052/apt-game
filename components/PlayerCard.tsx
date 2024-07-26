@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from './ui/Text';
 import { useGameStore } from 'models/gameStore';
 import Avatar from './Avatar';
+import { useMemo } from 'react';
 
 const avatarObject = {
   BodyColor: 1,
@@ -21,7 +22,11 @@ const PlayerCard = ({
   onPress: () => void;
   inTallyMode: boolean;
 }) => {
-  const { totalScore } = useGameStore();
+  const { totalScore, player } = useGameStore();
+
+  const answers = useMemo(() => {
+    return Object.values(player.answers);
+  }, [player]);
 
   return (
     <Pressable onPress={onPress} style={styles.container}>
@@ -30,6 +35,20 @@ const PlayerCard = ({
         <View style={{ paddingLeft: 10, gap: 5 }}>
           <Text>{username}</Text>
           <Text>{totalScore}</Text>
+        </View>
+      </View>
+      <View style={{ gap: 20 }}>
+        <View style={styles.answerContainer}>
+          <Text style={styles.answerText}>Animal</Text>
+          <Text style={styles.answerText}>{answers[0]}</Text>
+        </View>
+        <View style={styles.answerContainer}>
+          <Text style={styles.answerText}>Place</Text>
+          <Text style={styles.answerText}>{answers[1]}</Text>
+        </View>
+        <View style={styles.answerContainer}>
+          <Text style={styles.answerText}>Thing</Text>
+          <Text style={styles.answerText}>{answers[2]}</Text>
         </View>
       </View>
     </Pressable>
@@ -44,8 +63,8 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderRadius: 10,
     paddingHorizontal: 10,
-    paddingVertical: 0,
-    height: 80,
+    paddingVertical: 20,
+    gap: 10,
     justifyContent: 'center',
     elevation: 5,
     shadowColor: '#000',
@@ -54,4 +73,6 @@ const styles = StyleSheet.create({
       width: 0,
     },
   },
+  answerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  answerText: {},
 });

@@ -109,7 +109,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
             onPress={() => handlePlayerInspect(player)}
             username={player.username}
           />
-          <Text>Opponents</Text>
+          <Text style={{ color: 'white' }}>Opponents</Text>
           <View style={{ gap: 10, paddingTop: 10 }}>
             {opponents.map((opponent) => (
               <OpponentCard

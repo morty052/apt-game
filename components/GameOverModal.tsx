@@ -1,12 +1,25 @@
 import { useGameStore } from 'models/gameStore';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getItem } from 'utils/storage';
 
+import { ArcSlider } from './ArcSlider';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
-import { ArcSlider } from './ArcSlider';
-import { getItem } from 'utils/storage';
+
+async function finishGame() {
+  await fetch('https://api.spacexdata.com/v4/launches/latest', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      user: getItem('USERNAME'),
+      totalScore: useGameStore.getState().totalScore,
+    }),
+  });
+}
 
 function WinOrLoseView({
   totalScore,
@@ -57,8 +70,7 @@ export default function GameOverModal() {
   const [viewingPerformance, setViewingPerformance] = useState(false);
   const { totalScore, winner } = useGameStore();
 
-  const isWinner = winner?.username == getItem('USERNAME');
-  console.log({ winner, isWinner });
+  const isWinner = useMemo(() => winner?.username === getItem('USERNAME'), []);
 
   return (
     <View style={{ flex: 1 }}>

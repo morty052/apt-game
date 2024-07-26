@@ -9,6 +9,7 @@ type AppStoreProps = {
   character: CharacterProps;
   connected: boolean;
   matchFound: boolean;
+  highScore: number;
   setConnected: (connected: boolean) => void;
   setCharacter: (character: CharacterProps) => void;
   setGameMode: (mode: GameModes) => void;
@@ -23,6 +24,7 @@ export const useAppStore = create<AppStoreProps>((set) => ({
   matchmaking: false,
   connected: false,
   matchFound: false,
+  highScore: 0,
   setCharacter: (character: CharacterProps) => set({ character }),
   setConnected: (connected: boolean) => set({ connected }),
   setGameMode: (mode: GameModes) => set({ mode }),
