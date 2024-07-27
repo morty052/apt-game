@@ -106,7 +106,7 @@ export const Home = () => {
           <ModeCard />
           {/* <RightNav /> */}
           {/* <Character url={character.url} /> */}
-          {!findingMatch && <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />}
+          {/* {!findingMatch && <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />} */}
           {findingMatch && <MatchMakingStatusBar />}
         </View>
       </SafeAreaView>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    paddingTop: 0,
+    paddingTop: 20,
     paddingHorizontal: 0,
     // backgroundColor: 'red',
     position: 'relative',

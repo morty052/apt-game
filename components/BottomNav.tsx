@@ -5,12 +5,14 @@ import marketIcon from '../assets/icons/market-place-icon--min.png';
 import leaderBordIcon from '../assets/icons/leader-board-icon--min.png';
 import settingsIcon from '../assets/icons/settings-icon--min.png';
 import { useNavigation } from '@react-navigation/native';
+import { Text } from './ui/Text';
 
-function NavBarButton({ screenName, icon }: { screenName: string; icon: any }) {
+export function NavBarButton({ screenName, icon }: { screenName: string; icon: any }) {
   const navigation = useNavigation<any>();
   return (
     <Pressable onPress={() => navigation.navigate(screenName)} style={styles.buttonContainer}>
       <Image source={icon} resizeMode="contain" style={styles.icon} />
+      <Text style={styles.text}>{screenName}</Text>
     </Pressable>
   );
 }
@@ -23,17 +25,7 @@ export default function BottomNav({
   findingMatch: boolean;
 }) {
   return (
-    <View
-      style={{
-        alignItems: 'center',
-        paddingTop: 0,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        position: 'absolute',
-        bottom: 10,
-        left: 0,
-        right: 0,
-      }}>
+    <View style={styles.container}>
       {!findingMatch && (
         <>
           <NavBarButton icon={friendsIcon} screenName="FriendsList" />
@@ -53,19 +45,40 @@ export default function BottomNav({
 
 // *TODO FIX DIMENSION STYLES ?
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    alignItems: 'center',
+    paddingTop: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+  },
+  // buttonContainer: {
+  //   height: Dimensions.get('window').width / 6,
+  //   width: Dimensions.get('window').width / 6,
+  //   borderRadius: Dimensions.get('window').width,
+  //   backgroundColor: 'white',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   borderWidth: 1,
+  //   borderColor: 'black',
+  // },
   buttonContainer: {
-    height: Dimensions.get('window').width / 6,
-    width: Dimensions.get('window').width / 6,
-    borderRadius: Dimensions.get('window').width,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: 'red',
+    width: 70,
   },
   icon: {
-    height: 58,
-    width: 58,
+    height: 40,
+    width: 50,
+  },
+  text: {
+    fontSize: 10,
   },
 });

@@ -4,13 +4,15 @@ import { BackButton } from 'components/ui/BackButton';
 import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { friend } from 'types';
 import FriendCard from './cards/FriendCard';
 import Avatar from './Avatar';
+import { createPrivateMatch } from 'utils/supabase';
+import { getItem } from 'utils/storage';
 
 const Header = ({ handleClose }: { handleClose: () => void }) => {
   return (
@@ -58,6 +60,15 @@ export default function PrivateMatchCreationModal({
     return results;
   }, [query, friends]);
 
+  const createMatch = useCallback(async () => {
+    const host_id = 'bb3165a6-d7bb-4094-9959-e6e4db1827f6';
+    const username = getItem('USERNAME') as string;
+
+    const guests = invitedFriends.map((friend) => friend.username);
+    const room = await createPrivateMatch({ host_id, guests, username });
+    console.log({ room });
+  }, [invitedFriends, navigation]);
+
   return (
     <Modal animationType="slide" statusBarTranslucent visible={open}>
       <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
@@ -103,7 +114,8 @@ export default function PrivateMatchCreationModal({
             <Button
               title="Create match"
               onPress={() =>
-                navigation.navigate('Lobby', { friends: invitedFriends, mode: 'PRIVATE_MATCH' })
+                // navigation.navigate('Lobby', { friends: invitedFriends, mode: 'PRIVATE_MATCH' })
+                createMatch()
               }
             />
           </View>

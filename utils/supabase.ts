@@ -1,12 +1,74 @@
 import { createClient } from '@supabase/supabase-js';
-import { getItem } from './storage';
-import { AvatarObject } from 'components/Avatar';
 
 const projectUrl = 'https://gepjayxrfvoylhivwhzq.supabase.co';
 const anonKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlcGpheXhyZnZveWxoaXZ3aHpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NDM5MDMsImV4cCI6MjAzMTUxOTkwM30.dd-IHKAsG2TXONjU451yHPw6CGtH2u0aflXOX3r9FgA';
 
 export const supabase = createClient(projectUrl, anonKey);
+
+const apiUrl = 'https://exp.host/--/api/v2/push/send';
+
+const sendNotification = async ({
+  to,
+  title,
+  body,
+}: {
+  to: string;
+  title: string;
+  body: string;
+}) => {
+  const payload = {
+    to,
+    title,
+    body,
+  };
+
+  try {
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    console.log('Push notification sent successfully:', data);
+  } catch (error) {
+    console.error('Error sending push notification:', error);
+  }
+};
+
+const broadcast = async ({
+  list,
+  title,
+  body,
+}: {
+  list: string[];
+  title: string;
+  body: string;
+}) => {
+  try {
+    const { data: playersToNotify, error } = await supabase
+      .from('users')
+      .select('expo_push_token')
+      .in('username', list);
+    if (error) {
+      throw error;
+    }
+
+    for (const player in playersToNotify) {
+      sendNotification({
+        to: playersToNotify[player].expo_push_token,
+        title: 'New private match',
+        body,
+      });
+    }
+
+    console.log({ playersToNotify });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export async function getLeaderBoard() {
   try {
@@ -135,6 +197,24 @@ export const getPlayers = async (playerList: string[]): Promise<any> => {
   }
 };
 
+export const getPlayerDetails = async (username: string): Promise<any> => {
+  try {
+    const { data, error }: any = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', `${username}`);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { error: error };
+  }
+};
+
 // TODO: STOP USER FROM ADDING THEMSELVES AS A FRIEND
 // TODO STOP USERS FROM SENDING MULTIPLE FRIEND REQUESTS
 export const sendFriendRequest = async ({
@@ -218,5 +298,39 @@ export const acceptFriendRequest = async ({
   } catch (error) {
     console.log(error);
     return { data: null, error: error };
+  }
+};
+
+export const createPrivateMatch = async ({
+  host_id,
+  guests,
+  username,
+}: {
+  host_id: string;
+  guests: string[];
+  username: string;
+}): Promise<any> => {
+  try {
+    const { data, error }: any = await supabase
+      .from('created_games')
+      .insert({ host: host_id, guests })
+      .select('id');
+
+    if (error) {
+      throw error;
+    }
+
+    // * notify guests
+
+    await broadcast({
+      list: guests,
+      body: `join ${username} in a new private match.`,
+      title: `${username} has invited you to a private match.`,
+    });
+
+    return { data, error };
+  } catch (error) {
+    console.error(error);
+    return { data: null, error };
   }
 };

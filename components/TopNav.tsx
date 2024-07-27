@@ -1,9 +1,13 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Modal } from 'react-native';
 
 import coin from '../assets/icons/alph-a--min.png';
 import EnergyBar from '../assets/icons/thunderbolt-icon--min.png';
 import PlayerLevel from './PlayerLevel';
 import { Ionicons } from '@expo/vector-icons';
+import { ModalComponent } from './ui/ModalComponent';
+import { useRef, useState } from 'react';
+import { useAppStore } from 'models/appStore';
+import NotificationsButton from './action-buttons/NotificationsButton';
 
 function CoinsBalance() {
   return (
@@ -24,10 +28,25 @@ function EnergyBalance() {
 }
 
 function Notifications() {
+  const [visible, setVisible] = useState(false);
+
+  const { invites } = useAppStore();
+
+  const handleOpen = () => {
+    setVisible(true);
+  };
+
   return (
-    <View style={styles.notificationContainer}>
-      <Ionicons name="notifications-outline" size={24} color="black" />
-    </View>
+    <>
+      <View style={styles.notificationContainer}>
+        <Ionicons onPress={handleOpen} name="notifications-outline" size={24} color="black" />
+      </View>
+      <ModalComponent visible={visible}>
+        <Text onPress={() => setVisible(false)} style={{ fontFamily: 'Crispy-Tofu', fontSize: 14 }}>
+          Notifications
+        </Text>
+      </ModalComponent>
+    </>
   );
 }
 
@@ -45,7 +64,7 @@ function TopNav() {
       }}>
       <PlayerLevel level={900} total_score={1440} />
       <EnergyBalance />
-      <Notifications />
+      <NotificationsButton />
       {/* <View
         style={{
           flexDirection: 'row',
