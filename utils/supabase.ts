@@ -78,11 +78,13 @@ export async function getUserFriends(username: string): Promise<any> {
     // * query player database for all users with those usernames
     const { data, error } = await supabase
       .from('users')
-      .select('*, avatar(*)')
+      .select('username, total_score, online, avatar(*)')
       .in('username', friends);
     if (error) {
       throw error;
     }
+
+    console.log({ data });
 
     return {
       friends: data,

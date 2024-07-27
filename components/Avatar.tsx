@@ -69,14 +69,13 @@ function Avatar({ avatarObject }: { avatarObject: AvatarObject }) {
   }, [loaded]);
 
   return (
-    <View onLayout={() => setloaded(true)} style={{ width: 75, height: 75 }}>
-      <View style={{ width: 75, height: 75 }}>
-        <Rive
-          ref={riveRef}
-          url="https://hezpbxzutspjqunzdtdi.supabase.co/storage/v1/object/public/thumbnails/avatar_creator.riv"
-          stateMachineName={STATE_MACHINE_NAME}
-        />
-      </View>
+    <View onLayout={() => setloaded(true)} style={{ zIndex: 1 }}>
+      <Rive
+        style={{ width: 60, height: 60 }}
+        ref={riveRef}
+        url="https://hezpbxzutspjqunzdtdi.supabase.co/storage/v1/object/public/thumbnails/avatar_creator.riv"
+        stateMachineName={STATE_MACHINE_NAME}
+      />
     </View>
   );
 }

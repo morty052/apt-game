@@ -1,3 +1,4 @@
+import { AvatarObject } from 'components/Avatar';
 import { Socket } from 'socket.io-client';
 
 export type SocketProps = Socket;
@@ -30,4 +31,11 @@ export type playerProps = {
   doneTallying: boolean;
   strikes: number;
   character: CharacterNames | null;
+};
+
+export type friend = {
+  username: string;
+  total_score: number;
+  avatar: AvatarObject;
+  online: boolean;
 };

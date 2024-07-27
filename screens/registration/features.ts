@@ -1,5 +1,5 @@
 import { supabase } from 'utils/supabase';
-import { setItem } from 'utils/storage';
+import { getItem, setItem } from 'utils/storage';
 
 export const checkIfemailExists = async (email: string) => {
   try {
@@ -28,12 +28,14 @@ export const handleSignup = async ({
   email: string;
   password: string;
 }) => {
-  console.log('signup', username, email, password);
+  const expo_push_token = getItem('expo_push_token');
+  console.log('signup', username, email, password, expo_push_token);
 
   const { data, error } = await supabase.from('users').insert({
     username,
     email,
     password,
+    expo_push_token,
   });
 
   if (error) {

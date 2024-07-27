@@ -6,6 +6,6 @@ export const Colors = {
   darkGrey: '#232323',
   lightBlack: 'rgba(151, 151, 151, 0.25)',
   cardBlack: 'rgba(151, 151, 151, 0.40)',
-  accent: 'rgba(145,70,255, 0.25)',
+  ButtonOutline: '#ffea00',
   backGround: '#00c4ee',
 };

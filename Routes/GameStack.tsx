@@ -7,9 +7,11 @@ import GameScreen from 'screens/game-screen';
 import HelpScreen from 'screens/helpscreen';
 import Home from 'screens/home';
 import LeaderBoard from 'screens/leaderboard';
+import Lobby from 'screens/lobby';
 import MarketScreen from 'screens/market';
 import ModeScreen from 'screens/modes-screen';
 import SettingsScreen from 'screens/settings-screen';
+import { friend } from 'types';
 
 export type GameStackParamList = {
   GameTabs: undefined;
@@ -23,7 +25,10 @@ export type GameStackParamList = {
   Profile: undefined;
   PlayerScreen: undefined;
   GameScreen: { room: string };
-  Lobby: { mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH' };
+  Lobby: {
+    mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
+    friends?: friend[];
+  };
 };
 
 const Stack = createStackNavigator<GameStackParamList>();
@@ -43,6 +48,7 @@ export default function GameStack({ navigation }: any) {
         <Stack.Screen name="HelpScreen" component={HelpScreen} />
         <Stack.Screen name="PlayerScreen" component={HelpScreen} />
         <Stack.Screen name="Profile" component={HelpScreen} />
+        <Stack.Screen name="Lobby" component={Lobby} />
       </Stack.Navigator>
       <MatchConfirmationModal />
     </SocketContextComponent>

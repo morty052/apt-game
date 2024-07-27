@@ -28,7 +28,11 @@ export default function BottomNav({
         alignItems: 'center',
         paddingTop: 0,
         flexDirection: 'row',
-        justifyContent: findingMatch ? 'center' : 'space-between',
+        justifyContent: 'space-between',
+        position: 'absolute',
+        bottom: 10,
+        left: 0,
+        right: 0,
       }}>
       {!findingMatch && (
         <>

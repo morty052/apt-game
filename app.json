@@ -43,7 +43,8 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.RECORD_AUDIO"],
-      "package": "com.abduloutlook.aptgame"
+      "package": "com.abduloutlook.aptgame",
+      "googleServicesFile": "./google-services.json"
     },
     "extra": {
       "eas": {

@@ -10,23 +10,42 @@ import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useContext } from 'react';
-import { StyleSheet, View, ImageBackground } from 'react-native';
+import { StyleSheet, View, ImageBackground, useWindowDimensions, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 
-import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
-
 function RightNav() {
   return (
-    <View>
-      <View style={styles.actionButtonsContainer}>
-        <CharacterSelectButton />
-        <GameModeButton />
-        <HelpButton />
-      </View>
+    <View style={styles.actionButtonsContainer}>
+      <CharacterSelectButton />
+      <GameModeButton />
+      <HelpButton />
     </View>
   );
+}
+
+const Arc = () => {
+  const { width, height } = useWindowDimensions();
+  const circleWidth = width * 2;
+  return (
+    <View
+      style={{
+        width: circleWidth,
+        height: circleWidth,
+        backgroundColor: 'rgb(255,165,0)',
+        position: 'absolute',
+        elevation: 10,
+        // borderRadius: circleWidth,
+        zIndex: -1,
+        transform: [{ translateY: -height * 0.8 }, { translateX: -width / 2 }],
+      }}
+    />
+  );
+};
+
+function ModeCard() {
+  return <Pressable style={styles.modeCard}></Pressable>;
 }
 
 export const Home = () => {
@@ -79,23 +98,19 @@ export const Home = () => {
   }
 
   return (
-    <ImageBackground source={GameBackgroundImage} style={styles.container}>
-      <SafeAreaView style={{ flex: 1, gap: 20 }}>
-        <View
-          style={{
-            paddingTop: 5,
-            justifyContent: 'space-between',
-            flex: 1,
-            paddingBottom: 20,
-          }}>
-          <TopNav />
-          <RightNav />
-          <Character url={character.url} />
+    <View style={styles.container}>
+      <Arc />
+      <SafeAreaView style={{ flex: 1 }}>
+        <TopNav />
+        <View style={styles.innerContainer}>
+          <ModeCard />
+          {/* <RightNav /> */}
+          {/* <Character url={character.url} /> */}
           {!findingMatch && <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />}
           {findingMatch && <MatchMakingStatusBar />}
         </View>
       </SafeAreaView>
-    </ImageBackground>
+    </View>
   );
 };
 
@@ -104,9 +119,16 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 5,
-    backgroundColor: 'skyblue',
+    backgroundColor: '#f4f4f4',
     paddingBottom: 0,
+    paddingHorizontal: 5,
+    position: 'relative',
+  },
+  innerContainer: {
+    flex: 1,
+    paddingTop: 0,
+    paddingHorizontal: 0,
+    // backgroundColor: 'red',
     position: 'relative',
   },
   actionButton: {
@@ -121,10 +143,10 @@ const styles = StyleSheet.create({
   },
   actionButtonsContainer: {
     position: 'absolute',
-    top: 30,
+    top: 100,
     right: 10,
     width: 60,
-    // backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: 'rgba(255,255,255,0.5)',
     // borderWidth: 1,
     borderColor: 'black',
     zIndex: 1,
@@ -132,6 +154,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
     gap: 10,
+    borderRadius: 20,
+  },
+  modeCard: {
+    width: '100%',
+    backgroundColor: 'white',
+    height: 100,
     borderRadius: 20,
   },
 });

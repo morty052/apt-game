@@ -1,22 +1,20 @@
 import { Colors } from 'constants/colors';
-import { forwardRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { forwardRef, ReactNode } from 'react';
+import { StyleSheet, Text, Modal, TouchableOpacityProps, ViewStyle } from 'react-native';
 
 type ButtonProps = {
   onPress?: TouchableOpacityProps['onPress'];
-  title?: string;
-  style?: any;
+  children: ReactNode;
+  style?: ViewStyle;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<TouchableOpacity, ButtonProps>(
-  ({ onPress, title, style }, ref) => {
-    return (
-      <TouchableOpacity ref={ref} style={[styles.button, style]} onPress={onPress}>
-        <Text style={styles.buttonText}>{title}</Text>
-      </TouchableOpacity>
-    );
-  }
-);
+export const ModalComponent = forwardRef<Modal, ButtonProps>(({ style, children }, ref) => {
+  return (
+    <Modal visible={false} ref={ref} style={[styles.button, style]}>
+      {children}
+    </Modal>
+  );
+});
 
 const styles = StyleSheet.create({
   button: {
