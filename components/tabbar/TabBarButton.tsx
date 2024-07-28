@@ -1,30 +1,29 @@
-import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
+import { Colors } from 'constants/colors';
 import React, { useEffect } from 'react';
-
+import { Pressable, StyleSheet, Image } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { BottomTabBarButtonProps, BottomTabBarProps } from '@react-navigation/bottom-tabs';
 
 import friendsIcon from '../../assets/icons/friends-icon--min.png';
-import marketIcon from '../../assets/icons/market-place-icon--min.png';
 import leaderBoardIcon from '../../assets/icons/leader-board-icon--min.png';
+import marketIcon from '../../assets/icons/market-place-icon--min.png';
 import settingsIcon from '../../assets/icons/settings-icon--min.png';
-import { Colors } from 'constants/colors';
+import homeIcon from '../../assets/icons/home-icon-min.png';
 
 const icons = {
   Friends: friendsIcon,
   Market: marketIcon,
   Standings: leaderBoardIcon,
-  Home: leaderBoardIcon,
+  Home: homeIcon,
   Settings: settingsIcon,
 };
 
 const TabBarButton = (props: any) => {
-  const { isFocused, label, routeName, color } = props;
+  const { isFocused, label, routeName } = props;
 
   const scale = useSharedValue(0);
   const jump = useSharedValue(0);

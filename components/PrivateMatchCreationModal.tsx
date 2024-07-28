@@ -4,7 +4,7 @@ import { BackButton } from 'components/ui/BackButton';
 import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,6 +13,8 @@ import FriendCard from './cards/FriendCard';
 import Avatar from './Avatar';
 import { createPrivateMatch } from 'utils/supabase';
 import { getItem } from 'utils/storage';
+import SocketContext from 'contexts/SocketContext';
+import { useAppStore } from 'models/appStore';
 
 const Header = ({ handleClose }: { handleClose: () => void }) => {
   return (
@@ -49,6 +51,8 @@ export default function PrivateMatchCreationModal({
   const [query, setquery] = useState('');
   const [invitedFriends, setInvitedFriends] = useState<friend[]>([]);
   const navigation = useNavigation<any>();
+  const { socket } = useContext(SocketContext);
+  const character = useAppStore().character;
 
   const searchResults = useMemo(() => {
     if (!query) {
@@ -65,8 +69,25 @@ export default function PrivateMatchCreationModal({
     const username = getItem('USERNAME') as string;
 
     const guests = invitedFriends.map((friend) => friend.username);
-    const room = await createPrivateMatch({ host_id, guests, username });
-    console.log({ room });
+    const { data, error } = await createPrivateMatch({ host_id, guests, username });
+    if (error) {
+      return;
+    }
+    const private_room = data[0].id;
+    const privateRoomGuests = guests.map((guest) => {
+      return { username: guest };
+    });
+    socket?.emit(
+      'CREATE_PRIVATE_MATCH',
+      {
+        private_room,
+        guests: privateRoomGuests,
+        host: { username, character: character.name },
+      },
+      () => {
+        navigation.navigate('Lobby', { private_room, mode: 'PRIVATE_MATCH' });
+      }
+    );
   }, [invitedFriends, navigation]);
 
   return (
@@ -111,13 +132,7 @@ export default function PrivateMatchCreationModal({
                 ))}
               </View>
             </View>
-            <Button
-              title="Create match"
-              onPress={() =>
-                // navigation.navigate('Lobby', { friends: invitedFriends, mode: 'PRIVATE_MATCH' })
-                createMatch()
-              }
-            />
+            <Button title="Create match" onPress={() => createMatch()} />
           </View>
         </SafeAreaView>
       </View>

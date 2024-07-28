@@ -1,10 +1,8 @@
-import { View, StyleSheet, Pressable } from 'react-native';
-
-import { Text } from 'components/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from 'models/appStore';
-import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { Text } from 'components/ui/Text';
+import { useAppStore } from 'models/appStore';
+import { View, StyleSheet, Pressable } from 'react-native';
 
 const Badge = ({ invites }: { invites: number }) => {
   return (

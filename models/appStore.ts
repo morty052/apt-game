@@ -1,5 +1,5 @@
 import { charactersArray } from 'constants/characters';
-import { CharacterProps, GameModes } from 'types';
+import { CharacterProps, GameModes, inviteProps } from 'types';
 import { create } from 'zustand';
 
 type AppStoreProps = {
@@ -10,7 +10,7 @@ type AppStoreProps = {
   connected: boolean;
   matchFound: boolean;
   highScore: number;
-  invites: string[];
+  invites: inviteProps[] | [] | undefined;
   setConnected: (connected: boolean) => void;
   setCharacter: (character: CharacterProps) => void;
   setGameMode: (mode: GameModes) => void;

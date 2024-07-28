@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import BottomNav from 'components/BottomNav';
 import { Character } from 'components/CharacterSelectWindow';
 import LoadingScreen from 'components/LoadingScreen';
@@ -6,14 +7,16 @@ import TopNav from 'components/TopNav';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
 import GameModeButton from 'components/action-buttons/GameModeButton';
 import HelpButton from 'components/action-buttons/HelpButton';
+import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useContext } from 'react';
 import { StyleSheet, View, ImageBackground, useWindowDimensions, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { playerProps } from 'types';
+import { inviteProps, playerProps } from 'types';
 import { getItem } from 'utils/storage';
+import { getInvites } from 'utils/supabase';
 
 function RightNav() {
   return (
@@ -56,6 +59,16 @@ export const Home = () => {
   const { initGame } = useGameStore();
   const { character, mode, connected, setMatchFound } = useAppStore();
 
+  const { isLoading } = useQuery({
+    queryKey: ['matchInvites'],
+    queryFn: async () => {
+      const username = getItem('USERNAME');
+      const data = await getInvites(username as string);
+      useAppStore.setState(() => ({ invites: data }));
+      return data;
+    },
+  });
+
   const handleFindMatch = React.useCallback(() => {
     if (findingMatch) {
       return;
@@ -93,7 +106,7 @@ export const Home = () => {
     });
   }, [socket]);
 
-  if (!connected) {
+  if (!connected || isLoading) {
     return <LoadingScreen />;
   }
 
@@ -119,7 +132,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f4f4',
+    backgroundColor: Colors.plain,
     paddingBottom: 0,
     paddingHorizontal: 5,
     position: 'relative',

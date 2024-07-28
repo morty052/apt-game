@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { inviteProps } from 'types';
 
 const projectUrl = 'https://gepjayxrfvoylhivwhzq.supabase.co';
 const anonKey =
@@ -124,6 +125,26 @@ const getFriendRequests = async (username: string) => {
     }
 
     return data[0].friend_requests;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// TODO LOOK FOR A WAY TO INCLUDE AVATARS
+export const getInvites = async (username: string): Promise<any> => {
+  try {
+    const { data, error } = await supabase
+      .from('created_games')
+      .select('host(username, avatar(*)), id, guests')
+      .containedBy('guests', [`${username}`]);
+
+    if (error) {
+      throw error;
+    }
+
+    console.log({ data });
+
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -301,6 +322,38 @@ export const acceptFriendRequest = async ({
   }
 };
 
+const updateGuestsInvites = async ({
+  host,
+  game_id,
+  guests,
+}: {
+  host: string;
+  game_id: string;
+  guests: string[];
+}) => {
+  try {
+    const { data, error }: any = await supabase
+      .from('users')
+      .update({
+        game_invites: {
+          [game_id]: {
+            username: host,
+            game_id,
+          },
+        },
+      })
+      .in('username', guests)
+      .select('id');
+    if (error) {
+      throw error;
+    }
+
+    console.log({ dataInvites: data });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const createPrivateMatch = async ({
   host_id,
   guests,
@@ -321,11 +374,18 @@ export const createPrivateMatch = async ({
     }
 
     // * notify guests
-
     await broadcast({
       list: guests,
       body: `join ${username} in a new private match.`,
       title: `${username} has invited you to a private match.`,
+    });
+
+    // * add game to guests invite list
+
+    await updateGuestsInvites({
+      host: username,
+      game_id: data[0].id,
+      guests,
     });
 
     return { data, error };

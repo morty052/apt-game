@@ -5,7 +5,7 @@ export const Colors = {
   muted: 'rgba(255,255,255,0.5)',
   darkGrey: '#232323',
   lightBlack: 'rgba(151, 151, 151, 0.25)',
-  cardBlack: 'rgba(151, 151, 151, 0.40)',
+  plain: '#f4f4f4',
   ButtonOutline: '#ffea00',
   backGround: '#00c4ee',
 };

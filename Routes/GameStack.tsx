@@ -1,13 +1,11 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useQuery } from '@tanstack/react-query';
 import CharacterSelectWindow from 'components/CharacterSelectWindow';
-import LoadingScreen from 'components/LoadingScreen';
 import MatchConfirmationModal from 'components/MatchConfirmationModal';
 import TopNav from 'components/TopNav';
 import TabBar from 'components/tabbar/TabBar';
+import { BackButton } from 'components/ui/BackButton';
 import SocketContextComponent from 'contexts/SocketContextComponent';
-import { useAppStore } from 'models/appStore';
 import FriendListScreen from 'screens/friendslist';
 import GameScreen from 'screens/game-screen';
 import HelpScreen from 'screens/helpscreen';
@@ -18,9 +16,6 @@ import MarketScreen from 'screens/market';
 import ModeScreen from 'screens/modes-screen';
 import NotificationsScreen from 'screens/notifications-screen';
 import SettingsScreen from 'screens/settings-screen';
-import { friend } from 'types';
-import { getItem } from 'utils/storage';
-import { getPlayerDetails } from 'utils/supabase';
 
 export type GameStackParamList = {
   GameTabs: undefined;
@@ -37,7 +32,7 @@ export type GameStackParamList = {
   NotificationsScreen: { room: string };
   Lobby: {
     mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
-    friends?: friend[];
+    private_room?: string;
   };
 };
 
@@ -71,24 +66,6 @@ const GameTabs = () => {
 };
 
 export default function GameStack({ navigation }: any) {
-  const { isLoading } = useQuery({
-    queryKey: ['userData'],
-    queryFn: async () => {
-      const username = getItem('USERNAME');
-      const data = await getPlayerDetails(username as string);
-      useAppStore.setState((state) => ({
-        ...state,
-        invites: data[0]?.game_invites || [],
-      }));
-      console.log(data[0].game_invites);
-      return data;
-    },
-  });
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <SocketContextComponent>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -104,7 +81,17 @@ export default function GameStack({ navigation }: any) {
         <Stack.Screen name="PlayerScreen" component={HelpScreen} />
         <Stack.Screen name="Profile" component={HelpScreen} />
         <Stack.Screen name="Lobby" component={Lobby} />
-        <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitle: '',
+            headerBackTitle: '',
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerShadowVisible: false,
+          }}
+          name="NotificationsScreen"
+          component={NotificationsScreen}
+        />
       </Stack.Navigator>
       <MatchConfirmationModal />
     </SocketContextComponent>

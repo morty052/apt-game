@@ -39,3 +39,15 @@ export type friend = {
   avatar: AvatarObject;
   online: boolean;
 };
+
+export type inviteProps = {
+  host: {
+    username: string;
+    avatar: AvatarObject;
+  };
+  id: string;
+  guests: {
+    username: string;
+    avatar: AvatarObject;
+  }[];
+};
