@@ -1,63 +1,92 @@
 import { useQuery } from '@tanstack/react-query';
-import BottomNav from 'components/BottomNav';
-import { Character } from 'components/CharacterSelectWindow';
 import LoadingScreen from 'components/LoadingScreen';
-import MatchMakingStatusBar from 'components/MatchMakingStatusBar';
-import TopNav from 'components/TopNav';
-import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
-import GameModeButton from 'components/action-buttons/GameModeButton';
-import HelpButton from 'components/action-buttons/HelpButton';
+import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useContext } from 'react';
-import { StyleSheet, View, ImageBackground, useWindowDimensions, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { inviteProps, playerProps } from 'types';
+import { StyleSheet, View, Pressable, FlatList, Dimensions } from 'react-native';
+import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
+import { GameModes, playerProps } from 'types';
 import { getItem } from 'utils/storage';
 import { getInvites } from 'utils/supabase';
 
-function RightNav() {
+const modes: { value: GameModes; name: string }[] = [
+  {
+    value: 'HEAD_TO_HEAD',
+    name: 'Head To Head',
+  },
+  {
+    value: 'TRIPLE_THREAT',
+    name: 'Triple threat',
+  },
+  {
+    value: 'FULL_HOUSE',
+    name: 'Full House',
+  },
+  {
+    value: 'PRIVATE_MATCH',
+    name: 'Private Match',
+  },
+];
+
+function ModeCard({
+  mode,
+  handlePress,
+}: {
+  mode: { value: GameModes; name: string };
+  handlePress: (GameMode: GameModes) => void;
+}) {
   return (
-    <View style={styles.actionButtonsContainer}>
-      <CharacterSelectButton />
-      <GameModeButton />
-      <HelpButton />
+    <Pressable onPress={() => handlePress(mode.value)} style={styles.modeCard}>
+      <Text style={{ color: 'white' }}>{mode.name}</Text>
+    </Pressable>
+  );
+}
+
+function SeasonCard() {
+  return <Pressable style={styles.seasonCard}></Pressable>;
+}
+
+function ModesGrid({ handlePress }: { handlePress: (GameMode: GameModes) => void }) {
+  return (
+    <View style={{ gap: 10 }}>
+      <Text style={{ marginLeft: 5 }}>Game Modes</Text>
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 10 }}
+        horizontal
+        data={modes}
+        renderItem={({ item }) => <ModeCard handlePress={handlePress} mode={item} />}
+      />
     </View>
   );
 }
 
-const Arc = () => {
-  const { width, height } = useWindowDimensions();
-  const circleWidth = width * 2;
+function WeeklyGoals() {
+  function handlePress(mode: GameModes) {
+    console.log(mode);
+  }
   return (
-    <View
-      style={{
-        width: circleWidth,
-        height: circleWidth,
-        backgroundColor: 'rgb(255,165,0)',
-        position: 'absolute',
-        elevation: 10,
-        // borderRadius: circleWidth,
-        zIndex: -1,
-        transform: [{ translateY: -height * 0.8 }, { translateX: -width / 2 }],
-      }}
-    />
+    <View style={{ gap: 10 }}>
+      <Text style={{ marginLeft: 5 }}>Weekly Goals</Text>
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 10 }}
+        horizontal
+        data={modes}
+        renderItem={({ item }) => <ModeCard handlePress={handlePress} mode={item} />}
+      />
+    </View>
   );
-};
-
-function ModeCard() {
-  return <Pressable style={styles.modeCard}></Pressable>;
 }
 
 export const Home = () => {
-  const [findingMatch, setFindingMatch] = React.useState(false);
-
   const { socket } = useContext(SocketContext);
 
   const { initGame } = useGameStore();
-  const { character, mode, connected, setMatchFound } = useAppStore();
+  const { character, connected, matchmaking } = useAppStore();
 
   const { isLoading } = useQuery({
     queryKey: ['matchInvites'],
@@ -69,34 +98,37 @@ export const Home = () => {
     },
   });
 
-  const handleFindMatch = React.useCallback(() => {
-    if (findingMatch) {
-      return;
-    }
-    setFindingMatch(true);
-    socket?.emit(
-      'FIND_MATCH',
-      {
-        lobbyType: mode,
-        player: {
-          username: getItem('USERNAME'),
-          character: character.name,
-        },
-      },
-      (data: { matchId?: string }) => {
-        console.log('joined queue');
+  const handleFindMatch = React.useCallback(
+    (mode: GameModes) => {
+      if (matchmaking) {
+        return;
       }
-    );
-  }, [character, mode, socket, findingMatch, setFindingMatch]);
+      const username = getItem('USERNAME') as string;
+      useAppStore.setState(() => ({ matchmaking: true }));
+      socket?.emit(
+        'FIND_MATCH',
+        {
+          lobbyType: mode,
+          player: {
+            username,
+            character: character.name,
+          },
+        },
+        (data: { matchId?: string }) => {
+          console.log('joined queue');
+        }
+      );
+      console.log(mode);
+    },
+    [character, socket, matchmaking, useAppStore, getItem]
+  );
 
   function handleMatchFound(queue: playerProps[], room: string) {
     //* save current player room and opponents to state
     initGame({ queue, room });
 
-    // open match found modal
-    setMatchFound(true);
-
-    setFindingMatch(false);
+    //* open match found modal clear matchmaking state
+    useAppStore.setState(() => ({ matchmaking: false, matchFound: true }));
     // navigation.navigate('GameScreen', { room });
   }
 
@@ -110,19 +142,15 @@ export const Home = () => {
     return <LoadingScreen />;
   }
 
+  if (matchmaking) {
+    return <PendingMatchScreen />;
+  }
+
   return (
     <View style={styles.container}>
-      <Arc />
-      <SafeAreaView style={{ flex: 1 }}>
-        <TopNav />
-        <View style={styles.innerContainer}>
-          <ModeCard />
-          {/* <RightNav /> */}
-          {/* <Character url={character.url} /> */}
-          {/* {!findingMatch && <BottomNav findingMatch={findingMatch} onPressPlay={handleFindMatch} />} */}
-          {findingMatch && <MatchMakingStatusBar />}
-        </View>
-      </SafeAreaView>
+      <SeasonCard />
+      <ModesGrid handlePress={(mode) => handleFindMatch(mode)} />
+      <WeeklyGoals />
     </View>
   );
 };
@@ -136,13 +164,13 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     paddingHorizontal: 5,
     position: 'relative',
+    gap: 30,
+    paddingTop: 30,
   },
   innerContainer: {
     flex: 1,
-    paddingTop: 20,
     paddingHorizontal: 0,
     // backgroundColor: 'red',
-    position: 'relative',
   },
   actionButton: {
     height: 50,
@@ -170,9 +198,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   modeCard: {
-    width: '100%',
-    backgroundColor: 'white',
-    height: 100,
+    width: Dimensions.get('window').width * 0.9,
+    minWidth: 300,
+    backgroundColor: 'orange',
+    height: 150,
     borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+  },
+  seasonCard: {
+    width: Dimensions.get('window').width * 0.95,
+    minWidth: 300,
+    backgroundColor: Colors.backGround,
+    height: 150,
+    borderRadius: 20,
+    alignSelf: 'center',
   },
 });

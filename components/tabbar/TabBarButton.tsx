@@ -27,6 +27,7 @@ const TabBarButton = (props: any) => {
 
   const scale = useSharedValue(0);
   const jump = useSharedValue(0);
+  const backgroundColor = useSharedValue('red');
 
   useEffect(() => {
     scale.value = withSpring(typeof isFocused === 'boolean' ? (isFocused ? 1 : 0) : isFocused, {
@@ -35,6 +36,12 @@ const TabBarButton = (props: any) => {
     jump.value = withSpring(typeof isFocused === 'boolean' ? (isFocused ? 8 : 0) : isFocused, {
       duration: 350,
     });
+    backgroundColor.value = withSpring(
+      typeof isFocused === 'boolean' ? (isFocused ? Colors.backGround : 'transparent') : isFocused,
+      {
+        duration: 350,
+      }
+    );
   }, [scale, isFocused, jump]);
 
   const animatedIconStyle = useAnimatedStyle(() => {
@@ -44,7 +51,8 @@ const TabBarButton = (props: any) => {
     return {
       // styles
       transform: [{ scale: scaleValue }, { translateY: -jump.value }],
-      //   top,
+      backgroundColor: backgroundColor.value,
+      padding: typeof isFocused === 'boolean' ? (isFocused ? 2 : 0) : isFocused,
     };
   });
   const animatedTextStyle = useAnimatedStyle(() => {
@@ -57,7 +65,7 @@ const TabBarButton = (props: any) => {
   });
   return (
     <Pressable {...props} style={styles.container}>
-      <Animated.View style={[animatedIconStyle]}>
+      <Animated.View style={[animatedIconStyle, { borderRadius: 999 }]}>
         <Image
           style={{ width: 40, height: 40 }}
           source={icons[routeName as keyof typeof icons]}

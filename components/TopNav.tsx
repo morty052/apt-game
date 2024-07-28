@@ -8,6 +8,8 @@ import { ModalComponent } from './ui/ModalComponent';
 import { useRef, useState } from 'react';
 import { useAppStore } from 'models/appStore';
 import NotificationsButton from './action-buttons/NotificationsButton';
+import { Colors } from 'constants/colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function CoinsBalance() {
   return (
@@ -54,26 +56,27 @@ function TopNav() {
   return (
     <View
       style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        // backgroundColor: 'green',
-        paddingTop: 0,
-        height: 100,
-        gap: 10,
+        backgroundColor: Colors.tertiary,
+        elevation: 20,
+        borderBottomLeftRadius: 40,
+        borderBottomRightRadius: 40,
       }}>
-      <PlayerLevel level={900} total_score={1440} />
-      <EnergyBalance />
-      <NotificationsButton />
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          gap: 20,
-          backgroundColor: 'transparent',
-        }}>
-       
-      </View> */}
+      <SafeAreaView>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingTop: 20,
+            paddingBottom: 20,
+            paddingHorizontal: 10,
+            gap: 10,
+          }}>
+          <PlayerLevel level={900} total_score={1440} />
+          <EnergyBalance />
+          <NotificationsButton />
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -87,7 +90,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flex: 0.4,
     maxWidth: 150,
-    height: 32,
+    height: 30,
+    borderWidth: 2,
+    borderColor: 'white',
   },
   notificationContainer: {
     height: 40,

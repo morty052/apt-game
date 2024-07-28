@@ -10,7 +10,12 @@ export type answerProps = {
   Thing: string;
 };
 
-export type GameModes = 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
+export type GameModes =
+  | 'HEAD_TO_HEAD'
+  | 'FULL_HOUSE'
+  | 'PRIVATE_MATCH'
+  | 'SURVIVAL_MATCH'
+  | 'TRIPLE_THREAT';
 
 export type CharacterNames = 'DETECTIVE' | 'RACOON' | 'CHAMELEON' | 'GENIUS';
 

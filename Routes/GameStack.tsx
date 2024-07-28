@@ -55,7 +55,7 @@ const GameTabs = () => {
       <Tabs.Screen name="Friends" component={FriendListScreen} />
       <Tabs.Screen name="Market" component={MarketScreen} />
       <Tabs.Screen
-        // options={{ header: () => <TopNav />, headerShown: true }}
+        options={{ header: () => <TopNav />, headerShown: true }}
         name="Home"
         component={Home}
       />

@@ -27,7 +27,7 @@ function HeadtoHeadUi({ player, opponents }: { player: playerProps; opponents: p
         paddingBottom: 50,
         gap: 20,
       }}>
-      <View style={{ gap: 20 }}>
+      <View style={{ gap: 20, flex: 1 }}>
         <View style={{ alignItems: 'flex-start' }}>
           <View style={{ alignItems: 'center' }}>
             <Avatar avatarObject={avatarObject} />
@@ -106,7 +106,7 @@ const MatchConfirmationModal = () => {
       <View
         style={{
           flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.6)',
+          backgroundColor: 'rgba( 0, 0, 0, 0.8 )',
           justifyContent: 'flex-end',
         }}>
         <View
@@ -146,7 +146,8 @@ const MatchConfirmationModal = () => {
               }}
             />
             <Button
-              style={{ flex: 1, backgroundColor: 'red' }}
+              style={{ flex: 1, backgroundColor: 'red', borderColor: '#d80000' }}
+              textColor="white"
               title="Reject"
               onPress={() => {
                 navigation.navigate('GameScreen', { room });

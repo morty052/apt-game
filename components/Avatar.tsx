@@ -69,7 +69,7 @@ function Avatar({ avatarObject }: { avatarObject: AvatarObject }) {
   }, [loaded]);
 
   return (
-    <View onLayout={() => setloaded(true)} style={{ zIndex: 1 }}>
+    <View onLayout={() => setloaded(true)} style={{ zIndex: 1, width: 60, height: 60 }}>
       <Rive
         style={{ width: 60, height: 60 }}
         ref={riveRef}

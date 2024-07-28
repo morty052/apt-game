@@ -29,7 +29,7 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: 'gold',
+    backgroundColor: Colors.ButtonOutline,
     borderRadius: 24,
     elevation: 10,
     flexDirection: 'row',
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 8,
     borderLeftWidth: 4,
     borderRightWidth: 4,
-    borderColor: Colors.ButtonOutline,
+    borderColor: 'gold',
     shadowColor: '#000',
     shadowOffset: {
       height: 2,

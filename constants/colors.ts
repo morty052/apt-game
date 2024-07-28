@@ -7,5 +7,5 @@ export const Colors = {
   lightBlack: 'rgba(151, 151, 151, 0.25)',
   plain: '#f4f4f4',
   ButtonOutline: '#ffea00',
-  backGround: '#00c4ee',
+  backGround: '#00daff',
 };

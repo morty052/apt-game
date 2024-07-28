@@ -8,78 +8,6 @@ const getDistanceFromLastLevel = (total_score: number) => {
   return total_score % 100;
 };
 
-const width = 80;
-// export default function PlayerLevel({
-//   level,
-//   total_score,
-// }: {
-//   level: number;
-//   total_score: number;
-// }) {
-//   const [progress, setProgress] = useState(0);
-//   const r = width / 2;
-
-//   useEffect(() => {
-//     const distanceFromLastLevel = getDistanceFromLastLevel(total_score);
-//     setProgress(distanceFromLastLevel);
-//   }, []);
-
-//   const path = `M ${r}, ${r} m 0, -${r} a ${r}, ${r} 0 1,1 0,${2 * r} a ${r}, ${r} 0 1,1 0,${-2 * r} Z`;
-//   return (
-//     <Pressable style={styles.container} onPress={() => getDistanceFromLastLevel(total_score)}>
-//       <View
-//         style={{
-//           width,
-//           height: 90,
-//           position: 'relative',
-//         }}>
-//         <Canvas
-//           style={{
-//             width: 100,
-//             height: 90,
-//           }}>
-//           <Group transform={[{ translateX: 6 }, { translateY: 5 }]}>
-//             <Circle cx={r} cy={r} r={r} color="gold" />
-//             <Path
-//               path={path}
-//               color="#d3d3d3"
-//               //   strokeJoin="round"
-//               strokeWidth={10}
-//               // We trim the first and last quarter of the path
-//               style="stroke"
-//               start={0}
-//               end={1}
-//             />
-//             <Path
-//               path={path}
-//               color="#00c4ee"
-//               strokeJoin="round"
-//               strokeCap={'round'}
-//               strokeWidth={6}
-//               // We trim the first and last quarter of the path
-//               style="stroke"
-//               start={0}
-//               end={progress / 100}
-//             />
-//           </Group>
-//         </Canvas>
-//         <View
-//           style={{
-//             position: 'absolute',
-//             top: r - 5,
-//             left: 0,
-//             backgroundColor: 'transparent',
-//             width: 100,
-//             alignItems: 'center',
-//             transform: [{ translateX: -6 }],
-//           }}>
-//           <Text style={{ color: 'white', textAlign: 'center' }}>{level}</Text>
-//         </View>
-//       </View>
-//     </Pressable>
-//   );
-// }
-
 const ProgressBar = ({ distanceFromLastLevel }: { distanceFromLastLevel: any }) => {
   return (
     <View
@@ -89,15 +17,16 @@ const ProgressBar = ({ distanceFromLastLevel }: { distanceFromLastLevel: any }) 
         marginLeft: -6,
         borderTopRightRadius: 20,
         borderBottomRightRadius: 20,
-        borderWidth: 1,
+        borderWidth: 2,
+        borderColor: 'white',
         height: 30,
       }}>
       <View
         style={{
-          backgroundColor: '#00eb00',
+          backgroundColor: '#00daff',
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
-          height: 28,
+          height: 26,
           width: `${distanceFromLastLevel}%`,
           justifyContent: 'center',
         }}>
