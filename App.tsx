@@ -11,6 +11,8 @@ import { getItem, setItem } from 'utils/storage';
 import RootStack from './navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from 'components/ui/Button';
+import { useGameSoundTrack } from 'hooks/useSound';
+import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

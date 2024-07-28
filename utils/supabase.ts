@@ -394,3 +394,73 @@ export const createPrivateMatch = async ({
     return { data: null, error };
   }
 };
+
+const getPlayerStats = async ({ username }: { username: string }) => {
+  try {
+    const { data, error }: any = await supabase
+      .from('users')
+      .select('highscore, total_score, level')
+      .eq('username', `${username}`);
+    if (error) {
+      throw error;
+    }
+
+    const { highscore, total_score, level } = data[0];
+    return { highscore, total_score, level, error };
+  } catch (error) {
+    console.error(error);
+    return { error };
+  }
+};
+
+export const updatePlayerHighScore = async ({
+  username,
+  scoreForMatch,
+}: {
+  username: string;
+  scoreForMatch: number;
+}) => {
+  try {
+    const {
+      highscore,
+      total_score,
+      level,
+      error: playerStatsError,
+    } = await getPlayerStats({ username });
+
+    if (playerStatsError) {
+      throw playerStatsError;
+    }
+
+    const new_total_score = total_score + scoreForMatch;
+    const new_highscore = scoreForMatch > highscore;
+
+    if (new_highscore) {
+      const { error: updateError }: any = await supabase
+        .from('users')
+        .update({
+          total_score: new_total_score,
+          highscore: scoreForMatch,
+        })
+        .eq('username', `${username}`);
+      if (updateError) {
+        throw updateError;
+      }
+    }
+
+    const { error: updateError }: any = await supabase
+      .from('users')
+      .update({
+        total_score: new_total_score,
+      })
+      .eq('username', `${username}`);
+    if (updateError) {
+      throw updateError;
+    }
+
+    return { error: updateError, new_highscore, new_total_score };
+  } catch (error) {
+    console.error(error);
+    return { updateError: error };
+  }
+};

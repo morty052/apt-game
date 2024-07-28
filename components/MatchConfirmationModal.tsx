@@ -7,7 +7,7 @@ import { playerProps } from 'types';
 
 import Avatar from './Avatar';
 import { Button } from './ui/Button';
-import useSound from 'hooks/useSound';
+import useSound, { useGameSoundTrack } from 'hooks/useSound';
 
 const avatarObject = {
   BodyColor: 1,
@@ -84,7 +84,7 @@ function GroupMatchUi() {
 }
 
 const MatchConfirmationModal = () => {
-  const { playSound } = useSound();
+  const { playSound } = useGameSoundTrack();
 
   const { matchFound, mode } = useAppStore();
 
@@ -93,7 +93,7 @@ const MatchConfirmationModal = () => {
   const navigation = useNavigation<any>();
 
   useEffect(() => {
-    if (matchFound) playSound();
+    if (matchFound) playSound('matchFoundSound');
   }, [matchFound]);
 
   return (

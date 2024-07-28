@@ -3,6 +3,7 @@ import LoadingScreen from 'components/LoadingScreen';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
+import { useGameSoundTrack } from 'hooks/useSound';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useContext } from 'react';
@@ -88,6 +89,8 @@ export const Home = () => {
   const { initGame } = useGameStore();
   const { character, connected, matchmaking } = useAppStore();
 
+  const { playSound } = useGameSoundTrack();
+
   const { isLoading } = useQuery({
     queryKey: ['matchInvites'],
     queryFn: async () => {
@@ -142,16 +145,15 @@ export const Home = () => {
     return <LoadingScreen />;
   }
 
-  if (matchmaking) {
-    return <PendingMatchScreen />;
-  }
-
   return (
-    <View style={styles.container}>
-      <SeasonCard />
-      <ModesGrid handlePress={(mode) => handleFindMatch(mode)} />
-      <WeeklyGoals />
-    </View>
+    <>
+      <View style={styles.container}>
+        <SeasonCard />
+        <ModesGrid handlePress={(mode) => handleFindMatch(mode)} />
+        <WeeklyGoals />
+      </View>
+      <PendingMatchScreen />
+    </>
   );
 };
 
