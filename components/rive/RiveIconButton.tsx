@@ -26,32 +26,6 @@ export default function RiveIconButton({ artboardName }: RiveIconButtonProps) {
 
   const strippedDownName = artboardName.replace('Icon', '');
 
-  // const numOption = useStateMachineInput(rive, STATE_MACHINE_NAME, `num${strippedDownName}`);
-
-  /**
-   * The icon graphic should update to reflect the chosen feature option for that icon
-   * and so this listens for user selections in the options and updates accordingly
-   */
-  // useEffect(() => {
-  //   if (rive && numOption) {
-  //     numOption.value = riveAvatarSelections[strippedDownName];
-  //   }
-  // }, [rive, numOption, riveAvatarSelections, strippedDownName]);
-
-  /**
-   * When a user clicks on an icon, we want to set the isIconActive flag on the state machine input
-   * to true for that icon, and false for all other icons
-   */
-  // useEffect(() => {
-  //   if (rive && isIconActive) {
-  //     if (activeIcon === strippedDownName) {
-  //       isIconActive.value = true;
-  //     } else {
-  //       isIconActive.value = false;
-  //     }
-  //   }
-  // }, [rive, activeIcon, isIconActive, strippedDownName]);
-
   const onFocus = React.useCallback(() => {
     riveRef.current?.setInputState(STATE_MACHINE_NAME, 'isHover', true);
   }, [riveRef]);

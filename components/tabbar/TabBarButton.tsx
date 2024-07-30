@@ -16,10 +16,10 @@ import homeIcon from '../../assets/icons/home-icon-min.png';
 
 const icons = {
   Friends: friendsIcon,
-  Market: marketIcon,
+  Store: marketIcon,
   Standings: leaderBoardIcon,
   Home: homeIcon,
-  Settings: settingsIcon,
+  Hero: settingsIcon,
 };
 
 const TabBarButton = (props: any) => {

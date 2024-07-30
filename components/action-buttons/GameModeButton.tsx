@@ -20,14 +20,12 @@ export default function GameModeButton() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 70,
-    width: 70,
+    height: 60,
+    width: 60,
     borderRadius: 40,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'black',
   },
   icon: {
     height: 58,

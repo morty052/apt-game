@@ -1,14 +1,20 @@
-import { Canvas, Circle, Group, Path } from '@shopify/react-native-skia';
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { Text } from './ui/Text';
-import { useEffect, useState } from 'react';
+
 import Avatar from './Avatar';
+import { Text } from './ui/Text';
 
 const getDistanceFromLastLevel = (total_score: number) => {
   return total_score % 100;
 };
 
-const ProgressBar = ({ distanceFromLastLevel }: { distanceFromLastLevel: any }) => {
+const ProgressBar = ({
+  distanceFromLastLevel,
+  level,
+}: {
+  distanceFromLastLevel: any;
+  level: number;
+}) => {
   return (
     <View
       style={{
@@ -20,6 +26,7 @@ const ProgressBar = ({ distanceFromLastLevel }: { distanceFromLastLevel: any }) 
         borderWidth: 2,
         borderColor: 'white',
         height: 30,
+        position: 'relative',
       }}>
       <View
         style={{
@@ -29,8 +36,19 @@ const ProgressBar = ({ distanceFromLastLevel }: { distanceFromLastLevel: any }) 
           height: 26,
           width: `${distanceFromLastLevel}%`,
           justifyContent: 'center',
+        }}
+      />
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          justifyContent: 'center',
+          zIndex: 1,
         }}>
-        <Text style={{ color: 'white', textAlign: 'center', fontSize: 14 }}>100</Text>
+        <Text style={{ color: 'white', textAlign: 'center', fontSize: 14 }}>{level}</Text>
       </View>
     </View>
   );
@@ -69,24 +87,14 @@ export default function PlayerLevel({
           }}
         />
       </View>
-      <ProgressBar distanceFromLastLevel={`${getDistanceFromLastLevel(total_score)}`} />
+      <ProgressBar
+        level={level}
+        distanceFromLastLevel={`${getDistanceFromLastLevel(total_score)}`}
+      />
     </Pressable>
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     backgroundColor: 'white',
-//     width,
-//     zIndex: 1,
-//     borderColor: 'white',
-//     borderWidth: 1,
-//     paddingVertical: 5,
-//     paddingRight: 20,
-//     borderTopLeftRadius: 20,
-//     borderBottomLeftRadius: 20,
-//   },
-// });
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

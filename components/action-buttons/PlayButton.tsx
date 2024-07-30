@@ -1,3 +1,4 @@
+import { Colors } from 'constants/colors';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -34,17 +35,18 @@ export default function PlayButton({ onPress }: { onPress: () => void }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'yellow',
+    backgroundColor: Colors.tertiary,
     height: 100,
     width: 100,
     borderRadius: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 6,
-    borderColor: 'gold',
+    borderWidth: 4,
+    borderColor: 'yellow',
+    elevation: 10,
   },
   playText: {
-    color: 'black',
+    color: 'white',
     fontSize: 20,
     // fontWeight: 'bold',
     fontFamily: 'Crispy-Tofu',

@@ -29,17 +29,15 @@ export default function CharacterSelectButton() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 70,
-    width: 70,
-    borderRadius: 40,
+    height: 60,
+    width: 60,
+    borderRadius: 50,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'black',
   },
   icon: {
-    height: 58,
-    width: 58,
+    height: 50,
+    width: 50,
   },
 });

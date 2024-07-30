@@ -1,15 +1,10 @@
-import { View, Text, Image, StyleSheet, Modal } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Image, StyleSheet } from 'react-native';
 
+import PlayerLevel from './PlayerLevel';
+import NotificationsButton from './action-buttons/NotificationsButton';
 import coin from '../assets/icons/alph-a--min.png';
 import EnergyBar from '../assets/icons/thunderbolt-icon--min.png';
-import PlayerLevel from './PlayerLevel';
-import { Ionicons } from '@expo/vector-icons';
-import { ModalComponent } from './ui/ModalComponent';
-import { useRef, useState } from 'react';
-import { useAppStore } from 'models/appStore';
-import NotificationsButton from './action-buttons/NotificationsButton';
-import { Colors } from 'constants/colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 function CoinsBalance() {
   return (
@@ -23,60 +18,41 @@ function CoinsBalance() {
 function EnergyBalance() {
   return (
     <View style={styles.inventory}>
-      <Image source={EnergyBar} style={{ height: 30, width: 30 }} />
-      <Text style={{ fontFamily: 'Crispy-Tofu', fontSize: 14 }}>900</Text>
-    </View>
-  );
-}
-
-function Notifications() {
-  const [visible, setVisible] = useState(false);
-
-  const { invites } = useAppStore();
-
-  const handleOpen = () => {
-    setVisible(true);
-  };
-
-  return (
-    <>
-      <View style={styles.notificationContainer}>
-        <Ionicons onPress={handleOpen} name="notifications-outline" size={24} color="black" />
+      <View
+        style={{
+          height: 30,
+          width: 30,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 45,
+          backgroundColor: 'white',
+        }}>
+        <Image source={EnergyBar} style={{ height: 25, width: 25 }} />
       </View>
-      <ModalComponent visible={visible}>
-        <Text onPress={() => setVisible(false)} style={{ fontFamily: 'Crispy-Tofu', fontSize: 14 }}>
-          Notifications
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{ fontFamily: 'Crispy-Tofu', fontSize: 13, textAlign: 'right', color: 'white' }}>
+          900
         </Text>
-      </ModalComponent>
-    </>
+      </View>
+      <Ionicons name="add-circle" size={24} color="lime" />
+    </View>
   );
 }
 
 function TopNav() {
   return (
-    <View
-      style={{
-        backgroundColor: Colors.tertiary,
-        elevation: 20,
-        borderBottomLeftRadius: 40,
-        borderBottomRightRadius: 40,
-      }}>
-      <SafeAreaView>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingTop: 20,
-            paddingBottom: 20,
-            paddingHorizontal: 10,
-            gap: 10,
-          }}>
-          <PlayerLevel level={900} total_score={1440} />
-          <EnergyBalance />
-          <NotificationsButton />
-        </View>
-      </SafeAreaView>
+    <View style={{ height: 70 }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}>
+        <PlayerLevel level={900} total_score={1460} />
+        <EnergyBalance />
+      </View>
     </View>
   );
 }
@@ -90,9 +66,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flex: 0.4,
     maxWidth: 150,
-    height: 30,
     borderWidth: 2,
     borderColor: 'white',
+    paddingHorizontal: 2,
+    height: 35,
   },
   notificationContainer: {
     height: 40,

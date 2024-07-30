@@ -4,7 +4,7 @@ import { Text } from 'components/ui/Text';
 import { useAppStore } from 'models/appStore';
 import { View, StyleSheet, Pressable } from 'react-native';
 
-const Badge = ({ invites }: { invites: number }) => {
+const Badge = ({ invites }: { invites: number | undefined }) => {
   return (
     <View style={styles.badge}>
       <Text
@@ -27,8 +27,8 @@ function NotificationsButton() {
       <Pressable
         onPress={() => navigation.navigate('NotificationsScreen')}
         style={styles.notificationContainer}>
-        <Ionicons name="notifications-outline" size={24} color="black" />
-        <Badge invites={invites.length} />
+        <Ionicons name="notifications-outline" size={35} color="black" />
+        <Badge invites={invites?.length} />
       </Pressable>
     </>
   );
@@ -38,8 +38,8 @@ export default NotificationsButton;
 
 const styles = StyleSheet.create({
   notificationContainer: {
-    height: 40,
-    width: 40,
+    height: 60,
+    width: 60,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',

@@ -1,11 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { charactersArray } from 'constants/characters';
+import { Colors } from 'constants/colors';
 import { useAppStore } from 'models/appStore';
 import React from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Rive, { Alignment, Fit } from 'rive-react-native';
 import { CharacterProps } from 'types';
+
 import { Button } from './ui/Button';
 
 export function Character({ url }: { url: string }) {
@@ -13,12 +15,12 @@ export function Character({ url }: { url: string }) {
 
   return (
     <View style={styles.characterContainer}>
-      <View style={{ height: height * 0.65 }}>
+      <View style={{ height: height * 0.75 }}>
         <Rive
           alignment={Alignment.BottomCenter}
           fit={Fit.Contain}
           url={url}
-          style={{ width: width * 0.95, backgroundColor: 'transparent' }}
+          style={{ width, backgroundColor: 'transparent' }}
         />
       </View>
     </View>
@@ -58,17 +60,17 @@ function CharacterControlBar({
         alignItems: 'center',
         // backgroundColor: 'gold',
         borderRadius: 20,
-        height: 60,
       }}>
       <Pressable
         style={{
-          height: 60,
-          width: 60,
+          height: 40,
+          width: 40,
           borderRadius: 60,
-          borderWidth: 1,
+          borderWidth: 2,
+          borderColor: 'white',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'gold',
+          backgroundColor: Colors.tertiary,
         }}
         onPress={scrollLeft}>
         <Ionicons name="chevron-back" size={24} color="white" />
@@ -76,13 +78,14 @@ function CharacterControlBar({
 
       <Pressable
         style={{
-          height: 60,
-          width: 60,
+          height: 40,
+          width: 40,
           borderRadius: 60,
-          borderWidth: 1,
+          borderWidth: 2,
+          borderColor: 'white',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'gold',
+          backgroundColor: Colors.tertiary,
         }}
         onPress={scrollRight}>
         <Ionicons name="chevron-forward" size={24} color="white" />
@@ -104,7 +107,7 @@ function CharacterDescription({ character }: { character: CharacterProps }) {
       </Text>
       <Text
         style={{
-          fontSize: 20,
+          fontSize: 16,
           fontFamily: 'Crispy-Tofu',
         }}>
         {character.description}
@@ -172,39 +175,39 @@ export default function CharacterSelectWindow({ navigation }: { navigation: any 
   }, [index]);
 
   return (
-    <View style={{ flex: 1, borderWidth: 1 }}>
-      <SafeAreaView
+    <View
+      style={{
+        flex: 1,
+        position: 'relative',
+        backgroundColor: 'transparent',
+      }}>
+      <View>
+        {/* <CharacterConfirmButton confirmCharacter={confirmCharacter} /> */}
+        <FlatList
+          showsHorizontalScrollIndicator={false}
+          ref={flatListRef}
+          scrollEnabled={false}
+          contentContainerStyle={{ backgroundColor: 'transparent', height: height * 0.5 }}
+          style={{ backgroundColor: 'transparent', maxHeight: height * 0.5 }}
+          horizontal
+          data={charactersArray}
+          renderItem={({ item }) => <Character url={item.url} />}
+        />
+      </View>
+      <View
         style={{
-          flex: 1,
-          position: 'relative',
-          justifyContent: 'space-between',
           backgroundColor: 'transparent',
+          justifyContent: 'space-between',
+          paddingHorizontal: 5,
+          paddingTop: 10,
+          flex: 1,
+          paddingBottom: 30,
         }}>
-        <View>
-          {/* <CharacterConfirmButton confirmCharacter={confirmCharacter} /> */}
-          <FlatList
-            ref={flatListRef}
-            scrollEnabled={false}
-            contentContainerStyle={{ backgroundColor: 'transparent', height: height * 0.65 }}
-            style={{ backgroundColor: 'transparent', maxHeight: height * 0.65 }}
-            horizontal
-            data={charactersArray}
-            renderItem={({ item }) => <Character url={item.url} />}
-          />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'white',
-            justifyContent: 'space-between',
-            padding: 10,
-          }}>
-          {/* <CharacterInfoButtons /> */}
-          <CharacterDescription character={activeCharacter} />
-          <CharacterControlBar index={index} setIndex={setIndex} />
-          <Button onPress={confirmCharacter} title="Confirm" />
-        </View>
-      </SafeAreaView>
+        {/* <CharacterInfoButtons /> */}
+        <CharacterDescription character={activeCharacter} />
+        <CharacterControlBar index={index} setIndex={setIndex} />
+        <Button onPress={confirmCharacter} title="Confirm" />
+      </View>
     </View>
   );
 }

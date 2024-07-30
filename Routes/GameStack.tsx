@@ -24,7 +24,7 @@ export type GameStackParamList = {
   SettingsScreen: undefined;
   LeaderBoard: undefined;
   FriendsList: undefined;
-  Market: undefined;
+  Store: undefined;
   HelpScreen: undefined;
   Profile: undefined;
   PlayerScreen: undefined;
@@ -38,45 +38,48 @@ export type GameStackParamList = {
 
 const Stack = createStackNavigator<GameStackParamList>();
 
-const Tabs = createBottomTabNavigator();
+// const Tabs = createBottomTabNavigator();
 
-const GameTabs = () => {
-  return (
-    <Tabs.Navigator
-      initialRouteName="Home"
-      tabBar={(props) => <TabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: 'red',
-          height: 70,
-        },
-      }}>
-      <Tabs.Screen name="Friends" component={FriendListScreen} />
-      <Tabs.Screen name="Market" component={MarketScreen} />
-      <Tabs.Screen
-        options={{ header: () => <TopNav />, headerShown: true }}
-        name="Home"
-        component={Home}
-      />
-      <Tabs.Screen name="Standings" component={LeaderBoard} />
-      <Tabs.Screen name="Settings" component={SettingsScreen} />
-    </Tabs.Navigator>
-  );
-};
+// const GameTabs = () => {
+//   return (
+//     <Tabs.Navigator
+//       initialRouteName="Home"
+//       screenOptions={{
+//         headerShown: false,
+//         tabBarStyle: {
+//           backgroundColor: 'red',
+//           height: 70,
+//         },
+//       }}>
+//       <Tabs.Screen name="Friends" component={FriendListScreen} />
+//       <Tabs.Screen name="Store" component={MarketScreen} />
+//       <Tabs.Screen options={{ headerShown: false }} name="Home" component={Home} />
+//       <Tabs.Screen
+//         options={{
+//           headerShown: true,
+//           headerShadowVisible: false,
+//           headerStyle: { backgroundColor: 'transparent' },
+//         }}
+//         name="Hero"
+//         component={CharacterSelectWindow}
+//       />
+//       <Tabs.Screen name="Standings" component={LeaderBoard} />
+//     </Tabs.Navigator>
+//   );
+// };
 
 export default function GameStack({ navigation }: any) {
   return (
     <SocketContextComponent>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="GameTabs" component={GameTabs} />
+        <Stack.Screen name="GameTabs" component={Home} />
         <Stack.Screen name="CharacterSelect" component={CharacterSelectWindow} />
         <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
         <Stack.Screen name="FriendsList" component={FriendListScreen} />
         <Stack.Screen name="GameScreen" component={GameScreen} />
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="ModeSelectScreen" component={ModeScreen} />
-        <Stack.Screen name="Market" component={MarketScreen} />
+        <Stack.Screen name="Store" component={MarketScreen} />
         <Stack.Screen name="HelpScreen" component={HelpScreen} />
         <Stack.Screen name="PlayerScreen" component={HelpScreen} />
         <Stack.Screen name="Profile" component={HelpScreen} />
