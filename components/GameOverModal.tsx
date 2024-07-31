@@ -14,6 +14,7 @@ import { updatePlayerHighScore } from 'utils/supabase';
 
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
+import { useNavigation } from '@react-navigation/native';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -85,6 +86,7 @@ function WinOrLoseView({
 }
 
 function PerformanceView({ matchStats }: { matchStats: matchStatsProps | null }) {
+  const navigation = useNavigation<any>();
   return (
     <View style={styles.container}>
       <Text style={{ textAlign: 'center' }}>You Win</Text>
@@ -95,7 +97,7 @@ function PerformanceView({ matchStats }: { matchStats: matchStatsProps | null })
           <Text style={{ textAlign: 'center', fontSize: 20 }}>You earned average this game</Text>
         </View>
       </View>
-      <Button title="Continue" onPress={async () => {}} />
+      <Button title="Continue" onPress={async () => navigation.navigate('GameTabs')} />
     </View>
   );
 }
@@ -106,7 +108,7 @@ export default function GameOverModal() {
   const [matchStats, setMatchStats] = useState<matchStatsProps | null>(null);
   const { totalScore, winner } = useGameStore();
 
-  const isWinner = useMemo(() => winner?.username === getItem('USERNAME'), []);
+  const isWinner = useMemo(() => winner?.username === getItem('USERNAME'), [winner]);
 
   const handleShowPerformance = async () => {
     try {

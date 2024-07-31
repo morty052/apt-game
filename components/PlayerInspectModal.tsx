@@ -1,11 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from 'constants/colors';
+import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
-import { Button } from './ui/Button';
+
 import Wizard from './rive/Wizard';
-import { useGameStore } from 'models/gameStore';
+import { Button } from './ui/Button';
+import { Text } from './ui/Text';
 
 type VerdictProps = { isReal: boolean; description: string };
 
@@ -36,9 +39,11 @@ const PlayerAnswerBar = ({
 const VerdictView = ({
   verdict,
   handleClose,
+  answer,
 }: {
   verdict: VerdictProps;
   handleClose: () => void;
+  answer: string | undefined;
 }) => {
   const { description, isReal } = verdict ?? {};
   return (
@@ -46,8 +51,7 @@ const VerdictView = ({
       style={{
         flex: 1,
         paddingHorizontal: 10,
-        gap: 30,
-        backgroundColor: 'white',
+        backgroundColor: Colors.tertiary,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         paddingTop: 20,
@@ -55,9 +59,26 @@ const VerdictView = ({
         paddingBottom: 30,
         justifyContent: 'space-between',
       }}>
-      <View style={{ gap: 20 }}>
-        <Text>{isReal ? 'Real' : 'Fake'}</Text>
-        <Text style={{ fontSize: 20 }}>{description}</Text>
+      <View style={{ gap: 40 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            backgroundColor: 'white',
+            padding: 10,
+            borderRadius: 10,
+          }}>
+          <Text>{isReal ? 'Correct' : 'Fake'}</Text>
+          <Ionicons name="checkmark-circle" size={30} color={isReal ? 'green' : 'red'} />
+        </View>
+        <View style={{ gap: 20 }}>
+          <Text style={{ textTransform: 'capitalize', fontSize: 24, color: 'white' }}>
+            {answer}:
+          </Text>
+          <Text style={{ fontSize: 16, color: 'white' }}>{description}</Text>
+        </View>
       </View>
       <Button onPress={handleClose} title="Accept" />
     </View>
@@ -82,6 +103,7 @@ const PlayerInspectModal = ({
   socket: SocketProps | null;
 }) => {
   const [verifyingAnswer, setVerifyingAnswer] = React.useState(false);
+  const [query, setQuery] = React.useState<string | undefined>('');
   const [verdict, setVerdict] = React.useState<null | VerdictProps>(null);
 
   const { handleBonusPoints, player: accuser } = useGameStore();
@@ -94,6 +116,7 @@ const PlayerInspectModal = ({
   const handleInspect = React.useCallback(
     ({ query, type }: { query: string | undefined; type: string }) => {
       setVerifyingAnswer(true);
+      setQuery(query);
       socket?.emit(
         'VERIFY_ANSWER',
         { room, username, query, type },
@@ -119,7 +142,7 @@ const PlayerInspectModal = ({
         }
       );
     },
-    [socket, room, setVerifyingAnswer, username]
+    [socket, room, setVerifyingAnswer, username, setQuery]
   );
 
   const handleCloseVerdict = React.useCallback(() => {
@@ -129,7 +152,6 @@ const PlayerInspectModal = ({
   return (
     <Modal animationType="fade" statusBarTranslucent visible={open}>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }}>
-        <Text>{username}</Text>
         {!verdict && (
           <View
             style={{
@@ -178,7 +200,9 @@ const PlayerInspectModal = ({
           </View>
         )}
 
-        {verdict && <VerdictView handleClose={handleCloseVerdict} verdict={verdict} />}
+        {verdict && (
+          <VerdictView answer={query} handleClose={handleCloseVerdict} verdict={verdict} />
+        )}
       </SafeAreaView>
     </Modal>
   );
