@@ -3,12 +3,13 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import Avatar from './Avatar';
 import { Text } from './ui/Text';
+import { useNavigation } from '@react-navigation/native';
 
 const getDistanceFromLastLevel = (total_score: number) => {
   return total_score % 100;
 };
 
-const ProgressBar = ({
+export const ProgressBar = ({
   distanceFromLastLevel,
   level,
 }: {
@@ -61,21 +62,10 @@ export default function PlayerLevel({
   level: number;
   total_score: number;
 }) {
-  const [progress, setProgress] = useState(0);
-
+  const navigation = useNavigation<any>();
   return (
-    <Pressable style={styles.container} onPress={() => getDistanceFromLastLevel(total_score)}>
-      <View
-        style={{
-          height: 65,
-          width: 65,
-          borderRadius: 75,
-          zIndex: 1,
-          backgroundColor: 'white',
-          borderWidth: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
+    <View style={styles.container}>
+      <View style={styles.avatarContainer}>
         <Avatar
           avatarObject={{
             BodyColor: 1,
@@ -86,12 +76,24 @@ export default function PlayerLevel({
             BackgroundColor: 0,
           }}
         />
+        <Pressable
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: 'transparent',
+            zIndex: 4,
+          }}
+          onPress={() => navigation.navigate('Profile')}
+        />
       </View>
       <ProgressBar
         level={level}
         distanceFromLastLevel={`${getDistanceFromLastLevel(total_score)}`}
       />
-    </Pressable>
+    </View>
   );
 }
 
@@ -101,5 +103,16 @@ const styles = StyleSheet.create({
     flex: 0.6,
     alignItems: 'center',
     maxWidth: 350,
+  },
+  avatarContainer: {
+    height: 65,
+    width: 65,
+    borderRadius: 75,
+    zIndex: 1,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
 });

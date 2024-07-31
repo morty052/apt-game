@@ -1,9 +1,6 @@
-import { avatarStateProps } from '../models/avatarStateContext';
 import React from 'react';
 import { View } from 'react-native';
 import Rive, { RiveRef } from 'rive-react-native';
-
-import { RiveAvatarComponent, setStateMachineInput } from './rive/RiveAvatarComponent';
 
 export type AvatarObject = {
   BodyColor: number;
@@ -15,6 +12,57 @@ export type AvatarObject = {
 };
 
 const STATE_MACHINE_NAME = 'State Machine 1';
+
+export function PlayerAvatar({
+  avatarObject,
+  width,
+  height,
+}: {
+  avatarObject: AvatarObject;
+  width?: number;
+  height?: number;
+}) {
+  const [loaded, setloaded] = React.useState(false);
+
+  const riveRef = React.useRef<RiveRef>(null);
+
+  React.useEffect(() => {
+    // setStateMachineInput('avatar', avatar);
+
+    if (!loaded) {
+      return;
+    }
+
+    riveRef.current?.setInputState(STATE_MACHINE_NAME, 'numBodyColor', avatarObject.BodyColor);
+    riveRef.current?.setInputState(STATE_MACHINE_NAME, 'numBodySize', avatarObject.BodySize);
+    riveRef.current?.setInputState(STATE_MACHINE_NAME, 'numBodyEyes', avatarObject.BodyEyes);
+    riveRef.current?.setInputState(STATE_MACHINE_NAME, 'numBodyHair', avatarObject.BodyHair);
+    riveRef.current?.setInputState(
+      STATE_MACHINE_NAME,
+      'numBodyFaceHair',
+      avatarObject.BodyFaceHair
+    );
+    riveRef.current?.setInputState(
+      STATE_MACHINE_NAME,
+      'numBackgroundColor',
+      avatarObject.BackgroundColor
+    );
+  }, [loaded]);
+
+  return (
+    <Rive
+      style={{
+        width: width || 60,
+        height: height || 60,
+        // borderWidth: 1,
+      }}
+      ref={riveRef}
+      url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722345626/avatar.riv"
+      stateMachineName={STATE_MACHINE_NAME}
+      autoplay={false}
+    />
+  );
+}
 
 function Avatar({ avatarObject }: { avatarObject: AvatarObject }) {
   const [loaded, setloaded] = React.useState(false);
@@ -73,7 +121,7 @@ function Avatar({ avatarObject }: { avatarObject: AvatarObject }) {
       <Rive
         style={{ width: 60, height: 60 }}
         ref={riveRef}
-        url="https://hezpbxzutspjqunzdtdi.supabase.co/storage/v1/object/public/thumbnails/avatar_creator.riv"
+        url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722345626/avatar.riv"
         stateMachineName={STATE_MACHINE_NAME}
       />
     </View>

@@ -1,9 +1,6 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import CharacterSelectWindow from 'components/CharacterSelectWindow';
 import MatchConfirmationModal from 'components/MatchConfirmationModal';
-import TopNav from 'components/TopNav';
-import TabBar from 'components/tabbar/TabBar';
 import { BackButton } from 'components/ui/BackButton';
 import SocketContextComponent from 'contexts/SocketContextComponent';
 import FriendListScreen from 'screens/friendslist';
@@ -16,6 +13,9 @@ import MarketScreen from 'screens/market';
 import ModeScreen from 'screens/modes-screen';
 import NotificationsScreen from 'screens/notifications-screen';
 import SettingsScreen from 'screens/settings-screen';
+import PlayerProfile from 'screens/profile';
+import { Colors } from 'constants/colors';
+import SettingsButton from 'components/action-buttons/SettingsIcon';
 
 export type GameStackParamList = {
   GameTabs: undefined;
@@ -82,7 +82,18 @@ export default function GameStack({ navigation }: any) {
         <Stack.Screen name="Store" component={MarketScreen} />
         <Stack.Screen name="HelpScreen" component={HelpScreen} />
         <Stack.Screen name="PlayerScreen" component={HelpScreen} />
-        <Stack.Screen name="Profile" component={HelpScreen} />
+        <Stack.Screen
+          name="Profile"
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { color: 'white', fontFamily: 'Crispy-Tofu' },
+            headerStyle: { backgroundColor: Colors.tertiary },
+            headerRight: () => <SettingsButton />,
+            headerShadowVisible: false,
+          }}
+          component={PlayerProfile}
+        />
         <Stack.Screen name="Lobby" component={Lobby} />
         <Stack.Screen
           options={{
