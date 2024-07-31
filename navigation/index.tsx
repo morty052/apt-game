@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import GameStack from 'Routes/GameStack';
 
 import RegistrationScreen from 'screens/registration';
+import UserAvatarCreator from 'screens/user-avatar-creator/UserAvatarCreator';
 
 export type RootTabsParamList = {
   Home: undefined;

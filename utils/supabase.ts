@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { AvatarObject } from 'components/Avatar';
 import { inviteProps } from 'types';
 
 const projectUrl = 'https://gepjayxrfvoylhivwhzq.supabase.co';
@@ -462,5 +463,64 @@ export const updatePlayerHighScore = async ({
   } catch (error) {
     console.error(error);
     return { updateError: error };
+  }
+};
+
+const createUserAvatar = async (avatarSelections: AvatarObject) => {
+  try {
+    const { data, error } = await supabase
+      .from('avatars')
+      .insert({
+        ...avatarSelections,
+      })
+      .select('id');
+    if (error) {
+      throw error;
+    }
+
+    return data[0].id;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const handleSignup = async ({
+  username,
+  email,
+  password,
+  expo_push_token,
+  avatar,
+}: {
+  username: string;
+  email: string;
+  password: string;
+  expo_push_token: string;
+  avatar: AvatarObject;
+}) => {
+  console.log('signup', username, email, password, expo_push_token);
+
+  try {
+    const AvatarId = await createUserAvatar(avatar);
+
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        username,
+        email,
+        password,
+        expo_push_token,
+        avatar: AvatarId,
+      })
+      .select('id');
+
+    if (error) {
+      console.log(error);
+      throw error;
+    }
+
+    return data[0].id;
+  } catch (error) {
+    console.error(error);
   }
 };

@@ -1,22 +1,23 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { Button } from 'components/ui/Button';
 import Input from 'components/ui/Input';
-import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import UserAvatarCreator from 'screens/user-avatar-creator/UserAvatarCreator';
 
-import { checkIfemailExists, handleSignup } from './features';
+import { checkIfemailExists } from './features';
+import { getItem, setItem } from 'utils/storage';
+import { handleSignup } from 'utils/supabase';
 
 const Stack = createStackNavigator();
 
 const UsernameScreen = ({ route, navigation }: any) => {
-  const [username, setUsername] = React.useState('');
+  const [username, setUsername] = useState('');
   const { email, password } = route.params;
 
   async function handleSubmit() {
-    console.log(email, password, username);
-    await handleSignup({ email, password, username });
-    navigation.navigate('GameStack');
+    navigation.navigate('UserAvatarCreator', { email, password, username });
   }
 
   return (
@@ -28,9 +29,9 @@ const UsernameScreen = ({ route, navigation }: any) => {
 };
 
 const EmailAndPasswordScreen = ({ navigation }: any) => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   async function handleSubmit() {
     if (!email || !password) {
@@ -66,6 +67,7 @@ const RegistrationScreen = () => {
     <Stack.Navigator initialRouteName="EmailAndPassword" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="EmailAndPassword" component={EmailAndPasswordScreen} />
       <Stack.Screen name="UsernameScreen" component={UsernameScreen} />
+      <Stack.Screen name="UserAvatarCreator" component={UserAvatarCreator} />
     </Stack.Navigator>
   );
 };

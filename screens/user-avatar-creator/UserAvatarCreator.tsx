@@ -2,58 +2,40 @@ import { Ionicons } from '@expo/vector-icons';
 import { RiveAvatarComponent, setStateMachineInput } from 'components/rive/RiveAvatarComponent';
 import RiveIconsContainer from 'components/rive/RiveIconsContainer';
 import RiveOptionsContainer from 'components/rive/RiveOptionsContainer';
+import { BackButton } from 'components/ui/BackButton';
 import { Colors } from 'constants/colors';
 import { useAvatarStateContext } from 'models/avatarStateContext';
-import { UserProps, useUserModel } from 'models/userModel';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { RiveRef } from 'rive-react-native';
-import { setItem } from 'utils/storage';
-import { supabase } from 'utils/supabase';
-
-import avatarConfig from '../../constants/json/avatarConfig.json';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { RiveRef } from 'rive-react-native';
+import { getItem, setItem } from 'utils/storage';
+import { handleSignup } from 'utils/supabase';
 
-type JSONData = typeof avatarConfig;
-
-const localData = JSON.parse(JSON.stringify(avatarConfig));
-
-async function createUser(user: UserProps) {
-  const { data, error } = await supabase.from('users').insert([user]).select();
-
-  console.log(data, error);
-  return data;
-}
-
-const UserAvatar = ({ navigation }: { navigation: any }) => {
+const UserAvatarCreator = ({ navigation, route }: any) => {
+  const { password, username, email } = route.params;
   const riveRef = React.useRef<RiveRef>(null);
 
   const { activeIcon, riveAvatarSelections, setRiveAvatarSelection } = useAvatarStateContext();
-  const { firstname, lastname, email, username } = useUserModel();
-
-  // @ts-ignore
-  const trimmedActiveIcon: keyof JSONData =
-    activeIcon === 'BackgroundColor' ? activeIcon : activeIcon.split('Body')[1];
 
   async function handleSubmit() {
     console.log(riveAvatarSelections);
-    const user = {
-      firstname,
-      lastname,
+    const expo_push_token = getItem('expo_push_token') as string;
+    const id = await handleSignup({
       email,
+      password,
       username,
+      expo_push_token,
       avatar: riveAvatarSelections,
-    };
-    const data = await createUser(user);
-    const id = data?.[0].id;
-    setItem('id', JSON.stringify(id));
-    setItem('firstname', firstname);
-    setItem('lastname', lastname);
-    setItem('email', email);
-    setItem('username', username);
-    setItem('avatar', JSON.stringify(riveAvatarSelections));
+    });
+    setItem('ID', id);
+    setItem('USERNAME', username);
+    setItem('EMAIL', email);
+    setItem('PASSWORD', password);
+    setItem('ONBOARDED', 'TRUE');
+    setItem('AVATAR', JSON.stringify(riveAvatarSelections));
     setItem('ONBOARDED', 'true');
-    navigation.navigate('App');
+    navigation.navigate('GameStack');
   }
 
   return (
@@ -66,7 +48,7 @@ const UserAvatar = ({ navigation }: { navigation: any }) => {
           alignItems: 'center',
           marginBottom: 20,
         }}>
-        {/* <BackButton onPress={() => navigation.goBack()} /> */}
+        <BackButton onPress={() => navigation.goBack()} />
         <Pressable
           style={{
             backgroundColor: Colors.primary,
@@ -98,8 +80,6 @@ const UserAvatar = ({ navigation }: { navigation: any }) => {
             setRiveAvatarSelection(mainName, value);
             console.log('riveAvatarSelections', mainName, value);
           }}
-          numOptions={localData[trimmedActiveIcon].numOptions}
-          buttonCollectionName={trimmedActiveIcon}
         />
       </View>
       {/* <Button title="Submit" onPress={() => console.log(riveAvatarSelections)} /> */}
@@ -107,7 +87,7 @@ const UserAvatar = ({ navigation }: { navigation: any }) => {
   );
 };
 
-export default UserAvatar;
+export default UserAvatarCreator;
 
 const styles = StyleSheet.create({
   title: {

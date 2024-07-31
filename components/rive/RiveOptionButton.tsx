@@ -2,8 +2,6 @@ import React from 'react';
 import { Dimensions, Pressable } from 'react-native';
 import Rive, { RiveRef } from 'rive-react-native';
 
-// @refresh reset
-
 interface RiveOptionButtonProps {
   artboardName: string;
   optionIdx: number;
@@ -30,14 +28,6 @@ export default function RiveOptionButton({
     }
   }, []);
 
-  const onFocus = React.useCallback(() => {
-    // isHovered.value = true;
-  }, [riveRef]);
-
-  const onBlur = React.useCallback(() => {
-    // isHovered.value = false;
-  }, [riveRef]);
-
   // const onClick = () => {
   //   setRiveAvatarSelection(mainName, numOption);
   // };
@@ -46,8 +36,6 @@ export default function RiveOptionButton({
     <Pressable
       style={{ width: Dimensions.get('window').width * 0.3, height: 150 }}
       // className={`exp-option-button aspect-[21/16] min-w-[150px] opacity-100`}
-      onFocus={onFocus}
-      onBlur={onBlur}
       onPress={() => onPress(mainName, optionIdx)}>
       <Pressable
         style={{

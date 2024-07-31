@@ -33,7 +33,7 @@ export const RiveAvatarComponent = React.forwardRef(({}, ref: LegacyRef<RiveRef>
   return (
     <Rive
       ref={ref}
-      url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722344538/avatar.riv"
+      url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722345626/avatar.riv"
       // alignment={Alignment.TopCenter}
       // style={{ width: 300, height: 300, backgroundColor: 'white' }}
       stateMachineName={STATE_MACHINE_NAME}

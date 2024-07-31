@@ -18,35 +18,3 @@ export const checkIfemailExists = async (email: string) => {
     return null;
   }
 };
-
-export const handleSignup = async ({
-  username,
-  email,
-  password,
-}: {
-  username: string;
-  email: string;
-  password: string;
-}) => {
-  const expo_push_token = getItem('expo_push_token');
-  console.log('signup', username, email, password, expo_push_token);
-
-  const { data, error } = await supabase.from('users').insert({
-    username,
-    email,
-    password,
-    expo_push_token,
-  });
-
-  if (error) {
-    console.log(error);
-    return error;
-  }
-
-  setItem('USERNAME', username);
-  setItem('EMAIL', email);
-  setItem('PASSWORD', password);
-  setItem('ONBOARDED', 'TRUE');
-
-  return data;
-};
