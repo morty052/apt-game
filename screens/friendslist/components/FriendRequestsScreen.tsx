@@ -68,26 +68,6 @@ export function FriendRequestsScreen({ route, navigation }: any) {
     <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BackButton onPress={() => navigation.goBack()} />
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 20, flex: 1 }}>
-              Friend Requests
-            </Text>
-            <Pressable
-              onPress={() => navigation.navigate('FriendRequests', { friendRequests })}
-              style={{
-                height: 40,
-                width: 40,
-                backgroundColor: 'yellow',
-                borderRadius: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'relative',
-              }}>
-              <Ionicons name="mail" size={24} color="black" />
-              <FriendRequestsBadge requests={friendRequests?.length} />
-            </Pressable>
-          </View>
           {requests?.map((sender: { username: string; avatar: AvatarObject }) => (
             <View
               style={{
@@ -135,6 +115,19 @@ export function FriendRequestsScreen({ route, navigation }: any) {
               </View>
             </View>
           ))}
+          <View
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 200 }}>
+            {!isLoading && friendRequests.length === 0 && (
+              <Text
+                style={{
+                  color: 'white',
+                  textAlign: 'center',
+                  marginTop: 20,
+                }}>
+                No new friend requests
+              </Text>
+            )}
+          </View>
         </View>
       </SafeAreaView>
     </View>

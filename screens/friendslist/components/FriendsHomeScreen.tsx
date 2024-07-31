@@ -8,7 +8,7 @@ import { BackButton } from 'components/ui/BackButton';
 import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import { useCallback, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 import { Pressable, View, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { friend } from 'types';

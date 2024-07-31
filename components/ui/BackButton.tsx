@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'yellow',
     borderColor: 'gold',
+    marginLeft: 5,
   },
   backButtonText: {
     color: 'black',
