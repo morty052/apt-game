@@ -1,13 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 import React, { useEffect } from 'react';
 import { Modal, Platform, StyleSheet, Text, View } from 'react-native';
 import { playerProps } from 'types';
 
 import Avatar from './Avatar';
 import { Button } from './ui/Button';
-import useSound, { useGameSoundTrack } from 'hooks/useSound';
 
 const avatarObject = {
   BodyColor: 1,
@@ -84,7 +84,7 @@ function GroupMatchUi() {
 }
 
 const MatchConfirmationModal = () => {
-  const { playSound } = useGameSoundTrack();
+  const { playSound } = useSoundTrackModel();
 
   const { matchFound, mode } = useAppStore();
 
@@ -93,7 +93,7 @@ const MatchConfirmationModal = () => {
   const navigation = useNavigation<any>();
 
   useEffect(() => {
-    if (matchFound) playSound('matchFoundSound');
+    if (matchFound) playSound('MATCH_FOUND');
   }, [matchFound]);
 
   return (

@@ -22,6 +22,7 @@ import { getItem } from 'utils/storage';
 import { getInvites } from 'utils/supabase';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 
 function RightNav() {
   return (
@@ -110,7 +111,7 @@ export const Home = () => {
   const { initGame } = useGameStore();
   const { character, connected, matchmaking, mode } = useAppStore();
 
-  const { playSound } = useGameSoundTrack();
+  const { playSound } = useSoundTrackModel();
 
   const { isLoading } = useQuery({
     queryKey: ['matchInvites'],

@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import PerformanceMeter, { performanceAnimationNames } from './rive/PerformanceMeter';
 import ALPHABETS from 'constants/alphabets';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -170,11 +171,8 @@ export function PerformanceView({ matchStats }: { matchStats: matchStatsProps | 
         </View>
         <PerformanceMeter animation={performance || 'zero'} />
         <View style={{ paddingTop: 20, flex: 1 }}>
-          <Text style={{ textAlign: 'center', color: 'white' }}>
-            {performance !== 'zero' ? performance : 'badly'}
-          </Text>
           <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>
-            You performed {performance !== 'zero' ? performance : 'badly'} this game
+            You performed {performance !== 'zero' ? performance : 'poorly'} this game
           </Text>
         </View>
       </View>
@@ -190,6 +188,8 @@ export default function GameOverModal() {
   const { totalScore, winner } = useGameStore();
 
   const isWinner = useMemo(() => winner?.username === getItem('USERNAME'), [winner]);
+
+  const { playSound } = useSoundTrackModel();
 
   const handleShowPerformance = async () => {
     try {
@@ -211,6 +211,13 @@ export default function GameOverModal() {
       setGettingStats(false);
     }
   };
+
+  useEffect(() => {
+    if (!winner) return;
+    else if (winner) {
+      playSound(winner.username === getItem('USERNAME') ? 'WINNER_SOUND' : 'LOSER_SOUND');
+    }
+  }, [winner]);
 
   return (
     <View style={{ flex: 1 }}>

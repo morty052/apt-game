@@ -13,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from 'components/ui/Button';
 import { useGameSoundTrack } from 'hooks/useSound';
 import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
+import { StatusBar } from 'expo-status-bar';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -68,6 +70,8 @@ export default function App() {
   const notificationListener = React.useRef<Notifications.Subscription | null>(null);
   const responseListener = React.useRef<Notifications.Subscription | null>(null);
 
+  const { loadedSoundTrack, loadGameSoundtrack } = useSoundTrackModel();
+
   React.useEffect(() => {
     registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
 
@@ -103,10 +107,15 @@ export default function App() {
     }
 
     getOnboarded();
+    loadGameSoundtrack();
   }, []);
 
   if (onboarded == null) {
     return null;
+  }
+
+  if (!loadedSoundTrack) {
+    return <GameLoadingScreen />;
   }
 
   // return (
@@ -118,6 +127,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <RootStack onboarded={onboarded} />
+      <StatusBar style="light" />
     </QueryClientProvider>
   );
 }

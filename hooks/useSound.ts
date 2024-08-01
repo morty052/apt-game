@@ -4,7 +4,7 @@ import { Audio, AVPlaybackSource } from 'expo-av';
 import matchFoundSound from '../assets/sounds/playButton.mp3';
 import wrongLetterSound from '../assets/sounds/wrongletter.mp3';
 
-type SoundTrackName = 'matchFoundSound' | 'wrongLetterSound';
+type SoundTrackNames = 'matchFoundSound' | 'wrongLetterSound';
 
 export default function useSound() {
   const [sound, setSound] = useState<null | Audio.Sound>(null);
@@ -40,23 +40,30 @@ export function useGameSoundTrack() {
     wrongLetterSound,
   });
 
-  async function loadSound(source: AVPlaybackSource, title: string) {
+  async function loadSound(title: SoundTrackNames) {
     console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync(soundTracks[title as string], {
-      shouldPlay: false,
-    });
+    const { sound } = await Audio.Sound.createAsync(soundTracks[title as string]);
     setSound(sound);
-    console.log('Playing Sound');
-    await sound.playAsync();
+    console.log('Loaded Sound');
   }
 
-  async function playSound(title: SoundTrackName) {
+  async function playSound(title: SoundTrackNames) {
     try {
       console.log('Loading Sound');
       const { sound } = await Audio.Sound.createAsync(soundTracks[title as string]);
       setSound(sound);
       console.log('Playing Sound');
       await sound.playAsync();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  async function playLoadedSound() {
+    try {
+      console.log('Loading Sound', { sound });
+
+      await sound?.playAsync();
+      console.log('Playing Sound');
     } catch (error) {
       console.error(error);
     }
@@ -74,5 +81,6 @@ export function useGameSoundTrack() {
   return {
     loadSound,
     playSound,
+    playLoadedSound,
   };
 }

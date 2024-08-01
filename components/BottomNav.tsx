@@ -1,11 +1,11 @@
+import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, Pressable, Image, Dimensions } from 'react-native';
+
 import PlayButton from './action-buttons/PlayButton';
 import friendsIcon from '../assets/icons/friends-icon--min.png';
-import marketIcon from '../assets/icons/market-place-icon--min.png';
 import leaderBordIcon from '../assets/icons/leader-board-icon--min.png';
+import marketIcon from '../assets/icons/market-place-icon--min.png';
 import settingsIcon from '../assets/icons/settings-icon--min.png';
-import { useNavigation } from '@react-navigation/native';
-import { Text } from './ui/Text';
 
 export function NavBarButton({ screenName, icon }: { screenName: string; icon: any }) {
   const navigation = useNavigation<any>();

@@ -18,7 +18,7 @@ type AppStoreProps = {
   setMatchFound: (matchFound: boolean) => void;
 };
 
-export const useAppStore = create<AppStoreProps>((set) => ({
+export const useAppStore = create<AppStoreProps>((set, state) => ({
   online: false,
   mode: 'HEAD_TO_HEAD',
   character: charactersArray[0],
