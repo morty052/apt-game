@@ -11,9 +11,10 @@ import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 
 const GameScreen = ({ route }: any) => {
+  const room = route.params.room;
+
   const [viewingFinalTally, setViewingFinalTally] = React.useState(false);
   const [gameOver, setGameOver] = React.useState(false);
-  const room = route.params.room;
 
   const { socket } = React.useContext(SocketContext);
 
@@ -101,6 +102,16 @@ const GameScreen = ({ route }: any) => {
         winner: data.winner,
       }));
     });
+
+    return () => {
+      socket?.off('LETTER_SELECTED');
+      socket?.off('PLAYER_SUBMITTED');
+      socket?.off('SHOW_FINAL_TALLY');
+      socket?.off('TALLY_TIME_EXPIRED');
+      socket?.off('START_COUNTDOWN');
+      socket?.off('PLAYER_DIED');
+      socket?.off('GAME_OVER');
+    };
   }, [socket]);
 
   return (

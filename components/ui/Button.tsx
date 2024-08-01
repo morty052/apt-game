@@ -1,19 +1,19 @@
 import { Colors } from 'constants/colors';
 import { forwardRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { Pressable, StyleSheet, Text, PressableProps } from 'react-native';
 
 type ButtonProps = {
-  onPress?: TouchableOpacityProps['onPress'];
+  onPress?: PressableProps['onPress'];
   title?: string;
   style?: any;
   fontSize?: number;
   textColor?: string;
-} & TouchableOpacityProps;
+} & PressableProps;
 
-export const Button = forwardRef<TouchableOpacity, ButtonProps>(
+export const Button = forwardRef<any, ButtonProps>(
   ({ onPress, title, style, fontSize, textColor }, ref) => {
     return (
-      <TouchableOpacity ref={ref} style={[styles.button, style]} onPress={onPress}>
+      <Pressable ref={ref} style={[styles.button, style]} onPress={onPress}>
         <Text
           style={[
             styles.buttonText,
@@ -21,7 +21,7 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
           ]}>
           {title}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 );

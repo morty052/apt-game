@@ -20,7 +20,7 @@ export default function BottomNav({ onPressPlay }: { onPressPlay: () => void }) 
   return (
     <View style={styles.container}>
       <NavBarButton icon={friendsIcon} screenName="FriendsList" />
-      <NavBarButton icon={marketIcon} screenName="Market" />
+      <NavBarButton icon={marketIcon} screenName="Store" />
       <PlayButton onPress={onPressPlay} />
       <NavBarButton icon={leaderBordIcon} screenName="LeaderBoard" />
       <NavBarButton icon={settingsIcon} screenName="SettingsScreen" />

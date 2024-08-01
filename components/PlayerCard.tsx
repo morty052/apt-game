@@ -39,16 +39,20 @@ const PlayerCard = ({
       </View>
       <View style={{ gap: 20 }}>
         <View style={styles.answerContainer}>
-          <Text style={styles.answerText}>Animal</Text>
+          <Text style={styles.answerText}>Name</Text>
           <Text style={styles.answerText}>{answers[0]}</Text>
         </View>
         <View style={styles.answerContainer}>
-          <Text style={styles.answerText}>Place</Text>
+          <Text style={styles.answerText}>Animal</Text>
           <Text style={styles.answerText}>{answers[1]}</Text>
         </View>
         <View style={styles.answerContainer}>
-          <Text style={styles.answerText}>Thing</Text>
+          <Text style={styles.answerText}>Place</Text>
           <Text style={styles.answerText}>{answers[2]}</Text>
+        </View>
+        <View style={styles.answerContainer}>
+          <Text style={styles.answerText}>Thing</Text>
+          <Text style={styles.answerText}>{answers[3]}</Text>
         </View>
       </View>
     </Pressable>

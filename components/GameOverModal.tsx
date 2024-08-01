@@ -15,6 +15,9 @@ import { updatePlayerHighScore } from 'utils/supabase';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
 import { useNavigation } from '@react-navigation/native';
+import PerformanceMeter, { performanceAnimationNames } from './rive/PerformanceMeter';
+import ALPHABETS from 'constants/alphabets';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -85,20 +88,98 @@ function WinOrLoseView({
   );
 }
 
-function PerformanceView({ matchStats }: { matchStats: matchStatsProps | null }) {
+export function PerformanceView({ matchStats }: { matchStats: matchStatsProps | null }) {
   const navigation = useNavigation<any>();
+
+  const resetGame = () => {
+    useGameStore.setState(() => ({
+      room: '',
+      player: {
+        username: getItem('USERNAME') || 'Guest',
+        answers: { Name: '', Animal: '', Place: '', Thing: '' },
+        score: 0,
+        inTallyMode: false,
+        turn: 0,
+        strikes: 0,
+        doneTallying: false,
+        character: null,
+      },
+      opponents: [],
+      winner: null,
+      round: 0,
+      activeLetter: 'A',
+      totalScore: 0,
+      alphabets: ALPHABETS,
+      selectingLetter: true,
+      playing: false,
+      tallying: false,
+      currentTurn: 0,
+    }));
+    navigation.navigate('HomeScreen');
+  };
+
+  const performance = useMemo(() => {
+    let animation: performanceAnimationNames = 'zero';
+    const totalScore = matchStats?.totalScore || 0;
+
+    if (totalScore < 200) {
+      animation = 'zero';
+      return animation;
+    }
+
+    if (totalScore > 200 && totalScore < 400) {
+      animation = 'okay';
+      return animation;
+    }
+
+    if (totalScore > 400 && totalScore < 600) {
+      animation = 'average';
+      return animation;
+    }
+
+    if (totalScore > 600 && totalScore < 800) {
+      animation = 'good';
+      return animation;
+    }
+
+    if (totalScore > 800) {
+      animation = 'great';
+      return animation;
+    }
+
+    return animation;
+  }, [matchStats?.totalScore]);
+
+  console.log({ performance, totalScore: matchStats?.totalScore });
+
   return (
-    <View style={styles.container}>
-      <Text style={{ textAlign: 'center' }}>You Win</Text>
-      <View style={{ gap: 20, flex: 1, paddingTop: 20 }}>
-        <Text>{matchStats?.totalScore}</Text>
-        <View style={{ paddingTop: 260, flex: 1 }}>
-          <Text style={{ textAlign: 'center' }}>Average</Text>
-          <Text style={{ textAlign: 'center', fontSize: 20 }}>You earned average this game</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: Colors.tertiary }]}>
+      <View
+        style={{
+          flex: 1,
+          paddingTop: 20,
+          alignItems: 'center',
+          gap: 20,
+          // backgroundColor: 'pink',
+        }}>
+        <View>
+          <Text style={{ textAlign: 'center', color: 'white' }}>You Scored</Text>
+          <Text style={{ textAlign: 'center', fontSize: 30, color: 'white' }}>
+            {matchStats?.totalScore} Points
+          </Text>
+        </View>
+        <PerformanceMeter animation={performance || 'zero'} />
+        <View style={{ paddingTop: 20, flex: 1 }}>
+          <Text style={{ textAlign: 'center', color: 'white' }}>
+            {performance !== 'zero' ? performance : 'badly'}
+          </Text>
+          <Text style={{ textAlign: 'center', fontSize: 20, color: 'white' }}>
+            You performed {performance !== 'zero' ? performance : 'badly'} this game
+          </Text>
         </View>
       </View>
-      <Button title="Continue" onPress={async () => navigation.navigate('GameTabs')} />
-    </View>
+      <Button title="Continue" onPress={resetGame} />
+    </SafeAreaView>
   );
 }
 
@@ -134,16 +215,18 @@ export default function GameOverModal() {
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.tertiary }}>
-        {viewingPerformance ? (
-          <PerformanceView matchStats={matchStats} />
-        ) : (
-          <WinOrLoseView
-            gettingStats={gettingStats}
-            isWinner={isWinner}
-            onContinue={() => handleShowPerformance()}
-            totalScore={totalScore}
-          />
-        )}
+        <LinearGradient colors={[Colors.tertiary, Colors.primary]} style={{ flex: 1 }}>
+          {viewingPerformance ? (
+            <PerformanceView matchStats={matchStats} />
+          ) : (
+            <WinOrLoseView
+              gettingStats={gettingStats}
+              isWinner={isWinner}
+              onContinue={() => handleShowPerformance()}
+              totalScore={totalScore}
+            />
+          )}
+        </LinearGradient>
       </SafeAreaView>
     </View>
   );

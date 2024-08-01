@@ -1,7 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import CharacterSelectWindow from 'components/CharacterSelectWindow';
 import MatchConfirmationModal from 'components/MatchConfirmationModal';
+import SettingsButton from 'components/action-buttons/SettingsIcon';
 import { BackButton } from 'components/ui/BackButton';
+import { Colors } from 'constants/colors';
 import SocketContextComponent from 'contexts/SocketContextComponent';
 import FriendListScreen from 'screens/friendslist';
 import GameScreen from 'screens/game-screen';
@@ -12,10 +14,8 @@ import Lobby from 'screens/lobby';
 import MarketScreen from 'screens/market';
 import ModeScreen from 'screens/modes-screen';
 import NotificationsScreen from 'screens/notifications-screen';
-import SettingsScreen from 'screens/settings-screen';
 import PlayerProfile from 'screens/profile';
-import { Colors } from 'constants/colors';
-import SettingsButton from 'components/action-buttons/SettingsIcon';
+import SettingsScreen from 'screens/settings-screen';
 
 export type GameStackParamList = {
   GameTabs: undefined;
@@ -34,6 +34,7 @@ export type GameStackParamList = {
     mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
     private_room?: string;
   };
+  HomeScreen: undefined;
 };
 
 const Stack = createStackNavigator<GameStackParamList>();
@@ -68,15 +69,26 @@ const Stack = createStackNavigator<GameStackParamList>();
 //   );
 // };
 
-export default function GameStack({ navigation }: any) {
+const GameRoutes = () => {
   return (
     <SocketContextComponent>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="GameTabs" component={Home} />
+        <Stack.Screen name="HomeScreen" component={Home} />
+        <Stack.Screen name="GameScreen" component={GameScreen} />
+      </Stack.Navigator>
+    </SocketContextComponent>
+  );
+};
+
+export default function GameStack({ navigation }: any) {
+  return (
+    <>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="GameTabs" component={GameRoutes} />
         <Stack.Screen name="CharacterSelect" component={CharacterSelectWindow} />
         <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
         <Stack.Screen name="FriendsList" component={FriendListScreen} />
-        <Stack.Screen name="GameScreen" component={GameScreen} />
+        {/* <Stack.Screen name="GameScreen" component={GameRoute} /> */}
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="ModeSelectScreen" component={ModeScreen} />
         <Stack.Screen name="Store" component={MarketScreen} />
@@ -108,6 +120,6 @@ export default function GameStack({ navigation }: any) {
         />
       </Stack.Navigator>
       <MatchConfirmationModal />
-    </SocketContextComponent>
+    </>
   );
 }

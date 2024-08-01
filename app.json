@@ -38,10 +38,6 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "permissions": ["android.permission.RECORD_AUDIO"],
       "package": "com.abduloutlook.aptgame",
       "googleServicesFile": "./google-services.json"
