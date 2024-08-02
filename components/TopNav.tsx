@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 
 import PlayerLevel from './PlayerLevel';
 import NotificationsButton from './action-buttons/NotificationsButton';
 import coin from '../assets/icons/alph-a--min.png';
 import EnergyBar from '../assets/icons/thunderbolt-icon--min.png';
+import { useNavigation } from '@react-navigation/native';
 
 function CoinsBalance() {
   return (
@@ -16,8 +17,9 @@ function CoinsBalance() {
 }
 
 function EnergyBalance() {
+  const navigation = useNavigation<any>();
   return (
-    <View style={styles.inventory}>
+    <Pressable onPress={() => navigation.navigate('Store')} style={styles.inventory}>
       <View
         style={{
           height: 30,
@@ -36,7 +38,7 @@ function EnergyBalance() {
         </Text>
       </View>
       <Ionicons name="add-circle" size={24} color="lime" />
-    </View>
+    </Pressable>
   );
 }
 

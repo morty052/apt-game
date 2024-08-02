@@ -15,6 +15,7 @@ import MarketScreen from 'screens/market';
 import ModeScreen from 'screens/modes-screen';
 import NotificationsScreen from 'screens/notifications-screen';
 import PlayerProfile from 'screens/profile';
+import RoadMapScreen from 'screens/roadmap';
 import SettingsScreen from 'screens/settings-screen';
 
 export type GameStackParamList = {
@@ -35,6 +36,7 @@ export type GameStackParamList = {
     private_room?: string;
   };
   HomeScreen: undefined;
+  RoadMapScreen: undefined;
 };
 
 const Stack = createStackNavigator<GameStackParamList>();
@@ -107,6 +109,20 @@ export default function GameStack({ navigation }: any) {
           component={PlayerProfile}
         />
         <Stack.Screen name="Lobby" component={Lobby} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitle: 'Quests',
+            headerBackTitle: '',
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerShadowVisible: false,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { color: 'white', fontFamily: 'Crispy-Tofu' },
+            headerStyle: { backgroundColor: Colors.tertiary },
+          }}
+          name="RoadMapScreen"
+          component={RoadMapScreen}
+        />
         <Stack.Screen
           options={{
             headerShown: true,

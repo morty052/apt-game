@@ -4,7 +4,6 @@ import { Character } from 'components/CharacterSelectWindow';
 import LoadingScreen from 'components/LoadingScreen';
 import TopNav from 'components/TopNav';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
-import HelpButton from 'components/action-buttons/HelpButton';
 import NotificationsButton from 'components/action-buttons/NotificationsButton';
 import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
@@ -23,7 +22,6 @@ function RightNav() {
   return (
     <View style={styles.actionButtonsContainer}>
       <NotificationsButton />
-      <HelpButton />
       <CharacterSelectButton />
       {/* <GameModeButton /> */}
     </View>
