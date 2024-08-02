@@ -1,10 +1,7 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import GameStack from 'Routes/GameStack';
-
 import RegistrationScreen from 'screens/registration';
-import UserAvatarCreator from 'screens/user-avatar-creator/UserAvatarCreator';
 
 export type RootTabsParamList = {
   Home: undefined;
@@ -13,8 +10,6 @@ export type RootTabsParamList = {
   Creator: undefined;
   MiniGames: undefined;
 };
-
-const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 export type RootStackParamList = {
   App: undefined;

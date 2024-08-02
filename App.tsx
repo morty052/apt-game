@@ -4,17 +4,14 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 import React from 'react';
 import { Platform } from 'react-native';
+import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
 import { getItem, setItem } from 'utils/storage';
 
 import RootStack from './navigation';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from 'components/ui/Button';
-import { useGameSoundTrack } from 'hooks/useSound';
-import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
-import { StatusBar } from 'expo-status-bar';
-import { useSoundTrackModel } from 'models/soundtrackModel';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

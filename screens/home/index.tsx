@@ -4,25 +4,20 @@ import { Character } from 'components/CharacterSelectWindow';
 import LoadingScreen from 'components/LoadingScreen';
 import TopNav from 'components/TopNav';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
-import GameModeButton from 'components/action-buttons/GameModeButton';
 import HelpButton from 'components/action-buttons/HelpButton';
 import NotificationsButton from 'components/action-buttons/NotificationsButton';
-import { Text } from 'components/ui/Text';
-import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
-import { useGameSoundTrack } from 'hooks/useSound';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useContext } from 'react';
-import { StyleSheet, View, Pressable, FlatList, Dimensions, ImageBackground } from 'react-native';
+import { StyleSheet, View, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
-import { GameModes, playerProps } from 'types';
+import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 import { getInvites } from 'utils/supabase';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
-import { useSoundTrackModel } from 'models/soundtrackModel';
 
 function RightNav() {
   return (
@@ -35,83 +30,11 @@ function RightNav() {
   );
 }
 
-const modes: { value: GameModes; name: string }[] = [
-  {
-    value: 'HEAD_TO_HEAD',
-    name: 'Head To Head',
-  },
-  {
-    value: 'TRIPLE_THREAT',
-    name: 'Triple threat',
-  },
-  {
-    value: 'FULL_HOUSE',
-    name: 'Full House',
-  },
-  {
-    value: 'PRIVATE_MATCH',
-    name: 'Private Match',
-  },
-];
-
-function ModeCard({
-  mode,
-  handlePress,
-}: {
-  mode: { value: GameModes; name: string };
-  handlePress: (GameMode: GameModes) => void;
-}) {
-  return (
-    <Pressable onPress={() => handlePress(mode.value)} style={styles.modeCard}>
-      <Text style={{ color: 'white' }}>{mode.name}</Text>
-    </Pressable>
-  );
-}
-
-function SeasonCard() {
-  return <Pressable style={styles.seasonCard} />;
-}
-
-function ModesGrid({ handlePress }: { handlePress: (GameMode: GameModes) => void }) {
-  return (
-    <View style={{ gap: 10 }}>
-      <Text style={{ marginLeft: 5 }}>Game Modes</Text>
-      <FlatList
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 10 }}
-        horizontal
-        data={modes}
-        renderItem={({ item }) => <ModeCard handlePress={handlePress} mode={item} />}
-      />
-    </View>
-  );
-}
-
-function WeeklyGoals() {
-  function handlePress(mode: GameModes) {
-    console.log(mode);
-  }
-  return (
-    <View style={{ gap: 10 }}>
-      <Text style={{ marginLeft: 5 }}>Weekly Goals</Text>
-      <FlatList
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 10 }}
-        horizontal
-        data={modes}
-        renderItem={({ item }) => <ModeCard handlePress={handlePress} mode={item} />}
-      />
-    </View>
-  );
-}
-
 export const Home = () => {
   const { socket } = useContext(SocketContext);
 
   const { initGame } = useGameStore();
   const { character, connected, matchmaking, mode } = useAppStore();
-
-  const { playSound } = useSoundTrackModel();
 
   const { isLoading } = useQuery({
     queryKey: ['matchInvites'],
@@ -221,22 +144,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     borderRadius: 20,
-  },
-  modeCard: {
-    width: Dimensions.get('window').width * 0.9,
-    minWidth: 300,
-    backgroundColor: 'orange',
-    height: 150,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-  },
-  seasonCard: {
-    width: Dimensions.get('window').width * 0.95,
-    minWidth: 300,
-    backgroundColor: Colors.backGround,
-    height: 150,
-    borderRadius: 20,
-    alignSelf: 'center',
   },
 });

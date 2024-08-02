@@ -9,8 +9,7 @@ export const Colors = {
   accent: 'rgba(145,70,255, 0.25)',
 };
 
-export const baseImageUrl =
-  'https://hezpbxzutspjqunzdtdi.supabase.co/storage/v1/object/public/thumbnails';
+export const dictionaryUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en';
 
 export const ALPHABETS = [
   'A',

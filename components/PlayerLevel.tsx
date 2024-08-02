@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import Avatar from './Avatar';
 import { Text } from './ui/Text';
-import { useNavigation } from '@react-navigation/native';
 
 const getDistanceFromLastLevel = (total_score: number) => {
   return total_score % 100;
