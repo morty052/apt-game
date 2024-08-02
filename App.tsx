@@ -1,7 +1,9 @@
 import 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Asset } from 'expo-asset';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
+import * as FileSystem from 'expo-file-system';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -10,8 +12,25 @@ import React from 'react';
 import { Platform } from 'react-native';
 import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
 import { getItem, setItem } from 'utils/storage';
+import { SQLiteProvider } from 'expo-sqlite/next';
 
 import RootStack from './navigation';
+
+const loadDataBase = async () => {
+  const dbName = 'preloaded.db';
+  const dbAsset = require('./assets/preloaded.db');
+  const dbUri = Asset.fromModule(dbAsset).uri;
+  const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
+
+  const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
+  if (!fileInfo.exists) {
+    await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, {
+      intermediates: true,
+    });
+  }
+  console.log('file exists');
+  await FileSystem.downloadAsync(dbUri, dbFilePath);
+};
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -66,6 +85,7 @@ export default function App() {
   const [notification, setNotification] = React.useState<Notifications.Notification>();
   const notificationListener = React.useRef<Notifications.Subscription | null>(null);
   const responseListener = React.useRef<Notifications.Subscription | null>(null);
+  const [dbLoaded, setDbLoaded] = React.useState(false);
 
   const { loadedSoundTrack, loadGameSoundtrack } = useSoundTrackModel();
 
@@ -105,13 +125,14 @@ export default function App() {
 
     getOnboarded();
     loadGameSoundtrack();
+    loadDataBase().then(() => setDbLoaded(true));
   }, []);
 
   if (onboarded == null) {
     return null;
   }
 
-  if (!loadedSoundTrack) {
+  if (!loadedSoundTrack || !dbLoaded) {
     return <GameLoadingScreen />;
   }
 
@@ -123,7 +144,11 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RootStack onboarded={onboarded} />
+      <React.Suspense>
+        <SQLiteProvider databaseName="preloaded.db" useSuspense>
+          <RootStack onboarded={onboarded} />
+        </SQLiteProvider>
+      </React.Suspense>
       <StatusBar style="light" />
     </QueryClientProvider>
   );

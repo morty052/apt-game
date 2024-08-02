@@ -2,15 +2,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from 'constants/colors';
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
-import { Modal, Pressable, View } from 'react-native';
+import { Modal, Pressable, View, Image, ImageSourcePropType, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
 
 import Wizard from './rive/Wizard';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
+import AnimalIcon from '../assets/icons/animal-icon.png';
+import NameIcon from '../assets/icons/friends-icon--min.png';
+import PlaceIcon from '../assets/icons/place-icon.png';
+import ThingIcon from '../assets/icons/thing-icon.png';
 
 type VerdictProps = { isReal: boolean; description: string };
+
+const FieldImage = ({ icon }: { icon: ImageSourcePropType }) => {
+  return <Image source={icon} style={styles.fieldImage} />;
+};
 
 const PlayerAnswerBar = ({
   title,
@@ -22,16 +30,12 @@ const PlayerAnswerBar = ({
   onPress: () => void;
 }) => {
   return (
-    <Pressable
-      onPress={onPress}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 10,
-      }}>
-      <Text style={{ color: 'white' }}>{title}</Text>
-      <Text style={{ color: 'white' }}>{value}</Text>
+    <Pressable onPress={onPress} style={[styles.answerContainer]}>
+      <FieldImage icon={NameIcon} />
+      <View style={[styles.answer]}>
+        <Text style={{ color: 'black' }}>{title}</Text>
+        <Text style={{ color: 'black' }}>{value}</Text>
+      </View>
     </Pressable>
   );
 };
@@ -174,6 +178,7 @@ const PlayerInspectModal = ({
 
             {!verifyingAnswer && (
               <View style={{ gap: 30 }}>
+                <Text style={{ color: 'white' }}> {username}</Text>
                 <PlayerAnswerBar
                   onPress={() => handleInspect({ query: Name, type: 'Name' })}
                   title="Name"
@@ -207,5 +212,48 @@ const PlayerInspectModal = ({
     </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    borderWidth: 0,
+    gap: 10,
+    justifyContent: 'center',
+  },
+  playerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingVertical: 5,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+  },
+  answerContainer: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'white',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+  },
+  answer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1 },
+  answerText: { fontSize: 14 },
+  fieldImage: {
+    height: 40,
+    width: 40,
+  },
+});
 
 export default PlayerInspectModal;

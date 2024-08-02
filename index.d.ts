@@ -6,3 +6,6 @@ declare module '*.png';
 
 // * allow jpeg file recognition
 declare module '*.jpg';
+
+// * allow db file recognition
+declare module '*.db';
