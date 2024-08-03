@@ -10,12 +10,12 @@ import { CharacterProps } from 'types';
 
 import { Button } from './ui/Button';
 
-export function Character({ url }: { url: string }) {
-  const { height, width } = useWindowDimensions();
+export function Character({ url, height }: { url: string; height?: number }) {
+  const { height: screenHeight, width } = useWindowDimensions();
 
   return (
     <View style={styles.characterContainer}>
-      <View style={{ height: height * 0.75 }}>
+      <View style={{ height: height || screenHeight * 0.75 }}>
         <Rive
           alignment={Alignment.BottomCenter}
           fit={Fit.Contain}
@@ -59,7 +59,12 @@ function CharacterControlBar({
         justifyContent: 'space-between',
         alignItems: 'center',
         // backgroundColor: 'gold',
+        position: 'absolute',
+        top: '50%',
+        left: 0,
+        right: 0,
         borderRadius: 20,
+        zIndex: 40,
       }}>
       <Pressable
         style={{
@@ -96,55 +101,24 @@ function CharacterControlBar({
 
 function CharacterDescription({ character }: { character: CharacterProps }) {
   return (
-    <View>
+    <View style={{ gap: 15 }}>
       <Text
         style={{
           fontSize: 24,
           fontFamily: 'Crispy-Tofu',
-          marginBottom: 10,
+          color: 'white',
         }}>
         {character.name}
       </Text>
       <Text
         style={{
-          fontSize: 16,
+          fontSize: 17,
           fontFamily: 'Crispy-Tofu',
+          color: Colors.plain,
         }}>
         {character.description}
       </Text>
     </View>
-  );
-}
-
-function CharacterInfoButtons() {
-  return (
-    <View style={{ flexDirection: 'row', columnGap: 10, marginLeft: -5 }}>
-      <View style={{ height: 60, width: 60, borderRadius: 60, borderWidth: 1 }} />
-      <View style={{ height: 60, width: 60, borderRadius: 60, borderWidth: 1 }} />
-      <View style={{ height: 60, width: 60, borderRadius: 60, borderWidth: 1 }} />
-    </View>
-  );
-}
-
-function CharacterConfirmButton({ confirmCharacter }: { confirmCharacter: () => void }) {
-  return (
-    <Pressable
-      onPress={confirmCharacter}
-      style={{
-        height: 60,
-        width: 60,
-        borderRadius: 60,
-        borderWidth: 1,
-        position: 'absolute',
-        right: 10,
-        top: 10,
-        backgroundColor: 'rgba(255,255,255,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1,
-      }}>
-      <Ionicons name="checkmark" size={30} color="green" />
-    </Pressable>
   );
 }
 
@@ -180,32 +154,36 @@ export default function CharacterSelectWindow({ navigation }: { navigation: any 
         flex: 1,
         position: 'relative',
         backgroundColor: 'transparent',
+        paddingBottom: 10,
+        gap: 20,
       }}>
       <View>
-        {/* <CharacterConfirmButton confirmCharacter={confirmCharacter} /> */}
+        <CharacterControlBar index={index} setIndex={setIndex} />
         <FlatList
           showsHorizontalScrollIndicator={false}
           ref={flatListRef}
           scrollEnabled={false}
-          contentContainerStyle={{ backgroundColor: 'transparent', height: height * 0.5 }}
-          style={{ backgroundColor: 'transparent', maxHeight: height * 0.5 }}
+          contentContainerStyle={{ backgroundColor: 'transparent', height: height * 0.6 }}
+          style={{ backgroundColor: 'transparent', maxHeight: height * 0.6 }}
           horizontal
           data={charactersArray}
-          renderItem={({ item }) => <Character url={item.url} />}
+          renderItem={({ item }) => <Character height={height * 0.6} url={item.url} />}
         />
       </View>
       <View
         style={{
-          backgroundColor: 'transparent',
+          backgroundColor: Colors.backGround,
           justifyContent: 'space-between',
           paddingHorizontal: 5,
-          paddingTop: 10,
+          paddingBottom: 10,
+          paddingTop: 15,
           flex: 1,
-          paddingBottom: 30,
+          width: width * 0.98,
+          alignSelf: 'center',
+          borderRadius: 20,
         }}>
         {/* <CharacterInfoButtons /> */}
         <CharacterDescription character={activeCharacter} />
-        <CharacterControlBar index={index} setIndex={setIndex} />
         <Button onPress={confirmCharacter} title="Confirm" />
       </View>
     </View>

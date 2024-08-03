@@ -87,7 +87,16 @@ export default function GameStack({ navigation }: any) {
     <>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="GameTabs" component={GameRoutes} />
-        <Stack.Screen name="CharacterSelect" component={CharacterSelectWindow} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitle: 'Character Select',
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu' },
+          }}
+          name="CharacterSelect"
+          component={CharacterSelectWindow}
+        />
         <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
         <Stack.Screen name="FriendsList" component={FriendListScreen} />
         {/* <Stack.Screen name="GameScreen" component={GameRoute} /> */}
