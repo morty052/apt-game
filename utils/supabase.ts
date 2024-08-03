@@ -188,7 +188,7 @@ export const getSearchResults = async (username: string) => {
     const { data, error } = await supabase
       .from('users')
       .select('*, avatar(*)')
-      .eq('username', `${username}`);
+      .ilike('username', `${username}`);
 
     if (error) {
       throw error;
