@@ -15,6 +15,7 @@ import { createPrivateMatch } from 'utils/supabase';
 import { getItem } from 'utils/storage';
 import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
+import SocketContextComponent from 'contexts/SocketContextComponent';
 
 const Header = ({ handleClose }: { handleClose: () => void }) => {
   return (
@@ -65,7 +66,7 @@ export default function PrivateMatchCreationModal({
   }, [query, friends]);
 
   const createMatch = useCallback(async () => {
-    const host_id = 'bb3165a6-d7bb-4094-9959-e6e4db1827f6';
+    const host_id = getItem('ID') as string;
     const username = getItem('USERNAME') as string;
 
     const guests = invitedFriends.map((friend) => friend.username);
@@ -77,6 +78,7 @@ export default function PrivateMatchCreationModal({
     const privateRoomGuests = guests.map((guest) => {
       return { username: guest };
     });
+    console.log(private_room, privateRoomGuests, username, character.name);
     socket?.emit(
       'CREATE_PRIVATE_MATCH',
       {
@@ -85,6 +87,7 @@ export default function PrivateMatchCreationModal({
         host: { username, character: character.name },
       },
       () => {
+        console.log('callback received');
         navigation.navigate('Lobby', { private_room, mode: 'PRIVATE_MATCH' });
       }
     );
@@ -132,7 +135,7 @@ export default function PrivateMatchCreationModal({
                 ))}
               </View>
             </View>
-            <Button title="Create match" onPress={() => createMatch()} />
+            <Button title="Create match" onPress={createMatch} />
           </View>
         </SafeAreaView>
       </View>

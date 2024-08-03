@@ -77,6 +77,7 @@ const GameRoutes = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={Home} />
         <Stack.Screen name="GameScreen" component={GameScreen} />
+        <Stack.Screen name="FriendsList" component={FriendListScreen} />
       </Stack.Navigator>
     </SocketContextComponent>
   );
@@ -98,7 +99,7 @@ export default function GameStack({ navigation }: any) {
           component={CharacterSelectWindow}
         />
         <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
-        <Stack.Screen name="FriendsList" component={FriendListScreen} />
+
         {/* <Stack.Screen name="GameScreen" component={GameRoute} /> */}
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="ModeSelectScreen" component={ModeScreen} />
