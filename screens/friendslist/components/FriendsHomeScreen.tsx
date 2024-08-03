@@ -2,18 +2,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import Avatar, { AvatarObject } from 'components/Avatar';
-import FriendCard from 'components/cards/FriendCard';
 import PrivateMatchCreationModal from 'components/PrivateMatchCreationModal';
+import FriendCard from 'components/cards/FriendCard';
 import { BackButton } from 'components/ui/BackButton';
 import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import { useCallback, useLayoutEffect, useState } from 'react';
-import { Pressable, View, StyleSheet, TextInput } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Pressable, View, StyleSheet, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { friend } from 'types';
 import { getItem } from 'utils/storage';
 import { getSearchResults, getUserFriends, sendFriendRequest } from 'utils/supabase';
+
+import friendsIcon from '../../../assets/icons/friends-icon--min.png';
 
 const FriendRequestsBadge = ({ requests }: { requests: number }) => {
   return (
@@ -64,12 +67,28 @@ function Header({ friendRequests }: { friendRequests: string[] }) {
 
 const CreateMatchCard = ({ onPress }: { onPress: () => void }) => {
   return (
-    <Pressable onPress={onPress} style={styles.createMatchCard}>
-      <View style={{ paddingTop: 10 }}>
-        <Text>Create Private match</Text>
-        <Text style={{ fontSize: 14 }}>create a private match with up to six friends</Text>
+    <LinearGradient colors={[Colors.backGround, 'steelblue']} style={styles.createMatchCard}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 50,
+            height: 50,
+            borderRadius: 45,
+            backgroundColor: 'white',
+          }}>
+          <Image style={{ height: 45, width: 45 }} source={friendsIcon} />
+        </View>
+        <View style={{ flex: 1, gap: 10 }}>
+          <Text style={{ fontSize: 20, color: 'white' }}>Private match</Text>
+          <Text style={{ fontSize: 14, color: 'white' }}>
+            create a private match with up to six friends
+          </Text>
+        </View>
       </View>
-    </Pressable>
+      <Button onPress={onPress} title="Create" />
+    </LinearGradient>
   );
 };
 
@@ -83,13 +102,16 @@ const PlayerResultItem = ({
   onPress: () => void;
 }) => {
   return (
-    <Pressable onPress={onPress} style={styles.playerRankingCard}>
-      <Avatar avatarObject={player.avatar} />
-      <View style={{ paddingTop: 10 }}>
-        <Text>{player.username}</Text>
-        <Text>{player.totalscore}</Text>
+    <View style={styles.playerRankingCard}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Avatar avatarObject={player.avatar} />
+        <View style={{ flex: 1, paddingTop: 10 }}>
+          <Text>{player.username}</Text>
+          <Text>{player.totalscore}</Text>
+        </View>
       </View>
-    </Pressable>
+      <Button onPress={onPress} title="Add Friend" />
+    </View>
   );
 };
 
@@ -119,6 +141,15 @@ export function FriendsHomeScreen({ navigation }: any) {
     queryFn: () => getUserFriends(getItem('USERNAME') as string),
   });
 
+  const friends = useMemo(() => {
+    if (!query) {
+      return data?.friends;
+    }
+    return data?.friends.filter((friend: any) =>
+      friend.username.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [query, data?.friends]);
+
   const searchUsers = useCallback(async () => {
     const { data: users, error } = await getSearchResults(query);
 
@@ -143,28 +174,46 @@ export function FriendsHomeScreen({ navigation }: any) {
     console.log(data);
   };
 
+  useEffect(() => {
+    if (!query) {
+      return;
+    }
+
+    const searchDebounce = setTimeout(() => {
+      searchUsers().then(() => console.log('done'));
+    }, 500);
+
+    return () => {
+      clearTimeout(searchDebounce);
+    };
+  }, [query, friends]);
+
   if (isLoading) {
     return null;
   }
 
   return (
     <>
-      <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
+      <View style={{ flex: 1, backgroundColor: Colors.tertiary }}>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Header friendRequests={data?.friendRequests} />
             <TextInput
               value={query}
-              onChangeText={setQuery}
-              placeholderTextColor="rgba(255,255,255,0.8)"
+              onChangeText={(text) => {
+                setQuery(text);
+                if (text.length === 0) {
+                  setResults(null);
+                }
+              }}
+              placeholderTextColor="white"
               cursorColor="white"
               placeholder="Search Friend or players"
               style={styles.searchInput}
             />
-            <CreateMatchCard onPress={() => setCreatingMatch(true)} />
-            {!query && <FriendsUi friends={data?.friends} />}
-            {query && <Button title="Search Friends" onPress={searchUsers} />}
+            {!query && <CreateMatchCard onPress={() => setCreatingMatch(true)} />}
             {results && <ResultsUi onPress={() => addFriendMutation(query)} results={results} />}
+            <FriendsUi friends={friends} />
           </View>
         </SafeAreaView>
       </View>
@@ -181,25 +230,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    backgroundColor: Colors.backGround,
+    backgroundColor: Colors.tertiary,
     gap: 30,
     paddingTop: 20,
   },
   playerRankingCard: {
-    backgroundColor: Colors.secondary,
+    backgroundColor: Colors.plain,
     padding: 10,
     borderRadius: 10,
-    flexDirection: 'row',
-    columnGap: 5,
-    position: 'relative',
+    gap: 10,
   },
   createMatchCard: {
     backgroundColor: Colors.secondary,
-    padding: 10,
+    paddingHorizontal: 10,
     borderRadius: 10,
-    flexDirection: 'row',
-    columnGap: 5,
-    position: 'relative',
+    elevation: 10,
+    gap: 15,
+    paddingVertical: 20,
   },
   searchInput: {
     height: 50,

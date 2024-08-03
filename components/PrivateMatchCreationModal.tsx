@@ -4,18 +4,18 @@ import { BackButton } from 'components/ui/BackButton';
 import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
+import SocketContext from 'contexts/SocketContext';
+import { useAppStore } from 'models/appStore';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { friend } from 'types';
-import FriendCard from './cards/FriendCard';
-import Avatar from './Avatar';
-import { createPrivateMatch } from 'utils/supabase';
 import { getItem } from 'utils/storage';
-import SocketContext from 'contexts/SocketContext';
-import { useAppStore } from 'models/appStore';
-import SocketContextComponent from 'contexts/SocketContextComponent';
+import { createPrivateMatch } from 'utils/supabase';
+
+import Avatar from './Avatar';
+import FriendCard from './cards/FriendCard';
 
 const Header = ({ handleClose }: { handleClose: () => void }) => {
   return (
@@ -105,6 +105,7 @@ export default function PrivateMatchCreationModal({
                 onChangeText={setquery}
                 style={styles.searchInput}
                 placeholder="Search friends"
+                placeholderTextColor="white"
               />
               <FlatList
                 horizontal
@@ -127,8 +128,10 @@ export default function PrivateMatchCreationModal({
                         style={{
                           flex: 1,
                           backgroundColor: invitedFriends.includes(friend) ? 'red' : 'gold',
+                          borderColor: invitedFriends.includes(friend) ? '#d80000' : 'gold',
                         }}
                         title={invitedFriends.includes(friend) ? 'Remove' : 'Add to match'}
+                        textColor={invitedFriends.includes(friend) ? 'white' : 'black'}
                       />
                     </View>
                   </FriendCard>
