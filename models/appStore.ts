@@ -22,7 +22,7 @@ export const useAppStore = create<AppStoreProps>((set, state) => ({
   online: false,
   mode: 'HEAD_TO_HEAD',
   character: charactersArray[0],
-  matchmaking: false,
+  matchmaking: true,
   connected: false,
   matchFound: false,
   highScore: 0,

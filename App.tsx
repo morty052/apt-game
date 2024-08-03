@@ -15,14 +15,20 @@ import { getItem, setItem } from 'utils/storage';
 import { SQLiteProvider } from 'expo-sqlite/next';
 
 import RootStack from './navigation';
+import { TestScreen } from 'screens/testscreen';
 
 const loadDataBase = async () => {
-  const dbName = 'preloaded.db';
-  const dbAsset = require('./assets/preloaded.db');
+  const dbName = 'preloadedData.db';
+  const dbAsset = require('./assets/preloadedData.db');
   const dbUri = Asset.fromModule(dbAsset).uri;
   const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
 
   const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
+  // if (fileInfo.exists) {
+  //   await FileSystem.deleteAsync(`${FileSystem.documentDirectory}SQLite`);
+  // }
+  // console.log('deleted', fileInfo.exists);
+  // await FileSystem.downloadAsync(dbUri, dbFilePath);
   if (!fileInfo.exists) {
     await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, {
       intermediates: true,
@@ -145,8 +151,9 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <React.Suspense>
-        <SQLiteProvider databaseName="preloaded.db" useSuspense>
+        <SQLiteProvider databaseName="preloadedData.db" useSuspense>
           <RootStack onboarded={onboarded} />
+          {/* <TestScreen /> */}
         </SQLiteProvider>
       </React.Suspense>
       <StatusBar style="light" />

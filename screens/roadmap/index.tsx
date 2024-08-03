@@ -27,20 +27,24 @@ const QuestCard = ({ quest }: { quest: QuestProps }) => {
 };
 
 export default function RoadMapScreen() {
-  const db = useSQLiteContext();
   const DB = useDB();
   const getQuests = async () => {
-    const allRows = await DB.query.Quests.findMany({
-      columns: {
-        ID: true,
-        Name: true,
-        DESCRIPTION: true,
-        IMAGE: true,
-        PROGRESS: true,
-      },
-    });
-    console.log({ allRows });
-    return allRows;
+    try {
+      const allRows = await DB.query.Nuggets.findMany({
+        columns: {
+          id: true,
+          title: true,
+          content: true,
+          type: true,
+          image: true,
+        },
+      });
+      console.log({ allRows });
+      return allRows;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
   };
 
   const { data, isLoading } = useQuery({
@@ -54,7 +58,7 @@ export default function RoadMapScreen() {
 
   return (
     <Container style={styles.container}>
-      {data?.map((quest: any, index) => <QuestCard quest={quest} key={index} />)}
+      {data?.map((quest: any, index) => <Text>{quest.title}</Text>)}
     </Container>
   );
 }
