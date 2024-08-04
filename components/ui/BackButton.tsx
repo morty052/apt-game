@@ -1,11 +1,20 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Colors } from 'constants/colors';
+import { Pressable, StyleSheet, ViewStyle } from 'react-native';
 
-export const BackButton = ({ onPress }: { onPress: () => void }) => {
+export const BackButton = ({
+  onPress,
+  style,
+  iconColor,
+}: {
+  onPress: () => void;
+  style?: ViewStyle;
+  iconColor?: string;
+}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.backButton}>
-      <Ionicons name="chevron-back" size={24} color="black" />
-    </TouchableOpacity>
+    <Pressable onPress={onPress} style={[styles.backButton, style]}>
+      <Ionicons name="chevron-back" size={24} color={iconColor || 'white'} />
+    </Pressable>
   );
 };
 const styles = StyleSheet.create({
@@ -17,8 +26,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'yellow',
-    borderColor: 'gold',
+    borderColor: 'white',
+    backgroundColor: Colors.tertiary,
     marginLeft: 5,
   },
   backButtonText: {

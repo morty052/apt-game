@@ -103,7 +103,16 @@ export default function GameStack({ navigation }: any) {
         {/* <Stack.Screen name="GameScreen" component={GameRoute} /> */}
         <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
         <Stack.Screen name="ModeSelectScreen" component={ModeScreen} />
-        <Stack.Screen name="Store" component={MarketScreen} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu' },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          }}
+          name="Store"
+          component={MarketScreen}
+        />
         <Stack.Screen name="HelpScreen" component={HelpScreen} />
         <Stack.Screen name="PlayerScreen" component={HelpScreen} />
         <Stack.Screen

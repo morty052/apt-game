@@ -2,12 +2,20 @@ import { charactersArray } from 'constants/characters';
 import { CharacterProps, GameModes, inviteProps } from 'types';
 import { create } from 'zustand';
 
+type stats = {
+  loginStreak: 0;
+  wins: 0;
+  losses: 0;
+  totalPoints: 0;
+  totalGames: 0;
+};
+
 type AppStoreProps = {
-  online: boolean;
-  matchmaking: boolean;
-  mode: GameModes;
-  character: CharacterProps;
   connected: boolean;
+  character: CharacterProps;
+  rewardCount: number;
+  mode: GameModes;
+  matchmaking: boolean;
   matchFound: boolean;
   highScore: number;
   invites: inviteProps[] | [] | undefined;
@@ -19,7 +27,6 @@ type AppStoreProps = {
 };
 
 export const useAppStore = create<AppStoreProps>((set, state) => ({
-  online: false,
   mode: 'HEAD_TO_HEAD',
   character: charactersArray[0],
   matchmaking: false,
@@ -27,6 +34,7 @@ export const useAppStore = create<AppStoreProps>((set, state) => ({
   matchFound: false,
   highScore: 0,
   invites: [],
+  rewardCount: 1,
   setCharacter: (character: CharacterProps) => set({ character }),
   setConnected: (connected: boolean) => set({ connected }),
   setGameMode: (mode: GameModes) => set({ mode }),

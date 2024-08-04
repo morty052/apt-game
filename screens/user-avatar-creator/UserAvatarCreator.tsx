@@ -4,6 +4,7 @@ import RiveIconsContainer from 'components/rive/RiveIconsContainer';
 import RiveOptionsContainer from 'components/rive/RiveOptionsContainer';
 import { BackButton } from 'components/ui/BackButton';
 import { Colors } from 'constants/colors';
+import dayjs from 'dayjs';
 import { useAvatarStateContext } from 'models/avatarStateContext';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -16,7 +17,7 @@ const UserAvatarCreator = ({ navigation, route }: any) => {
   const { password, username, email } = route.params;
   const riveRef = React.useRef<RiveRef>(null);
 
-  const { activeIcon, riveAvatarSelections, setRiveAvatarSelection } = useAvatarStateContext();
+  const { riveAvatarSelections, setRiveAvatarSelection } = useAvatarStateContext();
 
   async function handleSubmit() {
     console.log(riveAvatarSelections);
@@ -28,13 +29,15 @@ const UserAvatarCreator = ({ navigation, route }: any) => {
       expo_push_token,
       avatar: riveAvatarSelections,
     });
+    const now = dayjs();
+    setItem('LAST_LOGIN', `${now.format('YYYY-MM-DD HH:mm:ss')}`);
+    setItem('LOGIN_COUNT', `${1}`);
     setItem('ID', id);
     setItem('USERNAME', username);
     setItem('EMAIL', email);
     setItem('PASSWORD', password);
     setItem('ONBOARDED', 'TRUE');
     setItem('AVATAR', JSON.stringify(riveAvatarSelections));
-    setItem('ONBOARDED', 'true');
     navigation.navigate('GameStack');
   }
 

@@ -1,66 +1,118 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import Avatar, { AvatarObject } from 'components/Avatar';
-import { BackButton } from 'components/ui/BackButton';
+import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { getUserFriends } from 'utils/supabase';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useAppStore } from 'models/appStore';
+import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 
-const FriendCard = ({
-  player,
-  online,
-}: {
-  player: { username: string; totalscore: number; avatar: AvatarObject };
-  online: boolean;
-}) => {
+const days = [1, 2, 3, 4, 5, 6, 7];
+
+const DailyLoginProgressBar = ({ rewardNumber }: { rewardNumber: number }) => {
   return (
-    <Pressable style={styles.playerRankingCard}>
-      <Avatar avatarObject={player.avatar} />
-      <View style={{ paddingTop: 10 }}>
-        <Text>{player.username}</Text>
-        <Text>{player.totalscore}</Text>
+    <View style={{ flexDirection: 'row', gap: 3, alignItems: 'center', alignSelf: 'center' }}>
+      <View
+        style={[
+          styles.barItem,
+          {
+            borderTopLeftRadius: 30,
+            borderBottomLeftRadius: 30,
+            backgroundColor: rewardNumber > 0 ? 'green' : 'gray',
+          },
+        ]}
+      />
+      {days.slice(1).map((day) => {
+        const isActive = rewardNumber >= day;
+        return (
+          <View
+            key={day}
+            style={[styles.barItem, { backgroundColor: isActive ? 'green' : 'gray' }]}
+          />
+        );
+      })}
+      <View style={{ height: 60, width: 60, backgroundColor: 'blue', marginLeft: -4 }} />
+    </View>
+  );
+};
+
+const DailyRewardIndicator = ({ isEligibleToClaim }: { isEligibleToClaim: boolean }) => {
+  return (
+    <View
+      style={{
+        backgroundColor: isEligibleToClaim ? 'green' : 'red',
+        width: 80,
+        height: 80,
+        borderRadius: 10,
+      }}
+    />
+  );
+};
+
+const DailyRewardCard = ({ rewardNumber }: { rewardNumber: number }) => {
+  console.log(rewardNumber);
+  return (
+    <View style={styles.dailyRewardCard}>
+      <View>
+        <Text style={{ textAlign: 'center' }}>Daily login reward</Text>
+        <Text style={{ textAlign: 'center', fontSize: 15 }}>Claim your daily login reward</Text>
       </View>
-    </Pressable>
+      <View
+        style={{
+          flexDirection: 'row',
+          gap: 10,
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}>
+        {days.map((day) => (
+          <DailyRewardIndicator isEligibleToClaim={rewardNumber >= day} key={day} />
+        ))}
+      </View>
+      <DailyLoginProgressBar rewardNumber={rewardNumber} />
+      <Text style={{ textAlign: 'center', fontSize: 12 }}>
+        Claim 7 days to receive a bonus reward
+      </Text>
+      <Button title="Claim" />
+    </View>
+  );
+};
+
+const AdFreeBundle = () => {
+  return (
+    <LinearGradient
+      colors={[Colors.tertiary, 'gold']}
+      style={{
+        padding: 10,
+        height: 180,
+        borderRadius: 10,
+      }}>
+      <Text>AD Free Bundle</Text>
+      <Text style={{ fontSize: 12 }}>Get rid of ads for 7 days</Text>
+    </LinearGradient>
   );
 };
 
 export default function Market({ navigation }: any) {
-  const { data: friends, isLoading } = useQuery({
-    queryKey: ['market'],
-    queryFn: getUserFriends,
-  });
+  // const { data: friends, isLoading } = useQuery({
+  //   queryKey: ['market'],
+  //   queryFn: getUserFriends,
+  // });
 
-  if (isLoading) {
-    return null;
-  }
+  // if (isLoading) {
+  //   return null;
+  // }
+
+  const rewardCount = useAppStore().rewardCount;
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
-      <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.plain }}>
+      <ScrollView>
         <View style={styles.container}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BackButton onPress={() => navigation.goBack()} />
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 24, flex: 1 }}>
-              Market
-            </Text>
-            <Pressable
-              style={{
-                height: 40,
-                width: 40,
-                backgroundColor: 'yellow',
-                borderRadius: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Ionicons name="help" size={24} color="black" />
-            </Pressable>
-          </View>
+          <DailyRewardCard rewardNumber={rewardCount} />
+          <AdFreeBundle />
+          <Text style={{}}>Coin Packs</Text>
+          <AdFreeBundle />
         </View>
-      </SafeAreaView>
+      </ScrollView>
     </View>
   );
 }
@@ -68,27 +120,22 @@ export default function Market({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
-    backgroundColor: Colors.backGround,
+    paddingHorizontal: 5,
+    backgroundColor: Colors.plain,
     gap: 30,
-    paddingTop: 20,
+    paddingVertical: 20,
   },
-  playerRankingCard: {
-    backgroundColor: Colors.secondary,
+  dailyRewardCard: {
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 10,
-    flexDirection: 'row',
-    columnGap: 5,
-    position: 'relative',
+    gap: 25,
+    paddingVertical: 20,
+    elevation: 10,
   },
-  searchInput: {
-    height: 50,
-    borderColor: 'white',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    // textAlign: 'center',
-    fontFamily: 'Crispy-Tofu',
-    color: 'white',
+  barItem: {
+    backgroundColor: 'gray',
+    width: Dimensions.get('window').width / 10,
+    height: 40,
   },
 });

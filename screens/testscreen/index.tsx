@@ -461,8 +461,7 @@ export function TestScreen() {
       }}>
       <Text style={{ textAlign: 'center', color: 'black' }}>Select a letter</Text>
       <Rive
-        artboardName="Alphabets"
-        url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722638088/rive/ohbhnzl5kglg3h5n80ep.riv"
+        url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722789579/rive/i1ayobpu2ijavdpff7sr.riv"
         style={{
           width: Dimensions.get('window').width,
           // backgroundColor: 'red',

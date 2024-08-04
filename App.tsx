@@ -16,6 +16,7 @@ import { SQLiteProvider } from 'expo-sqlite/next';
 
 import RootStack from './navigation';
 import { TestScreen } from 'screens/testscreen';
+import { useDailyLogin } from 'hooks/useDailyLogin';
 
 const loadDataBase = async () => {
   const dbName = 'preloadedData.db';
@@ -95,6 +96,8 @@ export default function App() {
 
   const { loadedSoundTrack, loadGameSoundtrack } = useSoundTrackModel();
 
+  const { loadedReward } = useDailyLogin();
+
   React.useEffect(() => {
     registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
 
@@ -138,7 +141,7 @@ export default function App() {
     return null;
   }
 
-  if (!loadedSoundTrack || !dbLoaded) {
+  if (!loadedSoundTrack || !dbLoaded || !loadedReward) {
     return <GameLoadingScreen />;
   }
 
@@ -152,8 +155,8 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <React.Suspense>
         <SQLiteProvider databaseName="preloadedData.db" useSuspense>
-          <RootStack onboarded={onboarded} />
-          {/* <TestScreen /> */}
+          {/* <RootStack onboarded={onboarded} /> */}
+          <TestScreen />
         </SQLiteProvider>
       </React.Suspense>
       <StatusBar style="light" />
