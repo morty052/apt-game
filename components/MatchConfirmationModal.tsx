@@ -84,7 +84,7 @@ function GroupMatchUi() {
 }
 
 const MatchConfirmationModal = () => {
-  const { playSound } = useSoundTrackModel();
+  const { playOuterGameSound } = useSoundTrackModel();
 
   const { matchFound, mode } = useAppStore();
 
@@ -93,7 +93,7 @@ const MatchConfirmationModal = () => {
   const navigation = useNavigation<any>();
 
   useEffect(() => {
-    if (matchFound) playSound('MATCH_FOUND');
+    if (matchFound) playOuterGameSound('MATCH_FOUND');
   }, [matchFound]);
 
   return (

@@ -5,6 +5,7 @@ import ScoreForRoundModal from 'components/ScoreForRoundModal';
 import TallyScreen from 'components/TallyScreen';
 import SocketContext from 'contexts/SocketContext';
 import { useGameStore } from 'models/gameStore';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 import React from 'react';
 import { View } from 'react-native';
 import { playerProps } from 'types';
@@ -17,6 +18,7 @@ const GameScreen = ({ route }: any) => {
   const [gameOver, setGameOver] = React.useState(false);
 
   const { socket } = React.useContext(SocketContext);
+  const { playSound, loadGameSoundtrack } = useSoundTrackModel();
 
   const handleCloseScoreModal = () => {
     // readyNextRound();
@@ -34,6 +36,14 @@ const GameScreen = ({ route }: any) => {
     player,
     opponents,
   } = useGameStore();
+
+  React.useEffect(() => {
+    loadGameSoundtrack(true).then(() => {
+      console.log('game loaded');
+    });
+
+    // TODO unload game soundtrack as cleanUp function
+  }, []);
 
   React.useEffect(() => {
     socket?.on('LETTER_SELECTED', (data: { letter: string }) => {
@@ -61,6 +71,8 @@ const GameScreen = ({ route }: any) => {
     socket?.on('SHOW_FINAL_TALLY', ({ nextRound }) => {
       console.log({ nextRound, round });
 
+      playSound('SCORE_FOR_ROUND_SOUND');
+
       // * ignore event if players are already playing
       if (playing) {
         console.log('call to show final tally was ignored');
@@ -77,7 +89,7 @@ const GameScreen = ({ route }: any) => {
 
     socket?.on('START_COUNTDOWN', (data) => {
       console.log('Timer Started');
-      // console.log(data);
+      playSound('ROUND_START');
     });
 
     socket?.on('PLAYER_DIED', (data: { deadPlayer: string; updatedPlayers: playerProps[] }) => {

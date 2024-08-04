@@ -4,7 +4,11 @@ import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppStore } from 'models/appStore';
-import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
+import gift from '../../assets/gifts/giftbox-base.png';
+import { ModalComponent } from 'components/ui/ModalComponent';
+import { useState } from 'react';
+import Rive from 'rive-react-native';
 
 const days = [1, 2, 3, 4, 5, 6, 7];
 
@@ -17,7 +21,7 @@ const DailyLoginProgressBar = ({ rewardNumber }: { rewardNumber: number }) => {
           {
             borderTopLeftRadius: 30,
             borderBottomLeftRadius: 30,
-            backgroundColor: rewardNumber > 0 ? 'green' : 'gray',
+            backgroundColor: rewardNumber > 0 ? Colors.tertiary : 'gray',
           },
         ]}
       />
@@ -26,11 +30,22 @@ const DailyLoginProgressBar = ({ rewardNumber }: { rewardNumber: number }) => {
         return (
           <View
             key={day}
-            style={[styles.barItem, { backgroundColor: isActive ? 'green' : 'gray' }]}
+            style={[styles.barItem, { backgroundColor: isActive ? Colors.tertiary : 'gray' }]}
           />
         );
       })}
-      <View style={{ height: 60, width: 60, backgroundColor: 'blue', marginLeft: -4 }} />
+      <View
+        style={{
+          height: 60,
+          width: 60,
+          backgroundColor: 'gray',
+          marginLeft: -4,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 5,
+        }}>
+        <Image source={gift} style={{ width: 58, height: 58 }} />
+      </View>
     </View>
   );
 };
@@ -39,16 +54,23 @@ const DailyRewardIndicator = ({ isEligibleToClaim }: { isEligibleToClaim: boolea
   return (
     <View
       style={{
-        backgroundColor: isEligibleToClaim ? 'green' : 'red',
+        backgroundColor: isEligibleToClaim ? Colors.backGround : 'gray',
         width: 80,
         height: 80,
         borderRadius: 10,
-      }}
-    />
+      }}>
+      <Image source={gift} style={{ width: 80, height: 80 }} />
+    </View>
   );
 };
 
-const DailyRewardCard = ({ rewardNumber }: { rewardNumber: number }) => {
+const DailyRewardCard = ({
+  rewardNumber,
+  onPressClaim,
+}: {
+  rewardNumber: number;
+  onPressClaim: () => void;
+}) => {
   console.log(rewardNumber);
   return (
     <View style={styles.dailyRewardCard}>
@@ -71,7 +93,7 @@ const DailyRewardCard = ({ rewardNumber }: { rewardNumber: number }) => {
       <Text style={{ textAlign: 'center', fontSize: 12 }}>
         Claim 7 days to receive a bonus reward
       </Text>
-      <Button title="Claim" />
+      <Button onPress={onPressClaim} title="Claim" />
     </View>
   );
 };
@@ -91,7 +113,73 @@ const AdFreeBundle = () => {
   );
 };
 
+const ClaimModal = ({
+  claiming,
+  setClaiming,
+}: {
+  claiming: boolean;
+  setClaiming: (state: boolean) => void;
+}) => {
+  const [unWrapping, setunWrapping] = useState(true);
+  return (
+    <ModalComponent visible={claiming}>
+      <View
+        onLayout={() => {
+          setTimeout(() => {
+            setunWrapping(false);
+          }, 3000);
+        }}
+      />
+      {unWrapping && (
+        <Rive
+          url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722789579/rive/i1ayobpu2ijavdpff7sr.riv"
+          style={{
+            width: Dimensions.get('window').width,
+            maxHeight: 400,
+            backgroundColor: 'red',
+            flex: 1,
+          }}
+        />
+      )}
+      {!unWrapping && (
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            paddingVertical: 20,
+            position: 'relative',
+            paddingHorizontal: 10,
+            justifyContent: 'space-between',
+          }}>
+          <View
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              justifyContent: 'center',
+              // backgroundColor: 'red',
+              paddingBottom: 80,
+            }}>
+            <View style={{ alignItems: 'center' }}>
+              <Text>Congratulations</Text>
+              <Text>You received:</Text>
+            </View>
+            <Image
+              source={gift}
+              style={{ height: 300, width: 300, borderWidth: 1, borderRadius: 15 }}
+            />
+            <Text style={{ fontSize: 14 }}>Come back tomorrow for more rewards</Text>
+          </View>
+          {/* @ts-ignore */}
+          <Button style={{ width: '100%' }} title="Continue" onPress={() => setClaiming(false)} />
+        </View>
+      )}
+    </ModalComponent>
+  );
+};
+
 export default function Market({ navigation }: any) {
+  const [claiming, setClaiming] = useState(false);
+
   // const { data: friends, isLoading } = useQuery({
   //   queryKey: ['market'],
   //   queryFn: getUserFriends,
@@ -107,12 +195,13 @@ export default function Market({ navigation }: any) {
     <View style={{ flex: 1, backgroundColor: Colors.plain }}>
       <ScrollView>
         <View style={styles.container}>
-          <DailyRewardCard rewardNumber={rewardCount} />
+          <DailyRewardCard onPressClaim={() => setClaiming(true)} rewardNumber={rewardCount} />
           <AdFreeBundle />
           <Text style={{}}>Coin Packs</Text>
           <AdFreeBundle />
         </View>
       </ScrollView>
+      <ClaimModal claiming={claiming} setClaiming={setClaiming} />
     </View>
   );
 }
@@ -136,6 +225,6 @@ const styles = StyleSheet.create({
   barItem: {
     backgroundColor: 'gray',
     width: Dimensions.get('window').width / 10,
-    height: 40,
+    height: 30,
   },
 });

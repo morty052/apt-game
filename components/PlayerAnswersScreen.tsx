@@ -1,4 +1,6 @@
+import * as Haptics from 'expo-haptics';
 import { useGameStore } from 'models/gameStore';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 import React from 'react';
 import { View, TextInput } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -11,8 +13,6 @@ import { Mic } from './Mic';
 import { usePlayingTime } from './Timer';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
-import useSound from 'hooks/useSound';
-import * as Haptics from 'expo-haptics';
 
 // * All background colors
 const backgroundColors = {
@@ -92,7 +92,7 @@ const AnswerView = ({
 
   const { activeLetter } = useGameStore();
 
-  const { playSound, sound } = useSound();
+  const { playSound } = useSoundTrackModel();
 
   const handlePlayerInput = React.useCallback(
     async (value: string) => {
@@ -108,8 +108,7 @@ const AnswerView = ({
       if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
         setError(true);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        await playSound();
-        await sound?.unloadAsync();
+        playSound('WRONG_LETTER');
         return;
         // setValue((prev) => ({ ...prev, [title]: '' }));
       }
@@ -186,6 +185,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
   });
 
   const { readyTallyMode, updateAnswers } = useGameStore();
+  const { playSound } = useSoundTrackModel();
 
   const { seconds } = usePlayingTime();
 
@@ -248,6 +248,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
   // * Watch for clock
   React.useEffect(() => {
     socket?.on('TIME_UP', () => {
+      playSound('ROUND_END');
       // * here because socket does not get updated answers
       const answerObject = Object.assign({}, answers);
 

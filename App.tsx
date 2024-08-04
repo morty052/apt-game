@@ -155,8 +155,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <React.Suspense>
         <SQLiteProvider databaseName="preloadedData.db" useSuspense>
-          {/* <RootStack onboarded={onboarded} /> */}
-          <TestScreen />
+          <RootStack onboarded={onboarded} />
         </SQLiteProvider>
       </React.Suspense>
       <StatusBar style="light" />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Audio, AVPlaybackSource } from 'expo-av';
-import matchFoundSound from '../assets/sounds/playButton.mp3';
+import matchFoundSound from '../assets/sounds/matchfound.mp3';
 import wrongLetterSound from '../assets/sounds/wrongletter.mp3';
 
 type SoundTrackNames = 'matchFoundSound' | 'wrongLetterSound';

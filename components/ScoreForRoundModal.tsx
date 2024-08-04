@@ -22,8 +22,11 @@ const ScoreForRoundModal = ({
 
   useEffect(() => {
     if (!open) return;
+
     const totalPoints = getPointsForPlayer({ player, opponents });
     setScoreForRound(totalPoints);
+
+    // * SEND SCORES TO SERVER
     socket?.emit('UPDATE_SCORES', {
       player: { username: getItem('USERNAME') },
       scoreForRound: totalPoints,
