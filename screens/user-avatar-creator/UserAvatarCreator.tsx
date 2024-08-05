@@ -26,8 +26,19 @@ export const UserAvatarEditor = ({ navigation, route }: any) => {
   const { riveAvatarSelections, setRiveAvatarSelection } = useAvatarStateContext();
 
   async function handleSubmit() {
-    console.log(riveAvatarSelections);
-    setItem('AVATAR', JSON.stringify(riveAvatarSelections));
+    const previousSelectionsData = getItem('AVATAR') || '{}';
+
+    const previousSelections = JSON.parse(previousSelectionsData);
+
+    const totalData = {
+      ...previousSelections,
+      ...riveAvatarSelections,
+    };
+
+    const avatar = JSON.stringify(totalData);
+
+    console.log(JSON.parse(avatar));
+    setItem('AVATAR', avatar);
     navigation.goBack();
   }
 
