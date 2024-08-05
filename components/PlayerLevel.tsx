@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import Avatar from './Avatar';
+import Avatar, { PlayerAvatar } from './Avatar';
 import { Text } from './ui/Text';
 
 const getDistanceFromLastLevel = (total_score: number) => {
@@ -65,16 +65,7 @@ export default function PlayerLevel({
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
-        <Avatar
-          avatarObject={{
-            BodyColor: 1,
-            BodySize: 0,
-            BodyEyes: 0,
-            BodyHair: 0,
-            BodyFaceHair: 0,
-            BackgroundColor: 0,
-          }}
-        />
+        <PlayerAvatar />
         <Pressable
           style={{
             position: 'absolute',

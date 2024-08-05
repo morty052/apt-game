@@ -8,6 +8,7 @@ import { useMemo, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from 'components/ui/Button';
 import { TabPanel } from 'components/ui/TabComponent';
+import { Ionicons } from '@expo/vector-icons';
 
 const avatarWidth = Dimensions.get('window').width * 0.7;
 
@@ -139,32 +140,37 @@ function PlayerInventory() {
   );
 }
 
-export default function PlayerProfile() {
+export default function PlayerProfile({ navigation }: any) {
   const [activeTab, setactiveTab] = useState<string>('INFO');
 
   return (
     <Container>
-      <View style={styles.topContainer}>
+      <View style={[styles.topContainer, { alignItems: 'center' }]}>
         <View
           style={{
             // backgroundColor: 'blue',
             flex: 1,
             height: avatarWidth,
+            width: avatarWidth,
             alignItems: 'center',
-            marginTop: -10,
+            position: 'relative',
           }}>
-          <PlayerAvatar
-            height={avatarWidth}
-            width={avatarWidth}
-            avatarObject={{
-              BodyColor: 1,
-              BodySize: 0,
-              BodyEyes: 0,
-              BodyHair: 0,
-              BodyFaceHair: 0,
-              BackgroundColor: 0,
-            }}
-          />
+          <PlayerAvatar height={avatarWidth} width={avatarWidth} />
+          <Pressable
+            onPress={() => navigation.navigate('AvatarEditor')}
+            style={{
+              backgroundColor: 'white',
+              position: 'absolute',
+              top: 20,
+              right: 5,
+              height: 40,
+              width: 40,
+              borderRadius: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Ionicons name="add-circle" size={24} color="black" />
+          </Pressable>
         </View>
       </View>
       <View style={styles.container}>

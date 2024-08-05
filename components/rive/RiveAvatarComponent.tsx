@@ -40,3 +40,20 @@ export const RiveAvatarComponent = React.forwardRef(({}, ref: LegacyRef<RiveRef>
     />
   );
 });
+
+/**
+ * Component for Avatar character preview. when user is editing their avatar. it sets the previous selections on load and It also listens to the global state context
+ * to listen to when users select new character feature options and updates the avatar state
+ * machine accordingly
+ */
+export const RiveAvatarComponentPreview = React.forwardRef(({}, ref: LegacyRef<RiveRef>) => {
+  return (
+    <Rive
+      ref={ref}
+      url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722345626/avatar.riv"
+      // alignment={Alignment.TopCenter}
+      // style={{ width: 300, height: 300, backgroundColor: 'white' }}
+      stateMachineName={STATE_MACHINE_NAME}
+    />
+  );
+});

@@ -97,7 +97,7 @@ export const Home = () => {
           <BottomNav onPressPlay={handleFindMatch} />
         </SafeAreaView>
       </ImageBackground>
-      <PendingMatchScreen />
+      {matchmaking && <PendingMatchScreen />}
     </>
   );
 };

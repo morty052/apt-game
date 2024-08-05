@@ -17,6 +17,7 @@ import NotificationsScreen from 'screens/notifications-screen';
 import PlayerProfile from 'screens/profile';
 import RoadMapScreen from 'screens/roadmap';
 import SettingsScreen from 'screens/settings-screen';
+import UserAvatarCreator, { UserAvatarEditor } from 'screens/user-avatar-creator/UserAvatarCreator';
 
 export type GameStackParamList = {
   GameTabs: undefined;
@@ -37,6 +38,7 @@ export type GameStackParamList = {
   };
   HomeScreen: undefined;
   RoadMapScreen: undefined;
+  AvatarEditor: undefined;
 };
 
 const Stack = createStackNavigator<GameStackParamList>();
@@ -154,6 +156,7 @@ export default function GameStack({ navigation }: any) {
           name="NotificationsScreen"
           component={NotificationsScreen}
         />
+        <Stack.Screen name="AvatarEditor" component={UserAvatarEditor} />
       </Stack.Navigator>
       <MatchConfirmationModal />
     </>

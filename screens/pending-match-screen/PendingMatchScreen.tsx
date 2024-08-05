@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Button } from 'components/ui/Button';
 import { ModalComponent } from 'components/ui/ModalComponent';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
@@ -14,7 +15,6 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import compass from '../../assets/icons/findingmatchicon.png';
-import { Button } from 'components/ui/Button';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
