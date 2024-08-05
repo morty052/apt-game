@@ -103,7 +103,7 @@ export const useSoundTrackModel = create<AppStoreProps>((set, state) => ({
           MATCH_SOUND_EFFECTS[SOUND_EFFECT as keyof typeof MATCH_SOUND_EFFECTS]
         ];
       await sound?.playAsync();
-      console.log('Playing Sound', sound);
+      console.log('Playing Sound');
     } catch (error) {
       console.error(error);
     }
@@ -113,7 +113,7 @@ export const useSoundTrackModel = create<AppStoreProps>((set, state) => ({
       const sound =
         state().soundTrack[SOUND_TRACK_NAMES[TRACK_NAME as keyof typeof SOUND_TRACK_NAMES]];
       await sound?.playAsync();
-      console.log('Playing Sound', sound);
+      console.log('Playing Sound');
     } catch (error) {
       console.error(error);
     }

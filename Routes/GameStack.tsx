@@ -107,8 +107,9 @@ export default function GameStack({ navigation }: any) {
           options={{
             headerShown: true,
             headerTitleAlign: 'center',
-            headerTitleStyle: { fontFamily: 'Crispy-Tofu' },
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
             headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerStyle: { backgroundColor: Colors.tertiary },
           }}
           name="Store"
           component={MarketScreen}

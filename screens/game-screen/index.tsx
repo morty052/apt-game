@@ -71,15 +71,13 @@ const GameScreen = ({ route }: any) => {
     socket?.on('SHOW_FINAL_TALLY', ({ nextRound }) => {
       console.log({ nextRound, round });
 
-      playSound('SCORE_FOR_ROUND_SOUND');
-
       // * ignore event if players are already playing
       if (playing) {
         console.log('call to show final tally was ignored');
         return;
       }
-
       setViewingFinalTally(true);
+      playSound('SCORE_FOR_ROUND_SOUND');
       readyNextRound(nextRound);
     });
 
