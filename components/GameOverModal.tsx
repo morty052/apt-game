@@ -272,15 +272,12 @@ export default function GameOverModal() {
     resetGame();
   };
 
-  useEffect(() => {
-    if (!winner) return;
-    else if (winner) {
-      playSound(winner.username === getItem('USERNAME') ? 'WINNER_SOUND' : 'LOSER_SOUND');
-    }
-  }, [winner]);
-
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      onLayout={() =>
+        playSound(winner?.username === getItem('USERNAME') ? 'WINNER_SOUND' : 'LOSER_SOUND')
+      }
+      style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.tertiary }}>
         <LinearGradient colors={[Colors.tertiary, Colors.primary]} style={{ flex: 1 }}>
           {viewingPerformance ? (
