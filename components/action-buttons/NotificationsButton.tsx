@@ -11,6 +11,7 @@ const Badge = ({ invites }: { invites: number | undefined }) => {
         style={{
           fontSize: 12,
           color: 'white',
+          textAlign: 'center',
         }}>
         {invites}
       </Text>
@@ -27,8 +28,10 @@ function NotificationsButton() {
       <Pressable
         onPress={() => navigation.navigate('NotificationsScreen')}
         style={styles.notificationContainer}>
-        <Ionicons name="notifications-outline" size={35} color="black" />
-        <Badge invites={invites?.length} />
+        <View style={{ position: 'relative' }}>
+          <Ionicons name="notifications-outline" size={35} color="black" />
+          <Badge invites={invites?.length} />
+        </View>
       </Pressable>
     </>
   );
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
   badge: {
     position: 'absolute',
     top: -10,
-    right: -2,
+    right: -4,
     backgroundColor: 'red',
     padding: 5,
     zIndex: 1,

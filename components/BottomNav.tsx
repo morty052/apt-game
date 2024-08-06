@@ -5,7 +5,7 @@ import PlayButton from './action-buttons/PlayButton';
 import friendsIcon from '../assets/icons/friends-icon--min.png';
 import leaderBoardIcon from '../assets/icons/leader-board-icon--min.png';
 import marketIcon from '../assets/icons/market-place-icon--min.png';
-import roadMapIcon from '../assets/icons/roadmap-icon.png';
+import settIngsIcon from '../assets/icons/settings-icon--min.png';
 
 export function NavBarButton({ screenName, icon }: { screenName: string; icon: any }) {
   const navigation = useNavigation<any>();
@@ -23,7 +23,7 @@ export default function BottomNav({ onPressPlay }: { onPressPlay: () => void }) 
       <NavBarButton icon={marketIcon} screenName="Store" />
       <PlayButton onPress={onPressPlay} />
       <NavBarButton icon={leaderBoardIcon} screenName="LeaderBoard" />
-      <NavBarButton icon={roadMapIcon} screenName="RoadMapScreen" />
+      <NavBarButton icon={settIngsIcon} screenName="SettingsScreen" />
     </View>
   );
 }

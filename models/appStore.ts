@@ -3,7 +3,11 @@ import { CharacterProps, GameModes, inviteProps, StatsProps } from 'types';
 import { create } from 'zustand';
 
 type AppStoreProps = {
-  connected: boolean;
+  networkState: {
+    reconnecting: boolean;
+    connected: boolean;
+    failed: boolean;
+  };
   character: CharacterProps;
   rewardCount: number;
   mode: GameModes;
@@ -14,10 +18,14 @@ type AppStoreProps = {
 };
 
 export const useAppStore = create<AppStoreProps>((set, state) => ({
+  networkState: {
+    reconnecting: false,
+    connected: false,
+    failed: false,
+  },
   mode: 'HEAD_TO_HEAD',
   character: charactersArray[0],
   matchmaking: false,
-  connected: false,
   matchFound: false,
   invites: [],
   rewardCount: 1,

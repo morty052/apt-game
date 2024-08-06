@@ -59,7 +59,8 @@ export const Home = () => {
   const DB = useDB();
 
   const { initGame } = useGameStore();
-  const { character, connected, matchmaking, mode } = useAppStore();
+  const { character, networkState, matchmaking, mode } = useAppStore();
+  const { connected } = networkState;
 
   const { isLoading } = useQuery({
     queryKey: ['userData'],

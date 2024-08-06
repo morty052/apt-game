@@ -80,7 +80,7 @@ export default function PlayerLevel() {
             onPress={() => navigation.navigate('Profile')}
           />
         </View>
-        <ProgressBar level={level} distanceFromLastLevel={distanceFromLastLevel} />
+        {/* <ProgressBar level={level} distanceFromLastLevel={distanceFromLastLevel} /> */}
         {/* <View
           style={{
             position: 'absolute',
@@ -102,7 +102,7 @@ export default function PlayerLevel() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    flex: 0.6,
+    // flex: 0.6,
     alignItems: 'center',
     maxWidth: 350,
     position: 'relative',

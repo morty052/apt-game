@@ -49,10 +49,11 @@ function TopNav() {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
           gap: 10,
         }}>
         <PlayerLevel />
+        <EnergyBalance />
         <EnergyBalance />
       </View>
     </View>

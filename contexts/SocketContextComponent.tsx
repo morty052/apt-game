@@ -59,11 +59,23 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     });
 
     socket.io.on('reconnect_error', async (error) => {
+      useAppStore.setState((state) => ({
+        networkState: {
+          ...state.networkState,
+          reconnecting: true,
+        },
+      }));
       console.info('Reconnection error: ' + error);
     });
 
     socket.io.on('reconnect_failed', () => {
       console.info('Reconnection failure.');
+      useAppStore.setState((state) => ({
+        networkState: {
+          ...state.networkState,
+          failed: true,
+        },
+      }));
     });
   };
 
@@ -74,9 +86,13 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
     const username = getItem('USERNAME');
     socket.emit('handshake', username, (uid: string, users: string[]) => {
       console.info('User handshake callback message received');
-      useAppStore.setState({
-        connected: true,
-      });
+      useAppStore.setState((state) => ({
+        networkState: {
+          connected: true,
+          failed: false,
+          reconnecting: false,
+        },
+      }));
     });
 
     setLoading(false);

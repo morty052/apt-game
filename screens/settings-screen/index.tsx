@@ -19,7 +19,6 @@ const avatarObject = {
 const UserInfoBar = () => {
   return (
     <View style={styles.userBar}>
-      <Avatar avatarObject={avatarObject} />
       <View>
         <Text style={styles.userBarText}>User Name</Text>
         <Text style={styles.userBarEmail}>abdulojehumen@outlook.com</Text>
@@ -50,37 +49,14 @@ const SettingsItem = ({ title, subtitle }: { title: string; subtitle: string }) 
 
 const SettingsScreen = ({ navigation }: any) => {
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BackButton onPress={() => navigation.goBack()} />
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 24, flex: 1 }}>
-              Settings
-            </Text>
-            <Pressable
-              style={{
-                height: 40,
-                width: 40,
-                backgroundColor: 'yellow',
-                borderRadius: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Ionicons name="help" size={24} color="black" />
-            </Pressable>
-          </View>
-          <UserInfoBar />
-          <SettingsItem title="Sound on" subtitle="Turn sound effects on or off" />
-          <SettingsItem title="Music" subtitle="Turn background music on or off" />
-          <SettingsItem title="Vibrations" subtitle="Turn vibrations  on or off" />
-          <SettingsItem title="Notification Sounds" subtitle="Turn vibrations  on or off" />
-          <SettingsItem
-            title="Friend requests"
-            subtitle="Allow  users to send you friend requests"
-          />
-        </View>
-      </SafeAreaView>
+    <View style={{ flex: 1, backgroundColor: Colors.plain }}>
+      <View style={styles.container}>
+        <SettingsItem title="Sound on" subtitle="Turn sound effects on or off" />
+        <SettingsItem title="Music" subtitle="Turn background music on or off" />
+        <SettingsItem title="Vibrations" subtitle="Turn vibrations  on or off" />
+        <SettingsItem title="Notification Sounds" subtitle="Turn vibrations  on or off" />
+        <SettingsItem title="Friend requests" subtitle="Allow  users to send you friend requests" />
+      </View>
     </View>
   );
 };
@@ -91,7 +67,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    backgroundColor: Colors.backGround,
+    backgroundColor: Colors.plain,
     gap: 30,
     paddingTop: 20,
   },

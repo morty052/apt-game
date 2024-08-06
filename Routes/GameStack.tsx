@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import CharacterSelectWindow from 'components/CharacterSelectWindow';
 import MatchConfirmationModal from 'components/MatchConfirmationModal';
+import NetworkFailedModal from 'components/NetworkFailedModal';
 import SettingsButton from 'components/action-buttons/SettingsIcon';
 import { BackButton } from 'components/ui/BackButton';
 import { Colors } from 'constants/colors';
@@ -17,7 +18,7 @@ import NotificationsScreen from 'screens/notifications-screen';
 import PlayerProfile from 'screens/profile';
 import RoadMapScreen from 'screens/roadmap';
 import SettingsScreen from 'screens/settings-screen';
-import UserAvatarCreator, { UserAvatarEditor } from 'screens/user-avatar-creator/UserAvatarCreator';
+import { UserAvatarEditor } from 'screens/user-avatar-creator/UserAvatarCreator';
 
 export type GameStackParamList = {
   GameTabs: undefined;
@@ -120,7 +121,19 @@ export default function GameStack({ navigation }: any) {
         <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
 
         {/* <Stack.Screen name="GameScreen" component={GameRoute} /> */}
-        <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitle: 'Settings',
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerStyle: { backgroundColor: Colors.tertiary },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerShadowVisible: false,
+          }}
+          name="SettingsScreen"
+          component={SettingsScreen}
+        />
         <Stack.Screen name="ModeSelectScreen" component={ModeScreen} />
         <Stack.Screen
           options={{
@@ -166,6 +179,7 @@ export default function GameStack({ navigation }: any) {
         <Stack.Screen name="AvatarEditor" component={UserAvatarEditor} />
       </Stack.Navigator>
       <MatchConfirmationModal />
+      <NetworkFailedModal />
     </>
   );
 }

@@ -20,6 +20,9 @@ import { updatePlayerHighScore } from 'utils/supabase';
 import PerformanceMeter, { performanceAnimationNames } from './rive/PerformanceMeter';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
+import { useDB } from 'hooks/useDb';
+import { Stats } from 'schema';
+import { eq } from 'drizzle-orm';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -169,6 +172,52 @@ export default function GameOverModal() {
 
   const navigation = useNavigation<any>();
 
+  const DB = useDB();
+
+  const updateAppStateStats = () => {
+    if (!matchStats) {
+      return;
+    }
+    const highScore = useAppStore.getState().stats.high_score;
+    const isHighScore = matchStats.totalScore > highScore;
+
+    useAppStore.setState((state) => ({
+      stats: {
+        ...state.stats,
+        points: matchStats.totalScore + state.stats.points,
+        games_played: state.stats.games_played + 1,
+        high_score: isHighScore ? matchStats.totalScore : highScore,
+        wins: isWinner ? state.stats.wins + 1 : state.stats.wins,
+        losses: isWinner ? state.stats.losses : state.stats.losses + 1,
+      },
+    }));
+  };
+
+  const updateDBStats = async () => {
+    if (!matchStats) {
+      return;
+    }
+    const stats = useAppStore.getState().stats;
+    const { high_score } = stats;
+    const isHighScore = matchStats.totalScore > high_score;
+    try {
+      const transaction = await DB.update(Stats)
+        .set({
+          points: matchStats.totalScore + stats.points,
+          games_played: stats.games_played + 1,
+          high_score: isHighScore ? matchStats.totalScore : high_score,
+          wins: isWinner ? stats.wins + 1 : stats.wins,
+          losses: isWinner ? stats.losses : stats.losses + 1,
+        })
+        .where(eq(Stats.id, 0))
+        .returning({ updatedId: Stats.level });
+
+      console.log(transaction);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleShowPerformance = async () => {
     try {
       setGettingStats(true);
@@ -217,23 +266,9 @@ export default function GameOverModal() {
     navigation.navigate('HomeScreen');
   };
 
-  const handleMatchFinish = () => {
-    if (!matchStats) {
-      return;
-    }
-    const highScore = useAppStore.getState().stats.high_score;
-    const isHighScore = matchStats.totalScore > highScore;
-
-    useAppStore.setState((state) => ({
-      stats: {
-        ...state.stats,
-        points: matchStats.totalScore + state.stats.points,
-        games_played: state.stats.games_played + 1,
-        high_score: isHighScore ? matchStats.totalScore : highScore,
-        wins: isWinner ? state.stats.wins + 1 : state.stats.wins,
-        losses: isWinner ? state.stats.losses : state.stats.losses + 1,
-      },
-    }));
+  const handleMatchFinish = async () => {
+    updateAppStateStats();
+    await updateDBStats();
     resetGame();
   };
 
