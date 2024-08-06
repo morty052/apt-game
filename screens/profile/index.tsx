@@ -1,14 +1,19 @@
-import { PlayerAvatar } from 'components/Avatar';
-import { Container } from 'components/ui/Container';
-import { Colors } from 'constants/colors';
-import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
-import { Text } from 'components/ui/Text';
-import { getItem } from 'utils/storage';
-import { useMemo, useState } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Button } from 'components/ui/Button';
-import { TabPanel } from 'components/ui/TabComponent';
 import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
+import { PlayerAvatar } from 'components/Avatar';
+import { Button } from 'components/ui/Button';
+import { Container } from 'components/ui/Container';
+import { TabPanel } from 'components/ui/TabComponent';
+import { Text } from 'components/ui/Text';
+import { Colors } from 'constants/colors';
+import { eq } from 'drizzle-orm';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useDB } from 'hooks/useDb';
+import { useMemo, useState } from 'react';
+import { Dimensions, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Stats } from 'schema';
+import { StatsProps } from 'types';
+import { getItem } from 'utils/storage';
 
 const avatarWidth = Dimensions.get('window').width * 0.7;
 
@@ -67,9 +72,38 @@ const ProgressBar = ({
   );
 };
 
-function PlayerInfo() {
+const StatContainer = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        borderTopWidth: 1,
+        borderColor: 'gray',
+        borderBottomWidth: 1,
+        paddingVertical: 20,
+      }}>
+      {children}
+    </View>
+  );
+};
+
+const StatItem = ({ title, value }: { title: string; value: string | number }) => {
+  return (
+    <View style={{ alignItems: 'center', flex: 1, gap: 5 }}>
+      <Text style={{ fontSize: 16 }}>{title}</Text>
+      <Text style={{ fontSize: 24 }}>{value}</Text>
+    </View>
+  );
+};
+
+const StatDivider = () => {
+  return <View style={{ width: 1, backgroundColor: 'gray' }} />;
+};
+
+function PlayerInfo({ stats }: { stats: StatsProps | undefined }) {
   const username = useMemo(() => getItem('USERNAME'), []);
   const email = useMemo(() => getItem('EMAIL'), []);
+  const { level, wins, losses, points, games_played, high_score } = stats || {};
   return (
     <View style={{ gap: 20 }}>
       <LinearGradient
@@ -110,6 +144,24 @@ function PlayerInfo() {
         </View>
         <Button title="View Achievements" />
       </LinearGradient>
+
+      <View>
+        <StatContainer>
+          <StatItem title={'Level'} value={level as number} />
+          <StatDivider />
+          <StatItem title={'Points'} value={points as number} />
+        </StatContainer>
+        <StatContainer>
+          <StatItem title={'Wins'} value={wins as number} />
+          <StatDivider />
+          <StatItem title={'Losses'} value={losses as number} />
+        </StatContainer>
+        <StatContainer>
+          <StatItem title={'Games Played'} value={games_played as number} />
+          <StatDivider />
+          <StatItem title={'High Score'} value={high_score as number} />
+        </StatContainer>
+      </View>
     </View>
   );
 }
@@ -142,43 +194,92 @@ function PlayerInventory() {
 
 export default function PlayerProfile({ navigation }: any) {
   const [activeTab, setactiveTab] = useState<string>('INFO');
+  const DB = useDB();
+  const getStats = async (): Promise<StatsProps> => {
+    try {
+      const allRows = await DB.query.Stats.findMany({
+        columns: {
+          level: true,
+          points: true,
+          high_score: true,
+          games_played: true,
+          wins: true,
+          losses: true,
+        },
+      });
+
+      const stats = allRows[0];
+      return stats;
+    } catch (error) {
+      console.log(error);
+      return {} as StatsProps;
+    }
+  };
+
+  const updateStats = async () => {
+    try {
+      const transaction = await DB.update(Stats)
+        .set({ level: 0, losses: 0 })
+        .where(eq(Stats.id, 0))
+        .returning({ updatedId: Stats.level });
+
+      console.log(transaction);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['Stats'],
+    queryFn: getStats,
+  });
+
+  console.log({ stats });
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
-    <Container>
-      <View style={[styles.topContainer, { alignItems: 'center' }]}>
-        <View
-          style={{
-            // backgroundColor: 'blue',
-            flex: 1,
-            height: avatarWidth,
-            width: avatarWidth,
-            alignItems: 'center',
-            position: 'relative',
-          }}>
-          <PlayerAvatar height={avatarWidth} width={avatarWidth} />
-          <Pressable
-            onPress={() => navigation.navigate('AvatarEditor')}
+    <ScrollView>
+      <Container style={{ paddingBottom: 40 }}>
+        <View style={[styles.topContainer, { alignItems: 'center' }]}>
+          <View
             style={{
-              backgroundColor: 'white',
-              position: 'absolute',
-              top: 20,
-              right: 5,
-              height: 40,
-              width: 40,
-              borderRadius: 20,
-              justifyContent: 'center',
+              // backgroundColor: 'blue',
+              flex: 1,
+              height: avatarWidth,
+              width: avatarWidth,
               alignItems: 'center',
+              position: 'relative',
             }}>
-            <Ionicons name="add-circle" size={24} color="black" />
-          </Pressable>
+            <PlayerAvatar height={avatarWidth} width={avatarWidth} />
+            <Pressable
+              // onPress={() => navigation.navigate('AvatarEditor')}
+              onPress={() => updateStats()}
+              style={{
+                backgroundColor: 'white',
+                position: 'absolute',
+                top: 20,
+                right: 5,
+                height: 40,
+                width: 40,
+                borderRadius: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Ionicons name="add-circle" size={24} color="black" />
+            </Pressable>
+          </View>
         </View>
-      </View>
-      <View style={styles.container}>
-        <TabPanel tabs={tabs} activeTab={activeTab} setactiveTab={setactiveTab} />
-        {activeTab === 'INFO' && <PlayerInfo />}
-        {activeTab === 'INVENTORY' && <PlayerInventory />}
-      </View>
-    </Container>
+        <View style={styles.container}>
+          <TabPanel tabs={tabs} activeTab={activeTab} setactiveTab={setactiveTab} />
+
+          {activeTab === 'INFO' && <PlayerInfo stats={stats} />}
+          {activeTab === 'INVENTORY' && <PlayerInventory />}
+        </View>
+      </Container>
+    </ScrollView>
   );
 }
 

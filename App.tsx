@@ -6,17 +6,17 @@ import * as Device from 'expo-device';
 import * as FileSystem from 'expo-file-system';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
+import { SQLiteProvider } from 'expo-sqlite/next';
 import { StatusBar } from 'expo-status-bar';
+import { useDailyLogin } from 'hooks/useDailyLogin';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import React from 'react';
 import { Platform } from 'react-native';
 import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
+import { TestScreen } from 'screens/testscreen';
 import { getItem, setItem } from 'utils/storage';
-import { SQLiteProvider } from 'expo-sqlite/next';
 
 import RootStack from './navigation';
-import { TestScreen } from 'screens/testscreen';
-import { useDailyLogin } from 'hooks/useDailyLogin';
 
 const loadDataBase = async () => {
   const dbName = 'preloadedData.db';
@@ -29,14 +29,15 @@ const loadDataBase = async () => {
   //   await FileSystem.deleteAsync(`${FileSystem.documentDirectory}SQLite`);
   // }
   // console.log('deleted', fileInfo.exists);
-  // await FileSystem.downloadAsync(dbUri, dbFilePath);
+
   if (!fileInfo.exists) {
     await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, {
       intermediates: true,
     });
   }
-  console.log('file exists');
+  console.log('file created');
   await FileSystem.downloadAsync(dbUri, dbFilePath);
+  setItem('DB_PATH', dbFilePath);
 };
 
 Notifications.setNotificationHandler({
@@ -134,6 +135,12 @@ export default function App() {
 
     getOnboarded();
     loadGameSoundtrack();
+    const DB_LOADED = getItem('DB_PATH') || null;
+
+    if (DB_LOADED) {
+      setDbLoaded(true);
+      return;
+    }
     loadDataBase().then(() => setDbLoaded(true));
   }, []);
 

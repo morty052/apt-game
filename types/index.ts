@@ -56,3 +56,12 @@ export type inviteProps = {
     avatar: AvatarObject;
   }[];
 };
+
+export type StatsProps = {
+  level: number;
+  points: number;
+  high_score: number;
+  games_played: number;
+  wins: number;
+  losses: number;
+};

@@ -1,14 +1,6 @@
 import { charactersArray } from 'constants/characters';
-import { CharacterProps, GameModes, inviteProps } from 'types';
+import { CharacterProps, GameModes, inviteProps, StatsProps } from 'types';
 import { create } from 'zustand';
-
-type stats = {
-  loginStreak: 0;
-  wins: 0;
-  losses: 0;
-  totalPoints: 0;
-  totalGames: 0;
-};
 
 type AppStoreProps = {
   connected: boolean;
@@ -17,12 +9,10 @@ type AppStoreProps = {
   mode: GameModes;
   matchmaking: boolean;
   matchFound: boolean;
-  highScore: number;
+  stats: StatsProps;
   invites: inviteProps[] | [] | undefined;
   setCharacter: (character: CharacterProps) => void;
   setGameMode: (mode: GameModes) => void;
-  setMatchmaking: (matchmaking: boolean) => void;
-  setMatchFound: (matchFound: boolean) => void;
 };
 
 export const useAppStore = create<AppStoreProps>((set, state) => ({
@@ -31,11 +21,16 @@ export const useAppStore = create<AppStoreProps>((set, state) => ({
   matchmaking: false,
   connected: false,
   matchFound: false,
-  highScore: 0,
   invites: [],
   rewardCount: 1,
+  stats: {
+    level: 0,
+    wins: 0,
+    losses: 0,
+    points: 0,
+    games_played: 0,
+    high_score: 0,
+  },
   setCharacter: (character: CharacterProps) => set({ character }),
   setGameMode: (mode: GameModes) => set({ mode }),
-  setMatchmaking: (matchmaking: boolean) => set({ matchmaking }),
-  setMatchFound: (matchFound: boolean) => set({ matchFound }),
 }));

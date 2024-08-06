@@ -12,11 +12,13 @@ import React, { useContext } from 'react';
 import { StyleSheet, View, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
-import { playerProps } from 'types';
+import { inviteProps, playerProps, StatsProps } from 'types';
 import { getItem } from 'utils/storage';
 import { getInvites } from 'utils/supabase';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
+import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
+import { useDB } from 'hooks/useDb';
 
 function RightNav() {
   return (
@@ -28,19 +30,43 @@ function RightNav() {
   );
 }
 
+const getUserData = async (DB: any): Promise<{ stats: StatsProps; invites: inviteProps[] }> => {
+  try {
+    const username = getItem('USERNAME');
+    const invites = await getInvites(username as string);
+    const allRows = await DB.query.Stats.findMany({
+      columns: {
+        level: true,
+        points: true,
+        high_score: true,
+        games_played: true,
+        wins: true,
+        losses: true,
+      },
+    });
+
+    const stats = allRows[0];
+    return { stats, invites };
+  } catch (error) {
+    console.log(error);
+    return {} as any;
+  }
+};
+
 export const Home = () => {
   const { socket } = useContext(SocketContext);
+
+  const DB = useDB();
 
   const { initGame } = useGameStore();
   const { character, connected, matchmaking, mode } = useAppStore();
 
   const { isLoading } = useQuery({
-    queryKey: ['matchInvites'],
+    queryKey: ['userData'],
     queryFn: async () => {
-      const username = getItem('USERNAME');
-      const data = await getInvites(username as string);
-      useAppStore.setState(() => ({ invites: data }));
-      return data;
+      const { stats, invites } = await getUserData(DB);
+      useAppStore.setState(() => ({ invites, stats }));
+      return stats;
     },
   });
 
@@ -82,7 +108,7 @@ export const Home = () => {
   }, [socket]);
 
   if (!connected || isLoading) {
-    return <LoadingScreen />;
+    return <GameLoadingScreen />;
   }
 
   return (

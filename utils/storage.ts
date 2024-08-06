@@ -11,7 +11,8 @@ type retreivableValues =
   | 'PASSWORD'
   | 'ONBOARDED'
   | 'AVATAR'
-  | 'expo_push_token';
+  | 'expo_push_token'
+  | 'DB_PATH';
 
 export const setItem = (key: string, value: string) => {
   storage.set(key, value);

@@ -32,16 +32,12 @@ function ModeSelectBox({
   value: gameModeProps['value'];
   setSelectingMode: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const navigation = useNavigation<NavigationProp<GameStackParamList>>();
-
-  const { setGameMode } = useAppStore();
-
   // const handleSelect = React.useCallback(() => {
   //   navigation.navigate('Lobby', { mode: value });
   // }, [value, navigation]);
 
   const handleSelect = () => {
-    setGameMode(value);
+    useAppStore.setState(() => ({ mode: value }));
     setSelectingMode(false);
   };
 
