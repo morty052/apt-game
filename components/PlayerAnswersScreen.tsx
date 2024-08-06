@@ -248,7 +248,6 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
   // * Watch for clock
   React.useEffect(() => {
     socket?.on('TIME_UP', () => {
-      playSound('ROUND_END');
       // * here because socket does not get updated answers
       const answerObject = Object.assign({}, answers);
 
@@ -279,7 +278,7 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
 
   return (
     <AnimatedSafeAreaView style={[{ flex: 1, gap: 20, paddingTop: 10 }, animatedStyles]}>
-      <View style={{ paddingHorizontal: 10 }}>
+      <View onLayout={() => playSound('ROUND_START')} style={{ paddingHorizontal: 10 }}>
         <HUD seconds={seconds} />
       </View>
       <>

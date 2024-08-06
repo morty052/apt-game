@@ -11,6 +11,7 @@ import PlayerInspectModal from './PlayerInspectModal';
 import { useTallyTime } from './Timer';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 
 const OpponentCard = ({
   username,
@@ -44,6 +45,8 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
   const { player, opponents, handleBustedPlayer } = useGameStore();
 
   const { seconds, setPaused } = useTallyTime();
+
+  const { playSound } = useSoundTrackModel();
 
   function handlePlayerInspect(player: any) {
     setPlayerToInspect(player);
@@ -102,7 +105,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
       />
       {/* <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} /> */}
       <SafeAreaView style={styles.alphabetScreencontainer}>
-        <View style={{ paddingHorizontal: 10, gap: 20 }}>
+        <View onLayout={() => playSound('ROUND_END')} style={{ paddingHorizontal: 10, gap: 20 }}>
           <HUD seconds={seconds} />
           <PlayerCard
             inTallyMode

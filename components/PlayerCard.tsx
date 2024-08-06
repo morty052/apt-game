@@ -1,5 +1,5 @@
 import { useGameStore } from 'models/gameStore';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { Pressable, StyleSheet, View, Image, ImageSourcePropType } from 'react-native';
 
 import Avatar from './Avatar';
@@ -8,6 +8,7 @@ import AnimalIcon from '../assets/icons/animal-icon.png';
 import ThingIcon from '../assets/icons/thing-icon.png';
 import PlaceIcon from '../assets/icons/place-icon.png';
 import NameIcon from '../assets/icons/friends-icon--min.png';
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 const avatarObject = {
   BodyColor: 1,
@@ -20,6 +21,27 @@ const avatarObject = {
 
 const FieldImage = ({ icon }: { icon: ImageSourcePropType }) => {
   return <Image source={icon} style={styles.fieldImage} />;
+};
+
+const FieldDisplay = ({ title, value }: { value: string; title: string }) => {
+  return (
+    <View style={[styles.answer]}>
+      <Text style={styles.answerText}>{title}</Text>
+      <Text style={styles.answerText}>{value}</Text>
+    </View>
+  );
+};
+
+const Field = ({ value, children }: { value: string; children: ReactNode }) => {
+  const isBusted = value === 'BUSTED';
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      backgroundColor: withSpring(isBusted ? 'red' : 'white'),
+    };
+  });
+
+  return <Animated.View style={[styles.answerContainer, animatedStyles]}>{children}</Animated.View>;
 };
 
 const PlayerCard = ({
@@ -47,34 +69,22 @@ const PlayerCard = ({
         </View>
       </View>
       <View style={{ gap: 20 }}>
-        <View style={[styles.answerContainer]}>
+        <Field value={answers[0]}>
           <FieldImage icon={NameIcon} />
-          <View style={[styles.answer]}>
-            <Text style={styles.answerText}>Name</Text>
-            <Text style={styles.answerText}>{answers[0]}</Text>
-          </View>
-        </View>
-        <View style={styles.answerContainer}>
+          <FieldDisplay title="Name" value={answers[0]} />
+        </Field>
+        <Field value={answers[1]}>
           <FieldImage icon={AnimalIcon} />
-          <View style={[styles.answer]}>
-            <Text style={styles.answerText}>Animal</Text>
-            <Text style={styles.answerText}>{answers[1]}</Text>
-          </View>
-        </View>
-        <View style={styles.answerContainer}>
+          <FieldDisplay title="Animal" value={answers[1]} />
+        </Field>
+        <Field value={answers[2]}>
           <FieldImage icon={PlaceIcon} />
-          <View style={[styles.answer]}>
-            <Text style={styles.answerText}>Place</Text>
-            <Text style={styles.answerText}>{answers[2]}</Text>
-          </View>
-        </View>
-        <View style={styles.answerContainer}>
+          <FieldDisplay title="Place" value={answers[2]} />
+        </Field>
+        <Field value={answers[3]}>
           <FieldImage icon={ThingIcon} />
-          <View style={[styles.answer]}>
-            <Text style={styles.answerText}>Thing</Text>
-            <Text style={styles.answerText}>{answers[3]}</Text>
-          </View>
-        </View>
+          <FieldDisplay title="Thing" value={answers[3]} />
+        </Field>
       </View>
     </Pressable>
   );
@@ -109,7 +119,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'white',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: {

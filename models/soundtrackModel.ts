@@ -98,11 +98,12 @@ export const useSoundTrackModel = create<AppStoreProps>((set, state) => ({
   },
   playSound: async (SOUND_EFFECT: MatchSoundEffectNames) => {
     try {
-      const sound =
+      const soundToPlay =
         state().matchSoundEffects[
           MATCH_SOUND_EFFECTS[SOUND_EFFECT as keyof typeof MATCH_SOUND_EFFECTS]
         ];
-      await sound?.playAsync();
+      await soundToPlay.setStatusAsync({ shouldPlay: true });
+      await soundToPlay.setStatusAsync({ positionMillis: 0 });
       console.log('Playing Sound');
     } catch (error) {
       console.error(error);
@@ -110,10 +111,14 @@ export const useSoundTrackModel = create<AppStoreProps>((set, state) => ({
   },
   playOuterGameSound: async (TRACK_NAME: OuterSoundTrackNames) => {
     try {
-      const sound =
+      const soundToPlay =
         state().soundTrack[SOUND_TRACK_NAMES[TRACK_NAME as keyof typeof SOUND_TRACK_NAMES]];
-      await sound?.playAsync();
       console.log('Playing Sound');
+      // await soundToPlay?.playAsync();
+      await soundToPlay.setStatusAsync({ shouldPlay: true });
+      await soundToPlay.setStatusAsync({ positionMillis: 0 });
+      // console.log('after play', );
+      // const { sound } = await Audio.Sound.createAsync(track);
     } catch (error) {
       console.error(error);
     }

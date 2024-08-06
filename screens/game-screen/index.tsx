@@ -18,7 +18,7 @@ const GameScreen = ({ route }: any) => {
   const [gameOver, setGameOver] = React.useState(false);
 
   const { socket } = React.useContext(SocketContext);
-  const { playSound, loadGameSoundtrack } = useSoundTrackModel();
+  const { loadGameSoundtrack } = useSoundTrackModel();
 
   const handleCloseScoreModal = () => {
     // readyNextRound();
@@ -77,7 +77,6 @@ const GameScreen = ({ route }: any) => {
         return;
       }
       setViewingFinalTally(true);
-      playSound('SCORE_FOR_ROUND_SOUND');
       readyNextRound(nextRound);
     });
 
@@ -87,7 +86,7 @@ const GameScreen = ({ route }: any) => {
 
     socket?.on('START_COUNTDOWN', (data) => {
       console.log('Timer Started');
-      playSound('ROUND_START');
+      // playSound('ROUND_START');
     });
 
     socket?.on('PLAYER_DIED', (data: { deadPlayer: string; updatedPlayers: playerProps[] }) => {

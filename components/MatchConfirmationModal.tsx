@@ -92,9 +92,9 @@ const MatchConfirmationModal = () => {
 
   const navigation = useNavigation<any>();
 
-  useEffect(() => {
-    if (matchFound) playOuterGameSound('MATCH_FOUND');
-  }, [matchFound]);
+  // useEffect(() => {
+  //   if (matchFound) playOuterGameSound('MATCH_FOUND');
+  // }, [matchFound]);
 
   return (
     <Modal
@@ -104,6 +104,7 @@ const MatchConfirmationModal = () => {
       statusBarTranslucent
       presentationStyle={Platform.select({ android: undefined, ios: 'fullScreen' })}>
       <View
+        onLayout={() => playOuterGameSound('MATCH_FOUND')}
         style={{
           flex: 1,
           backgroundColor: 'rgba( 0, 0, 0, 0.8 )',

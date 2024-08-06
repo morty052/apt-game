@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { getPointsForPlayer, useGameStore } from 'models/gameStore';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useEffect, useState } from 'react';
 import { Modal, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +20,7 @@ const ScoreForRoundModal = ({
 }) => {
   const [scoreForRound, setScoreForRound] = useState(0);
   const { player, opponents } = useGameStore();
+  const { playSound } = useSoundTrackModel();
 
   useEffect(() => {
     if (!open) return;
@@ -38,6 +40,7 @@ const ScoreForRoundModal = ({
     <Modal animationType="fade" statusBarTranslucent visible={open}>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }}>
         <View
+          onLayout={() => playSound('SCORE_FOR_ROUND_SOUND')}
           style={{
             flex: 1,
             paddingHorizontal: 10,

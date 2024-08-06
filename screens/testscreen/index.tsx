@@ -441,14 +441,18 @@
 // });
 
 import { Button } from 'components/ui/Button';
-import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Rive from 'rive-react-native';
+import { useSoundTrackModel } from 'models/soundtrackModel';
+import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 export function TestScreen() {
+  const { playOuterGameSound } = useSoundTrackModel();
+
+  useEffect(() => {
+    playOuterGameSound('MATCH_FOUND');
+  }, []);
+
   return (
     <View
       style={{
@@ -458,16 +462,14 @@ export function TestScreen() {
         gap: 20,
         paddingHorizontal: 10,
         alignItems: 'center',
+        justifyContent: 'flex-end',
       }}>
-      <Rive
-        url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722879917/qjofsvrlxhnaqfln30b4.riv"
-        style={{
-          width: Dimensions.get('window').width,
-          // backgroundColor: 'red',
-        }}
-      />
       {/* @ts-ignore */}
-      <Button style={{ width: '100%' }} title="Confirm" />
+      <Button
+        onPress={() => playOuterGameSound('MATCH_FOUND')}
+        style={{ width: '100%' }}
+        title="Confirm"
+      />
     </View>
   );
 }
