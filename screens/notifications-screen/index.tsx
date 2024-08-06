@@ -1,16 +1,25 @@
 import { useNavigation } from '@react-navigation/native';
 import Avatar from 'components/Avatar';
 import { Button } from 'components/ui/Button';
+import { TabPanel } from 'components/ui/TabComponent';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { inviteProps } from 'types';
 import { getItem } from 'utils/storage';
 
-function InvitationCard({ invite, onAccept }: { invite: inviteProps; onAccept: () => void }) {
+function InvitationCard({
+  invite,
+  onAccept,
+  onReject,
+}: {
+  invite: inviteProps;
+  onAccept: () => void;
+  onReject: () => void;
+}) {
   return (
     <View
       style={{
@@ -32,6 +41,7 @@ function InvitationCard({ invite, onAccept }: { invite: inviteProps; onAccept: (
       <View style={{ flexDirection: 'row', gap: 10 }}>
         <Button onPress={onAccept} fontSize={14} title="Accept" />
         <Button
+          onPress={onReject}
           style={{ backgroundColor: 'red', borderColor: '#ff0040' }}
           textColor="white"
           fontSize={14}
@@ -42,13 +52,50 @@ function InvitationCard({ invite, onAccept }: { invite: inviteProps; onAccept: (
   );
 }
 
-export default function NotificationsScreen() {
+const tabs = [
+  {
+    value: 'INVITES',
+    title: 'Invites',
+  },
+  {
+    value: 'MESSAGES',
+    title: 'Messages',
+  },
+];
+
+const InvitationPanel = ({
+  acceptCreation,
+  rejectInvite,
+}: {
+  acceptCreation: (invite: inviteProps) => void;
+  rejectInvite: (invite: inviteProps) => void;
+}) => {
   const { invites } = useAppStore();
+  return (
+    <FlatList
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ gap: 20 }}
+      data={invites}
+      renderItem={({ item }) => (
+        <InvitationCard
+          onReject={() => rejectInvite(item)}
+          onAccept={() => acceptCreation(item)}
+          invite={item}
+        />
+      )}
+    />
+  );
+};
+
+export default function NotificationsScreen() {
+  const [activeTab, setactiveTab] = useState<string>('INVITES');
 
   const navigation = useNavigation<any>();
   const { socket } = React.useContext(SocketContext);
 
   const { character } = useAppStore();
+
+  const { invites } = useAppStore();
 
   const acceptCreation = useCallback(
     (invite: inviteProps) => {
@@ -64,16 +111,22 @@ export default function NotificationsScreen() {
     [navigation, socket]
   );
 
+  const rejectNotification = (item: inviteProps) => {
+    console.log(item.id);
+    useAppStore.setState((state) => ({
+      invites: state.invites?.filter((invite) => invite.id !== item.id),
+    }));
+  };
+
   return (
     <View style={styles.container}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 20 }}
-        data={invites}
-        renderItem={({ item }) => (
-          <InvitationCard onAccept={() => acceptCreation(item)} invite={item} />
-        )}
-      />
+      <TabPanel tabs={tabs} activeTab={activeTab} setactiveTab={setactiveTab} />
+      {activeTab === 'INVITES' && (
+        <InvitationPanel rejectInvite={rejectNotification} acceptCreation={acceptCreation} />
+      )}
+      {activeTab === 'MESSAGES' && (
+        <InvitationPanel rejectInvite={rejectNotification} acceptCreation={acceptCreation} />
+      )}
     </View>
   );
 }
@@ -84,5 +137,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.plain,
     paddingHorizontal: 10,
     paddingVertical: 20,
+    gap: 20,
   },
 });

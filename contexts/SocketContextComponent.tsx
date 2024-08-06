@@ -1,17 +1,17 @@
+import { useAppStore } from 'models/appStore';
 import React, { PropsWithChildren, useEffect, useReducer, useState } from 'react';
 import { Text } from 'react-native';
 
 import { defaultSocketContextState, SocketContextProvider, SocketReducer } from './SocketContext';
 import { useSocket } from '../hooks/useSocket';
 import { getItem } from '../utils/storage';
-import { useAppStore } from 'models/appStore';
+
+import * as Network from 'expo-network';
 
 export type ISocketContextComponentProps = PropsWithChildren;
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = (props) => {
   const { children } = props;
-
-  const { setConnected } = useAppStore();
 
   const socket = useSocket(`https://apt-server.onrender.com/user`, {
     reconnectionAttempts: 5,
@@ -58,7 +58,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
       console.info('Reconnection Attempt: ' + attempt);
     });
 
-    socket.io.on('reconnect_error', (error) => {
+    socket.io.on('reconnect_error', async (error) => {
       console.info('Reconnection error: ' + error);
     });
 
@@ -69,11 +69,14 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 
   const SendHandshake = async () => {
     console.info('Sending handshake to server ...');
-
+    const networkState = await Network.getNetworkStateAsync();
+    console.log(networkState);
     const username = getItem('USERNAME');
     socket.emit('handshake', username, (uid: string, users: string[]) => {
       console.info('User handshake callback message received');
-      setConnected(true);
+      useAppStore.setState({
+        connected: true,
+      });
     });
 
     setLoading(false);

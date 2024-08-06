@@ -19,7 +19,6 @@ type AppStoreProps = {
   matchFound: boolean;
   highScore: number;
   invites: inviteProps[] | [] | undefined;
-  setConnected: (connected: boolean) => void;
   setCharacter: (character: CharacterProps) => void;
   setGameMode: (mode: GameModes) => void;
   setMatchmaking: (matchmaking: boolean) => void;
@@ -36,7 +35,6 @@ export const useAppStore = create<AppStoreProps>((set, state) => ({
   invites: [],
   rewardCount: 1,
   setCharacter: (character: CharacterProps) => set({ character }),
-  setConnected: (connected: boolean) => set({ connected }),
   setGameMode: (mode: GameModes) => set({ mode }),
   setMatchmaking: (matchmaking: boolean) => set({ matchmaking }),
   setMatchFound: (matchFound: boolean) => set({ matchFound }),

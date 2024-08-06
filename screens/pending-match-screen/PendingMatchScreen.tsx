@@ -5,8 +5,8 @@ import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import { useDB } from 'hooks/useDb';
 import { useAppStore } from 'models/appStore';
-import { useEffect } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, View, ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,6 +17,88 @@ import Animated, {
 import compass from '../../assets/icons/findingmatchicon.png';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
+
+const Skeleton = ({
+  height,
+  width,
+  style,
+}: {
+  height?: number;
+  width?: number;
+  style?: ViewStyle;
+}) => {
+  const backgroundColor = useSharedValue('white');
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      backgroundColor: backgroundColor.value,
+    };
+  });
+
+  useEffect(() => {
+    backgroundColor.value = withRepeat(withTiming(Colors.plain, { duration: 1000 }), -1, true);
+  }, []);
+
+  return (
+    <Animated.View
+      style={[{ height: height || 300, width: width || 300 }, animatedStyles, style]}
+    />
+  );
+};
+
+const NuggetSkeleton = () => {
+  return (
+    <View style={{ gap: 20, alignItems: 'center' }}>
+      <Skeleton
+        style={{ width: 220, height: 220, borderRadius: 20, elevation: 5, alignSelf: 'center' }}
+        height={200}
+        width={200}
+      />
+      <Skeleton style={{ borderRadius: 10 }} height={30} width={250} />
+      <Skeleton style={{ borderRadius: 10 }} height={20} width={300} />
+      <Skeleton style={{ borderRadius: 10 }} height={20} width={300} />
+    </View>
+  );
+};
+
+const Nugget = ({
+  nugget,
+}: {
+  nugget:
+    | { id: number; title: string | null; type: string; image: string; content: number }
+    | undefined;
+}) => {
+  return (
+    <>
+      <View
+        style={{
+          backgroundColor: 'white',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: 220,
+          height: 220,
+          borderRadius: 20,
+          elevation: 5,
+        }}>
+        <Image
+          source={{ uri: nugget?.image }}
+          style={{ height: 200, width: 200, alignSelf: 'center' }}
+        />
+      </View>
+      <Text
+        style={{
+          color: 'white',
+          textAlign: 'center',
+          fontSize: 24,
+        }}>
+        {nugget?.title}
+      </Text>
+      <Text style={{ color: 'white', textAlign: 'center', fontSize: 18, lineHeight: 24 }}>
+        {nugget?.content}
+      </Text>
+    </>
+  );
+};
 
 export default function PendingMatchScreen() {
   const DB = useDB();
@@ -65,6 +147,7 @@ export default function PendingMatchScreen() {
     <ModalComponent style={{ backgroundColor: Colors.tertiary }} visible={matchmaking}>
       <View style={styles.container}>
         <View style={styles.innerContainer}>
+          {/* HEADER */}
           <View style={{ gap: 2 }}>
             <AnimatedImage
               source={compass}
@@ -78,33 +161,11 @@ export default function PendingMatchScreen() {
               Finding Match
             </Animated.Text>
           </View>
+          {/* HR */}
           <View style={{ height: 2, backgroundColor: 'rgba(255,255,255,0.5)', width: '100%' }} />
-          <View
-            style={{
-              backgroundColor: 'white',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: 220,
-              height: 220,
-              borderRadius: 20,
-              elevation: 5,
-            }}>
-            <Image
-              source={{ uri: nugget?.image }}
-              style={{ height: 200, width: 200, alignSelf: 'center' }}
-            />
-          </View>
-          <Text
-            style={{
-              color: 'white',
-              textAlign: 'center',
-              fontSize: 24,
-            }}>
-            {nugget?.title}
-          </Text>
-          <Text style={{ color: 'white', textAlign: 'center', fontSize: 18, lineHeight: 24 }}>
-            {nugget?.content}
-          </Text>
+
+          {!isLoading && <Nugget nugget={nugget} />}
+          {isLoading && <NuggetSkeleton />}
         </View>
         <Button
           onPress={() => useAppStore.getState().setMatchmaking(false)}

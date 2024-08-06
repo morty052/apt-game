@@ -156,6 +156,7 @@ export default function App() {
       <React.Suspense>
         <SQLiteProvider databaseName="preloadedData.db" useSuspense>
           <RootStack onboarded={onboarded} />
+          {/* <GameLoadingScreen /> */}
         </SQLiteProvider>
       </React.Suspense>
       <StatusBar style="light" />

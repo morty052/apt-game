@@ -73,13 +73,27 @@ const Stack = createStackNavigator<GameStackParamList>();
 //   );
 // };
 
-const GameRoutes = () => {
+const GameRoutes = ({ navigation }: any) => {
   return (
     <SocketContextComponent>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={Home} />
         <Stack.Screen name="GameScreen" component={GameScreen} />
         <Stack.Screen name="FriendsList" component={FriendListScreen} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitle: 'Notifications',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerTitleAlign: 'center',
+            headerBackTitle: '',
+            headerStyle: { backgroundColor: Colors.tertiary },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerShadowVisible: false,
+          }}
+          name="NotificationsScreen"
+          component={NotificationsScreen}
+        />
       </Stack.Navigator>
     </SocketContextComponent>
   );
@@ -95,7 +109,10 @@ export default function GameStack({ navigation }: any) {
             headerShown: true,
             headerTitle: 'Character Select',
             headerTitleAlign: 'center',
-            headerTitleStyle: { fontFamily: 'Crispy-Tofu' },
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerStyle: { backgroundColor: Colors.tertiary },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerShadowVisible: false,
           }}
           name="CharacterSelect"
           component={CharacterSelectWindow}
@@ -145,17 +162,7 @@ export default function GameStack({ navigation }: any) {
           name="RoadMapScreen"
           component={RoadMapScreen}
         />
-        <Stack.Screen
-          options={{
-            headerShown: true,
-            headerTitle: '',
-            headerBackTitle: '',
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-            headerShadowVisible: false,
-          }}
-          name="NotificationsScreen"
-          component={NotificationsScreen}
-        />
+
         <Stack.Screen name="AvatarEditor" component={UserAvatarEditor} />
       </Stack.Navigator>
       <MatchConfirmationModal />

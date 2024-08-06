@@ -440,17 +440,17 @@
 //   },
 // });
 
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Button } from 'components/ui/Button';
+import { Text } from 'components/ui/Text';
+import { Colors } from 'constants/colors';
 import React from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Rive from 'rive-react-native';
-import { Colors } from 'constants/colors';
-import { Text } from 'components/ui/Text';
-import { Button } from 'components/ui/Button';
 
 export function TestScreen() {
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: Colors.plain,
@@ -459,9 +459,8 @@ export function TestScreen() {
         paddingHorizontal: 10,
         alignItems: 'center',
       }}>
-      <Text style={{ textAlign: 'center', color: 'black' }}>Select a letter</Text>
       <Rive
-        url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722789579/rive/i1ayobpu2ijavdpff7sr.riv"
+        url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722879917/qjofsvrlxhnaqfln30b4.riv"
         style={{
           width: Dimensions.get('window').width,
           // backgroundColor: 'red',
@@ -469,7 +468,7 @@ export function TestScreen() {
       />
       {/* @ts-ignore */}
       <Button style={{ width: '100%' }} title="Confirm" />
-    </SafeAreaView>
+    </View>
   );
 }
 
