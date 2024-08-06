@@ -128,8 +128,6 @@ export default function CharacterSelectWindow({ navigation }: { navigation: any 
   const { height, width } = useWindowDimensions();
   const flatListRef = React.useRef<FlatList>(null);
 
-  const { setCharacter } = useAppStore();
-
   const activeCharacter = React.useMemo(() => charactersArray[index], [index]);
 
   const scroll = (index: number) => {
@@ -139,7 +137,7 @@ export default function CharacterSelectWindow({ navigation }: { navigation: any 
   };
 
   const confirmCharacter = () => {
-    setCharacter(activeCharacter);
+    useAppStore.setState({ character: activeCharacter });
     // setSelectingCharacter(false);
     navigation.goBack();
   };

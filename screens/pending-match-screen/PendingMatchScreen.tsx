@@ -168,7 +168,7 @@ export default function PendingMatchScreen() {
           {isLoading && <NuggetSkeleton />}
         </View>
         <Button
-          onPress={() => useAppStore.getState().setMatchmaking(false)}
+          onPress={() => useAppStore.setState({ matchmaking: false })}
           style={{ backgroundColor: 'red', borderColor: '#d80000' }}
           textColor="white"
           title="Cancel"

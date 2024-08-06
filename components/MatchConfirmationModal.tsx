@@ -142,7 +142,7 @@ const MatchConfirmationModal = () => {
               title="Accept"
               onPress={() => {
                 navigation.navigate('GameScreen', { room });
-                useAppStore.getState().setMatchFound(false);
+                useAppStore.setState({ matchFound: false });
               }}
             />
             <Button
@@ -151,7 +151,7 @@ const MatchConfirmationModal = () => {
               title="Reject"
               onPress={() => {
                 navigation.navigate('GameScreen', { room });
-                useAppStore.getState().setMatchFound(false);
+                useAppStore.setState({ matchFound: false });
               }}
             />
           </View>

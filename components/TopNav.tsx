@@ -52,7 +52,7 @@ function TopNav() {
           justifyContent: 'space-between',
           gap: 10,
         }}>
-        <PlayerLevel total_score={5780} />
+        <PlayerLevel />
         <EnergyBalance />
       </View>
     </View>

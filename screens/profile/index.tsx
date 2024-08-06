@@ -9,6 +9,7 @@ import { Colors } from 'constants/colors';
 import { eq } from 'drizzle-orm';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDB } from 'hooks/useDb';
+import { useAppStore } from 'models/appStore';
 import { useMemo, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Stats } from 'schema';
@@ -100,10 +101,11 @@ const StatDivider = () => {
   return <View style={{ width: 1, backgroundColor: 'gray' }} />;
 };
 
-function PlayerInfo({ stats }: { stats: StatsProps | undefined }) {
+function PlayerInfo() {
   const username = useMemo(() => getItem('USERNAME'), []);
   const email = useMemo(() => getItem('EMAIL'), []);
-  const { level, wins, losses, points, games_played, high_score } = stats || {};
+  const stats = useAppStore().stats;
+  const { level, wins, losses, points, games_played, high_score } = stats;
   return (
     <View style={{ gap: 20 }}>
       <LinearGradient
@@ -229,17 +231,6 @@ export default function PlayerProfile({ navigation }: any) {
     }
   };
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ['Stats'],
-    queryFn: getStats,
-  });
-
-  console.log({ stats });
-
-  if (isLoading) {
-    return null;
-  }
-
   return (
     <ScrollView>
       <Container style={{ paddingBottom: 40 }}>
@@ -275,7 +266,7 @@ export default function PlayerProfile({ navigation }: any) {
         <View style={styles.container}>
           <TabPanel tabs={tabs} activeTab={activeTab} setactiveTab={setactiveTab} />
 
-          {activeTab === 'INFO' && <PlayerInfo stats={stats} />}
+          {activeTab === 'INFO' && <PlayerInfo />}
           {activeTab === 'INVENTORY' && <PlayerInventory />}
         </View>
       </Container>

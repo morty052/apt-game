@@ -1,5 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
+import ALPHABETS from 'constants/alphabets';
 import { Colors } from 'constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
@@ -12,13 +17,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getItem } from 'utils/storage';
 import { updatePlayerHighScore } from 'utils/supabase';
 
+import PerformanceMeter, { performanceAnimationNames } from './rive/PerformanceMeter';
 import { Button } from './ui/Button';
 import { Text } from './ui/Text';
-import { useNavigation } from '@react-navigation/native';
-import PerformanceMeter, { performanceAnimationNames } from './rive/PerformanceMeter';
-import ALPHABETS from 'constants/alphabets';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useSoundTrackModel } from 'models/soundtrackModel';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -89,36 +90,13 @@ function WinOrLoseView({
   );
 }
 
-export function PerformanceView({ matchStats }: { matchStats: matchStatsProps | null }) {
-  const navigation = useNavigation<any>();
-
-  const resetGame = () => {
-    useGameStore.setState(() => ({
-      room: '',
-      player: {
-        username: getItem('USERNAME') || 'Guest',
-        answers: { Name: '', Animal: '', Place: '', Thing: '' },
-        score: 0,
-        inTallyMode: false,
-        turn: 0,
-        strikes: 0,
-        doneTallying: false,
-        character: null,
-      },
-      opponents: [],
-      winner: null,
-      round: 0,
-      activeLetter: 'A',
-      totalScore: 0,
-      alphabets: ALPHABETS,
-      selectingLetter: true,
-      playing: false,
-      tallying: false,
-      currentTurn: 0,
-    }));
-    navigation.navigate('HomeScreen');
-  };
-
+export function PerformanceView({
+  matchStats,
+  onPressContinue,
+}: {
+  matchStats: matchStatsProps | null;
+  onPressContinue: () => void;
+}) {
   const performance = useMemo(() => {
     let animation: performanceAnimationNames = 'zero';
     const totalScore = matchStats?.totalScore || 0;
@@ -151,8 +129,6 @@ export function PerformanceView({ matchStats }: { matchStats: matchStatsProps | 
     return animation;
   }, [matchStats?.totalScore]);
 
-  console.log({ performance, totalScore: matchStats?.totalScore });
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: Colors.tertiary }]}>
       <View
@@ -176,7 +152,7 @@ export function PerformanceView({ matchStats }: { matchStats: matchStatsProps | 
           </Text>
         </View>
       </View>
-      <Button title="Continue" onPress={resetGame} />
+      <Button title="Continue" onPress={onPressContinue} />
     </SafeAreaView>
   );
 }
@@ -190,6 +166,8 @@ export default function GameOverModal() {
   const isWinner = useMemo(() => winner?.username === getItem('USERNAME'), [winner]);
 
   const { playSound } = useSoundTrackModel();
+
+  const navigation = useNavigation<any>();
 
   const handleShowPerformance = async () => {
     try {
@@ -212,6 +190,53 @@ export default function GameOverModal() {
     }
   };
 
+  const resetGame = () => {
+    useGameStore.setState(() => ({
+      room: '',
+      player: {
+        username: getItem('USERNAME') || 'Guest',
+        answers: { Name: '', Animal: '', Place: '', Thing: '' },
+        score: 0,
+        inTallyMode: false,
+        turn: 0,
+        strikes: 0,
+        doneTallying: false,
+        character: null,
+      },
+      opponents: [],
+      winner: null,
+      round: 0,
+      activeLetter: 'A',
+      totalScore: 0,
+      alphabets: ALPHABETS,
+      selectingLetter: true,
+      playing: false,
+      tallying: false,
+      currentTurn: 0,
+    }));
+    navigation.navigate('HomeScreen');
+  };
+
+  const handleMatchFinish = () => {
+    if (!matchStats) {
+      return;
+    }
+    const highScore = useAppStore.getState().stats.high_score;
+    const isHighScore = matchStats.totalScore > highScore;
+
+    useAppStore.setState((state) => ({
+      stats: {
+        ...state.stats,
+        points: matchStats.totalScore + state.stats.points,
+        games_played: state.stats.games_played + 1,
+        high_score: isHighScore ? matchStats.totalScore : highScore,
+        wins: isWinner ? state.stats.wins + 1 : state.stats.wins,
+        losses: isWinner ? state.stats.losses : state.stats.losses + 1,
+      },
+    }));
+    resetGame();
+  };
+
   useEffect(() => {
     if (!winner) return;
     else if (winner) {
@@ -224,7 +249,7 @@ export default function GameOverModal() {
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.tertiary }}>
         <LinearGradient colors={[Colors.tertiary, Colors.primary]} style={{ flex: 1 }}>
           {viewingPerformance ? (
-            <PerformanceView matchStats={matchStats} />
+            <PerformanceView onPressContinue={handleMatchFinish} matchStats={matchStats} />
           ) : (
             <WinOrLoseView
               gettingStats={gettingStats}

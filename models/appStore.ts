@@ -11,8 +11,6 @@ type AppStoreProps = {
   matchFound: boolean;
   stats: StatsProps;
   invites: inviteProps[] | [] | undefined;
-  setCharacter: (character: CharacterProps) => void;
-  setGameMode: (mode: GameModes) => void;
 };
 
 export const useAppStore = create<AppStoreProps>((set, state) => ({
@@ -31,6 +29,4 @@ export const useAppStore = create<AppStoreProps>((set, state) => ({
     games_played: 0,
     high_score: 0,
   },
-  setCharacter: (character: CharacterProps) => set({ character }),
-  setGameMode: (mode: GameModes) => set({ mode }),
 }));

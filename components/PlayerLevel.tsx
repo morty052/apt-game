@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import Avatar, { PlayerAvatar } from './Avatar';
 import { Text } from './ui/Text';
 import { useMemo } from 'react';
+import { useAppStore } from 'models/appStore';
 
 const getDistanceFromLastLevel = (total_score: number) => {
   return `${Math.floor((total_score % 1000) * 0.1)}%`;
@@ -55,9 +56,10 @@ export const ProgressBar = ({
   );
 };
 
-export default function PlayerLevel({ total_score }: { total_score: number }) {
+export default function PlayerLevel() {
   const navigation = useNavigation<any>();
-  const distanceFromLastLevel = getDistanceFromLastLevel(total_score);
+  const total_score = useAppStore().stats.points;
+  const distanceFromLastLevel = useMemo(() => getDistanceFromLastLevel(total_score), [total_score]);
   const level = useMemo(() => Math.floor(total_score / 1000), [total_score]);
 
   return (
