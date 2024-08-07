@@ -263,6 +263,7 @@ export default function GameOverModal() {
       tallying: false,
       currentTurn: 0,
     }));
+    useSoundTrackModel.setState({ matchSoundEffects: [] });
     navigation.navigate('HomeScreen');
   };
 
