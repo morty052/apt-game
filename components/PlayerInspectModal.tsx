@@ -24,14 +24,16 @@ const PlayerAnswerBar = ({
   title,
   value,
   onPress,
+  icon,
 }: {
   title: string;
   value: string | undefined;
   onPress: () => void;
+  icon: any;
 }) => {
   return (
     <Pressable onPress={onPress} style={[styles.answerContainer]}>
-      <FieldImage icon={NameIcon} />
+      <FieldImage icon={icon} />
       <View style={[styles.answer]}>
         <Text style={{ color: 'black' }}>{title}</Text>
         <Text style={{ color: 'black' }}>{value}</Text>
@@ -183,21 +185,25 @@ const PlayerInspectModal = ({
                   onPress={() => handleInspect({ query: Name, type: 'Name' })}
                   title="Name"
                   value={Name}
+                  icon={NameIcon}
                 />
                 <PlayerAnswerBar
                   onPress={() => handleInspect({ query: Animal, type: 'Animal' })}
                   title="Animal"
                   value={Animal}
+                  icon={AnimalIcon}
                 />
                 <PlayerAnswerBar
                   onPress={() => handleInspect({ query: Place, type: 'Place' })}
                   title="Place"
                   value={Place}
+                  icon={PlaceIcon}
                 />
                 <PlayerAnswerBar
                   onPress={() => handleInspect({ query: Thing, type: 'Thing' })}
                   title="Thing"
                   value={Thing}
+                  icon={ThingIcon}
                 />
               </View>
             )}
