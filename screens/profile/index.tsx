@@ -194,7 +194,7 @@ function PlayerInventory() {
   );
 }
 
-export default function PlayerProfile({ navigation }: any) {
+export default function Profile({ navigation }: any) {
   const [activeTab, setactiveTab] = useState<string>('INFO');
   const DB = useDB();
   const getStats = async (): Promise<StatsProps> => {

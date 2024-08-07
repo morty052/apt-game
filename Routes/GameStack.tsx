@@ -15,7 +15,8 @@ import Lobby from 'screens/lobby';
 import MarketScreen from 'screens/market';
 import ModeScreen from 'screens/modes-screen';
 import NotificationsScreen from 'screens/notifications-screen';
-import PlayerProfile from 'screens/profile';
+import PlayerScreen from 'screens/playerscreen';
+import Profile from 'screens/profile';
 import RoadMapScreen from 'screens/roadmap';
 import SettingsScreen from 'screens/settings-screen';
 import { UserAvatarEditor } from 'screens/user-avatar-creator/UserAvatarCreator';
@@ -30,7 +31,9 @@ export type GameStackParamList = {
   Store: undefined;
   HelpScreen: undefined;
   Profile: undefined;
-  PlayerScreen: undefined;
+  PlayerScreen: {
+    username: string;
+  };
   GameScreen: { room: string };
   NotificationsScreen: { room: string };
   Lobby: {
@@ -118,7 +121,17 @@ export default function GameStack({ navigation }: any) {
           name="CharacterSelect"
           component={CharacterSelectWindow}
         />
-        <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerStyle: { backgroundColor: Colors.tertiary },
+          }}
+          name="LeaderBoard"
+          component={LeaderBoard}
+        />
 
         {/* <Stack.Screen name="GameScreen" component={GameRoute} /> */}
         <Stack.Screen
@@ -147,7 +160,18 @@ export default function GameStack({ navigation }: any) {
           component={MarketScreen}
         />
         <Stack.Screen name="HelpScreen" component={HelpScreen} />
-        <Stack.Screen name="PlayerScreen" component={HelpScreen} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerStyle: { backgroundColor: Colors.tertiary },
+            headerTitle: 'Profile',
+          }}
+          name="PlayerScreen"
+          component={PlayerScreen}
+        />
         <Stack.Screen
           name="Profile"
           options={{
@@ -158,7 +182,7 @@ export default function GameStack({ navigation }: any) {
             headerRight: () => <SettingsButton />,
             headerShadowVisible: false,
           }}
-          component={PlayerProfile}
+          component={Profile}
         />
         <Stack.Screen name="Lobby" component={Lobby} />
         <Stack.Screen

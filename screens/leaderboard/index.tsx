@@ -5,7 +5,7 @@ import { BackButton } from 'components/ui/BackButton';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getLeaderBoard } from 'utils/supabase';
 
@@ -20,18 +20,20 @@ const PositionBadge = ({ number }: { number: number }) => {
 const PlayerRankingCard = ({
   player,
   position,
+  onPress,
 }: {
-  player: { username: string; totalscore: number; avatar: AvatarObject };
+  player: { username: string; total_score: number; avatar: AvatarObject };
   position: number;
+  onPress: () => void;
 }) => {
   return (
-    <Pressable style={styles.playerRankingCard}>
+    <Pressable onPress={onPress} style={styles.playerRankingCard}>
+      <PositionBadge number={position} />
       <Avatar avatarObject={player.avatar} />
       <View style={{ paddingTop: 10 }}>
-        <Text>{player.username}</Text>
-        <Text>{player.totalscore}</Text>
+        <Text style={{ fontSize: 14 }}>{player.username}</Text>
+        <Text>{player.total_score}</Text>
       </View>
-      <PositionBadge number={position} />
     </Pressable>
   );
 };
@@ -47,32 +49,27 @@ const LeaderBoard = ({ navigation }: any) => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
-      <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: Colors.plain }}>
+      <ScrollView>
         <View style={styles.container}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BackButton onPress={() => navigation.goBack()} />
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 24, flex: 1 }}>
-              Leader board
-            </Text>
-            <Pressable
-              style={{
-                height: 40,
-                width: 40,
-                backgroundColor: 'yellow',
-                borderRadius: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Ionicons name="help" size={24} color="black" />
-            </Pressable>
-          </View>
-
           {players?.map((player, index) => (
-            <PlayerRankingCard key={index} player={player} position={index + 1} />
+            <PlayerRankingCard
+              onPress={() => {
+                navigation.navigate('PlayerScreen', {
+                  username: player.username,
+                  avatar: player.avatar,
+                  points_to_compare: player.total_score,
+                  high_score_to_compare: player.highscore,
+                  level_to_compare: player.level,
+                });
+              }}
+              key={index}
+              player={player}
+              position={index + 1}
+            />
           ))}
         </View>
-      </SafeAreaView>
+      </ScrollView>
     </View>
   );
 };
@@ -83,25 +80,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    backgroundColor: Colors.backGround,
+    backgroundColor: Colors.plain,
     gap: 30,
-    paddingTop: 20,
+    paddingVertical: 20,
   },
   playerRankingCard: {
-    backgroundColor: Colors.secondary,
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 10,
     flexDirection: 'row',
-    columnGap: 5,
-    position: 'relative',
+    columnGap: 10,
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
   },
   badgeContainer: {
-    position: 'absolute',
-    top: -10,
-    right: -5,
     backgroundColor: 'white',
     padding: 5,
-    zIndex: 1,
     height: 40,
     width: 40,
     borderRadius: 30,

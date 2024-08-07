@@ -1,5 +1,5 @@
 import { useAvatarStateContext } from 'models/avatarStateContext';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import Rive, { RiveRef } from 'rive-react-native';
 import { getItem } from 'utils/storage';
@@ -91,42 +91,22 @@ export function PlayerAvatar({ width, height }: { width?: number; height?: numbe
   );
 }
 
-function Avatar({ avatarObject }: { avatarObject: AvatarObject }) {
-  const [loaded, setloaded] = React.useState(false);
-
+function Avatar({
+  avatarObject,
+  width,
+  height,
+}: {
+  avatarObject: AvatarObject;
+  width?: number;
+  height?: number;
+}) {
+  const [loaded, setloaded] = useState(false);
   const riveRef = React.useRef<RiveRef>(null);
 
-  // const avatar = React.useMemo(() => {
-  //   const avatarData = JSON.stringify(avatarObject);
-  //   const riveAvatarSelections = JSON.parse(avatarData);
-  //   return riveAvatarSelections;
-  // }, []);
-
-  const updateAvatar = () => {
-    for (const key in avatarObject) {
-      riveRef.current?.setInputState(
-        STATE_MACHINE_NAME,
-        `num${key}`,
-        avatarObject[key as keyof typeof avatarObject]
-      );
-    }
-  };
-
   React.useEffect(() => {
-    // setStateMachineInput('avatar', avatar);
-
     if (!loaded) {
       return;
     }
-
-    // for (const key in avatarObject) {
-    //   setStateMachineInput({
-    //     riveRef,
-    //     partToUpdate: `num${key}`,
-    //     value: avatarObject[key as keyof typeof avatarObject],
-    //   });
-    // }
-
     riveRef.current?.setInputState(STATE_MACHINE_NAME, 'numBodyColor', avatarObject.BodyColor);
     riveRef.current?.setInputState(STATE_MACHINE_NAME, 'numBodySize', avatarObject.BodySize);
     riveRef.current?.setInputState(STATE_MACHINE_NAME, 'numBodyEyes', avatarObject.BodyEyes);
@@ -144,12 +124,17 @@ function Avatar({ avatarObject }: { avatarObject: AvatarObject }) {
   }, [loaded]);
 
   return (
-    <View onLayout={() => setloaded(true)} style={{ zIndex: 1, width: 60, height: 60 }}>
+    <View onLayout={() => setloaded(true)}>
       <Rive
-        style={{ width: 60, height: 60 }}
+        style={{
+          width: width || 60,
+          height: height || 60,
+          // borderWidth: 1,
+        }}
         ref={riveRef}
         url="https://res.cloudinary.com/dg6bgaasp/raw/upload/v1722345626/avatar.riv"
         stateMachineName={STATE_MACHINE_NAME}
+        autoplay={false}
       />
     </View>
   );
