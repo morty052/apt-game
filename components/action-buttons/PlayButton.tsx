@@ -1,8 +1,7 @@
 import { Colors } from 'constants/colors';
-import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Pressable, StyleSheet, Text} from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable);
 

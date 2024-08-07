@@ -12,7 +12,8 @@ type retreivableValues =
   | 'ONBOARDED'
   | 'AVATAR'
   | 'expo_push_token'
-  | 'DB_PATH';
+  | 'DB_PATH'
+  | 'SETTINGS';
 
 export const setItem = (key: string, value: string) => {
   storage.set(key, value);
@@ -21,6 +22,13 @@ export const setItem = (key: string, value: string) => {
 
 export const getItem = (key: retreivableValues) => {
   return storage.getString(key);
+};
+
+export const getSettings = () => {
+  const settingsData = storage.getString('SETTINGS');
+  const settings = JSON.parse(settingsData || '{}');
+  const { soundOn, vibrations, friendRequest, gameInvites } = settings;
+  return { soundOn, vibrations, friendRequest, gameInvites };
 };
 
 export const removeItem = (key: retreivableValues) => {

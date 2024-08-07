@@ -180,7 +180,7 @@ const ClaimModal = ({
   // }, [unWrapping]);
 
   return (
-    <ModalComponent visible={claiming}>
+    <ModalComponent style={{ backgroundColor: 'white' }} visible={claiming}>
       {unWrapping && (
         <View
           style={{
@@ -218,24 +218,41 @@ const ClaimModal = ({
             position: 'relative',
             paddingHorizontal: 10,
             justifyContent: 'space-between',
+            gap: 20,
           }}>
           <View
             style={{
               alignItems: 'center',
               flex: 1,
               justifyContent: 'center',
-              // backgroundColor: 'red',
               paddingBottom: 80,
             }}>
-            <View style={{ alignItems: 'center' }}>
-              <Text>Congratulations</Text>
-              <Text>You received:</Text>
+            <View style={{ backgroundColor: 'white', padding: 30, gap: 20, borderRadius: 10 }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text>Congratulations</Text>
+                <Text>You received:</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ alignItems: 'center' }}>
+                  <Image
+                    source={coin}
+                    style={{ height: 100, width: 100, borderWidth: 1, borderRadius: 15 }}
+                  />
+                  <Text>x5</Text>
+                </View>
+                <View style={{ alignItems: 'center' }}>
+                  <Image
+                    source={coin}
+                    style={{ height: 100, width: 100, borderWidth: 1, borderRadius: 15 }}
+                  />
+                  <Text>x5</Text>
+                </View>
+              </View>
+              <View>
+                <Text style={{ fontSize: 14, textAlign: 'center' }}>Come back tomorrow</Text>
+                <Text style={{ fontSize: 14, textAlign: 'center' }}>for more rewards</Text>
+              </View>
             </View>
-            <Image
-              source={gift}
-              style={{ height: 300, width: 300, borderWidth: 1, borderRadius: 15 }}
-            />
-            <Text style={{ fontSize: 14 }}>Come back tomorrow for more rewards</Text>
           </View>
           {/* @ts-ignore */}
           <Button

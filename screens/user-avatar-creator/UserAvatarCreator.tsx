@@ -139,6 +139,16 @@ const UserAvatarCreator = ({ navigation, route }: any) => {
     setItem('PASSWORD', password);
     setItem('ONBOARDED', 'TRUE');
     setItem('AVATAR', JSON.stringify(riveAvatarSelections));
+
+    const settings = {
+      soundOn: true,
+      vibrations: true,
+      friendRequest: true,
+      gameInvites: true,
+    };
+
+    setItem('SETTINGS', JSON.stringify(settings));
+
     navigation.navigate('GameStack');
   }
 

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Audio, AVPlaybackSource } from 'expo-av';
+import { getSettings } from 'utils/storage';
 
 type MatchSoundEffectNames =
   | 'ROUND_START'
@@ -97,6 +98,11 @@ export const useSoundTrackModel = create<AppStoreProps>((set, state) => ({
     }
   },
   playSound: async (SOUND_EFFECT: MatchSoundEffectNames) => {
+    const { soundOn } = getSettings();
+    if (!soundOn) {
+      console.log('sound not enabled');
+      return;
+    }
     try {
       const soundToPlay =
         state().matchSoundEffects[
@@ -110,6 +116,11 @@ export const useSoundTrackModel = create<AppStoreProps>((set, state) => ({
     }
   },
   playOuterGameSound: async (TRACK_NAME: OuterSoundTrackNames) => {
+    const { soundOn } = getSettings();
+    if (!soundOn) {
+      console.log('sound not enabled');
+      return;
+    }
     try {
       const soundToPlay =
         state().soundTrack[SOUND_TRACK_NAMES[TRACK_NAME as keyof typeof SOUND_TRACK_NAMES]];

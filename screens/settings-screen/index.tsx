@@ -1,35 +1,28 @@
-import { Ionicons } from '@expo/vector-icons';
-import Avatar from 'components/Avatar';
-import { BackButton } from 'components/ui/BackButton';
+import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import React, { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Pressable, StyleSheet, View, Switch } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { getItem, setItem } from 'utils/storage';
 
-const avatarObject = {
-  BodyColor: 0,
-  BodySize: 1,
-  BodyEyes: 2,
-  BodyHair: 3,
-  BodyFaceHair: 4,
-  BackgroundColor: 5,
+type SettingsProps = {
+  soundOn: boolean;
+  vibrations: boolean;
+  friendRequest: boolean;
+  gameInvites: boolean;
 };
 
-const UserInfoBar = () => {
-  return (
-    <View style={styles.userBar}>
-      <View>
-        <Text style={styles.userBarText}>User Name</Text>
-        <Text style={styles.userBarEmail}>abdulojehumen@outlook.com</Text>
-      </View>
-    </View>
-  );
-};
-
-const SettingsItem = ({ title, subtitle }: { title: string; subtitle: string }) => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+const SettingsItem = ({
+  title,
+  subtitle,
+  isEnabled,
+  toggleSwitch,
+}: {
+  title: string;
+  subtitle: string;
+  isEnabled: boolean;
+  toggleSwitch: () => void;
+}) => {
   return (
     <Pressable style={styles.settingsItem}>
       <View style={{ flex: 1, rowGap: 5 }}>
@@ -48,15 +41,78 @@ const SettingsItem = ({ title, subtitle }: { title: string; subtitle: string }) 
 };
 
 const SettingsScreen = ({ navigation }: any) => {
+  const [settings, setSettings] = useState<SettingsProps>({
+    soundOn: true,
+    vibrations: true,
+    friendRequest: true,
+    gameInvites: true,
+  });
+
+  const [changedValues, setChangedValues] = useState<string[]>([]);
+
+  const hasChanges = useMemo(() => {
+    return changedValues.length > 0;
+  }, [changedValues]);
+
+  const retrieveSettings = useCallback(() => {
+    const settingsData = getItem('SETTINGS');
+    const settings = settingsData ? JSON.parse(settingsData) : {};
+    console.log(settings, changedValues);
+    setSettings(settings);
+  }, [setSettings, settings]);
+
+  const toggleSwitch = (value: keyof SettingsProps) => {
+    setSettings((previousState) => {
+      return { ...previousState, [value]: !previousState[value] };
+    });
+    if (changedValues.includes(value)) {
+      setChangedValues(changedValues.filter((item) => item !== value));
+      return;
+    }
+    setChangedValues([...changedValues, value]);
+  };
+
+  const confirmChanges = useCallback(() => {
+    console.log('confirmed');
+    setItem('SETTINGS', JSON.stringify(settings));
+    navigation.goBack();
+  }, [settings, navigation]);
+
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.plain }}>
-      <View style={styles.container}>
-        <SettingsItem title="Sound on" subtitle="Turn sound effects on or off" />
-        <SettingsItem title="Music" subtitle="Turn background music on or off" />
-        <SettingsItem title="Vibrations" subtitle="Turn vibrations  on or off" />
-        <SettingsItem title="Notification Sounds" subtitle="Turn vibrations  on or off" />
-        <SettingsItem title="Friend requests" subtitle="Allow  users to send you friend requests" />
+    <View onLayout={retrieveSettings} style={styles.container}>
+      <View style={styles.innerContainer}>
+        <SettingsItem
+          isEnabled={settings.soundOn}
+          toggleSwitch={() => toggleSwitch('soundOn')}
+          title="Sound on"
+          subtitle="Turn sound effects on or off"
+        />
+        <SettingsItem
+          isEnabled={settings.vibrations}
+          toggleSwitch={() => toggleSwitch('vibrations')}
+          title="Vibrations"
+          subtitle="Turn vibrations  on or off"
+        />
+        <SettingsItem
+          isEnabled={settings.friendRequest}
+          toggleSwitch={() => toggleSwitch('friendRequest')}
+          title="Friend requests"
+          subtitle="Allow  users to send you friend requests"
+        />
+        <SettingsItem
+          isEnabled={settings.gameInvites}
+          toggleSwitch={() => toggleSwitch('gameInvites')}
+          title="Game  invites"
+          subtitle="Allow  users to challenge you to games"
+        />
       </View>
+      {hasChanges ? (
+        <Button style={{ backGroundColor: 'red' }} onPress={confirmChanges} title="Save Changes" />
+      ) : (
+        <View style={styles.disabledButton}>
+          <Text style={{ color: 'gray' }}>Save Changes</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -64,9 +120,9 @@ const SettingsScreen = ({ navigation }: any) => {
 export default SettingsScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1, backgroundColor: Colors.plain, paddingBottom: 20, paddingHorizontal: 10 },
+  innerContainer: {
     flex: 1,
-    paddingHorizontal: 10,
     backgroundColor: Colors.plain,
     gap: 30,
     paddingTop: 20,
@@ -100,8 +156,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
   },
-  userBarText: {},
-  userBarEmail: {
-    fontSize: 13,
+  disabledButton: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 24,
+    elevation: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 16,
+    borderBottomWidth: 8,
+    borderLeftWidth: 4,
+    borderRightWidth: 4,
+    borderColor: 'rgba(0,0,0,0.5)',
   },
 });
