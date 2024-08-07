@@ -33,8 +33,7 @@ const GameScreen = ({ route }: any) => {
     updateOpponents,
     confirmLetterSelection,
     round,
-    player,
-    opponents,
+    endMatch,
   } = useGameStore();
 
   React.useEffect(() => {
@@ -105,7 +104,7 @@ const GameScreen = ({ route }: any) => {
     });
 
     socket?.on('GAME_OVER', (data) => {
-      console.log(data);
+      endMatch();
       setGameOver(true);
       useGameStore.setState((state) => ({
         winner: data.winner,

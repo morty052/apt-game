@@ -221,7 +221,7 @@ export default function PlayerProfile({ navigation }: any) {
   const updateStats = async () => {
     try {
       const transaction = await DB.update(Stats)
-        .set({ level: 0, losses: 0 })
+        .set({ level: 0, losses: 0, high_score: 0, points: 0, games_played: 0, wins: 0 })
         .where(eq(Stats.id, 0))
         .returning({ updatedId: Stats.level });
 

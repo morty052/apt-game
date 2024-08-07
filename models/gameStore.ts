@@ -33,6 +33,7 @@ type GameProps = {
   }) => void;
   handleBonusPoints: (character: CharacterNames) => void;
   readyNextRound: (round: number) => void;
+  endMatch: () => void;
   initGame: ({ room, queue }: { room: string; queue: playerProps[] }) => void;
 };
 
@@ -312,6 +313,14 @@ export const useGameStore = create<GameProps>((set, state) => ({
         answers: { Name: '', Animal: '', Place: '', Thing: '' },
       },
       round,
+    }));
+  },
+  endMatch: () => {
+    const { player, opponents } = state();
+    const totalPoints = getPointsForPlayer({ player, opponents });
+    const newScore = state().totalScore + totalPoints;
+    set((state) => ({
+      totalScore: newScore,
     }));
   },
 }));
