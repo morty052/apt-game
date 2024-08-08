@@ -50,6 +50,7 @@ const GameTextInput = ({
 
   return (
     <AnimatedTextInput
+      maxLength={25}
       onFocus={() => setError(false)}
       style={[
         {
