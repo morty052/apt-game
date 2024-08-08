@@ -9,7 +9,7 @@ type MatchSoundEffectNames =
   | 'WINNER_SOUND'
   | 'LOSER_SOUND'
   | 'SCORE_FOR_ROUND_SOUND';
-type OuterSoundTrackNames = 'MATCH_FOUND';
+type OuterSoundTrackNames = 'MATCH_FOUND' | 'CLAIM_SOUND';
 
 // const soundTracks = {
 //   matchFoundSound,
@@ -18,6 +18,7 @@ type OuterSoundTrackNames = 'MATCH_FOUND';
 
 const SOUND_TRACK_NAMES = {
   MATCH_FOUND: 0,
+  CLAIM_SOUND: 1,
 };
 
 const MATCH_SOUND_EFFECTS = {
@@ -46,7 +47,10 @@ type AppStoreProps = {
 
 export const useSoundTrackModel = create<AppStoreProps>((set, state) => ({
   activeSound: null,
-  soundFiles: [require('../assets/sounds/matchfound.mp3')],
+  soundFiles: [
+    require('../assets/sounds/matchfound.mp3'),
+    require('../assets/sounds/claim-sound.mp3'),
+  ],
   matchSoundFiles: [
     require('../assets/sounds/start.mp3'),
     require('../assets/sounds/timeup.mp3'),

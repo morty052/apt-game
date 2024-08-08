@@ -12,6 +12,7 @@ import gift from '../../assets/gifts/giftbox-base.png';
 import removeAdsIcons from '../../assets/icons/removeAds-min.png';
 import energy from '../../assets/icons/thunderbolt-icon--min.png';
 import coin from '../../assets/icons/alph-a--min.png';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 
 const days = [1, 2, 3, 4, 5, 6, 7];
 
@@ -166,6 +167,8 @@ const ClaimModal = ({
   const [unWrapping, setunWrapping] = useState(true);
   const [loopCount, setloopCount] = useState(0);
 
+  const { playOuterGameSound } = useSoundTrackModel();
+
   // useEffect(() => {
   //   if (!unWrapping) {
   //     return;
@@ -211,6 +214,7 @@ const ClaimModal = ({
       )}
       {!unWrapping && (
         <View
+          onLayout={() => playOuterGameSound('CLAIM_SOUND')}
           style={{
             flex: 1,
             alignItems: 'center',
@@ -242,7 +246,7 @@ const ClaimModal = ({
                 </View>
                 <View style={{ alignItems: 'center' }}>
                   <Image
-                    source={coin}
+                    source={energy}
                     style={{ height: 100, width: 100, borderWidth: 1, borderRadius: 15 }}
                   />
                   <Text>x5</Text>
