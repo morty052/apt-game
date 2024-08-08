@@ -1,3 +1,4 @@
+import { AvatarObject } from 'components/Avatar';
 import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
 
 export const Quests = sqliteTable('Quests', {
@@ -26,4 +27,12 @@ export const Stats = sqliteTable('stats', {
   losses: integer('losses').notNull(),
   login_streak: integer('login_streak').notNull(),
   claimed_for_day: text('claimed_for_day').notNull(),
+});
+
+export const Invites = sqliteTable('invites', {
+  game_id: text('game_id').notNull().primaryKey(),
+  avatar: text('avatar', { mode: 'json' }).$type<AvatarObject>().notNull(),
+  host: text('host').notNull(),
+  guests: text('guests', { mode: 'json' }).notNull().$type<string[]>(),
+  created_at: text('created_at').notNull(),
 });

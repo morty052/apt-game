@@ -31,7 +31,7 @@ function Lobby({
 
   React.useEffect(() => {
     socket?.on('PLAYER_JOINED', (data) => {
-      console.log(data);
+      console.log('player joined', data);
     });
 
     socket?.on('PLAYER_LEFT', (data) => {
@@ -39,6 +39,7 @@ function Lobby({
     });
 
     socket?.on('START_PRIVATE_MATCH', (data: { queue: playerProps[]; room: string }) => {
+      console.log(data);
       handleStartMatch(data.queue, data.room);
     });
 
@@ -52,6 +53,7 @@ function Lobby({
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'skyblue' }}>
       <Text>{private_room}</Text>
+      <Text>{mode}</Text>
     </SafeAreaView>
   );
 }

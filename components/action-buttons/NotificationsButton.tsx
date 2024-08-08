@@ -30,7 +30,7 @@ function NotificationsButton() {
         style={styles.notificationContainer}>
         <View style={{ position: 'relative' }}>
           <Ionicons name="notifications-outline" size={35} color="black" />
-          <Badge invites={invites?.length} />
+          <Badge invites={invites} />
         </View>
       </Pressable>
     </>

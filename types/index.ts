@@ -46,15 +46,20 @@ export type friend = {
 };
 
 export type inviteProps = {
+  host: string;
+  avatar: AvatarObject;
+  game_id: string;
+  guests: string[];
+};
+
+export type inviteDataProps = {
   host: {
     username: string;
     avatar: AvatarObject;
   };
-  id: string;
-  guests: {
-    username: string;
-    avatar: AvatarObject;
-  }[];
+  avatar: AvatarObject;
+  game_id: string;
+  guests: string[];
 };
 
 export type StatsProps = {

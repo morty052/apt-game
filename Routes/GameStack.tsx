@@ -98,6 +98,7 @@ const GameRoutes = ({ navigation }: any) => {
           name="NotificationsScreen"
           component={NotificationsScreen}
         />
+        <Stack.Screen name="Lobby" component={Lobby} />
       </Stack.Navigator>
     </SocketContextComponent>
   );
@@ -184,7 +185,7 @@ export default function GameStack({ navigation }: any) {
           }}
           component={Profile}
         />
-        <Stack.Screen name="Lobby" component={Lobby} />
+
         <Stack.Screen
           options={{
             headerShown: true,

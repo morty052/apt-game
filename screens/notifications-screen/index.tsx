@@ -1,15 +1,20 @@
 import { useNavigation } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
 import Avatar from 'components/Avatar';
 import { Button } from 'components/ui/Button';
 import { TabPanel } from 'components/ui/TabComponent';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
+import { ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
+import { useDB } from 'hooks/useDb';
+import { useRefreshOnFocus } from 'hooks/useRefreshOnFocus';
 import { useAppStore } from 'models/appStore';
 import React, { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { inviteProps } from 'types';
 import { getItem } from 'utils/storage';
+import * as SchemaProps from '../../schema';
 
 function InvitationCard({
   invite,
@@ -30,11 +35,11 @@ function InvitationCard({
         borderRadius: 10,
       }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Avatar avatarObject={invite.host.avatar} />
+        <Avatar avatarObject={invite.avatar} />
         <View style={{ paddingRight: 10, flex: 1, gap: 2 }}>
-          <Text>{invite.host.username}</Text>
+          <Text>{invite.host}</Text>
           <Text style={{ fontSize: 12 }}>
-            {invite.host.username} invited you and {invite.guests.length} members to play
+            {invite.host} invited you and {invite.guests.length} members to play
           </Text>
         </View>
       </View>
@@ -66,11 +71,12 @@ const tabs = [
 const InvitationPanel = ({
   acceptCreation,
   rejectInvite,
+  invites,
 }: {
   acceptCreation: (invite: inviteProps) => void;
   rejectInvite: (invite: inviteProps) => void;
+  invites: inviteProps[];
 }) => {
-  const { invites } = useAppStore();
   return (
     <FlatList
       showsVerticalScrollIndicator={false}
@@ -87,6 +93,21 @@ const InvitationPanel = ({
   );
 };
 
+const getInvites = async (DB: ExpoSQLiteDatabase<typeof SchemaProps>) => {
+  const allRows = await DB.query.Invites.findMany({
+    columns: {
+      game_id: true,
+      avatar: true,
+      host: true,
+      guests: true,
+      created_at: true,
+    },
+    orderBy: (rows, { desc }) => [desc(rows.created_at)],
+  });
+
+  return allRows;
+};
+
 export default function NotificationsScreen() {
   const [activeTab, setactiveTab] = useState<string>('INVITES');
 
@@ -95,37 +116,67 @@ export default function NotificationsScreen() {
 
   const { character } = useAppStore();
 
-  const { invites } = useAppStore();
+  const DB = useDB();
+
+  const {
+    data: invites,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['userNotifications'],
+    queryFn: async () => {
+      const invites = await getInvites(DB);
+
+      return invites;
+    },
+  });
+
+  useRefreshOnFocus(refetch);
 
   const acceptCreation = useCallback(
     (invite: inviteProps) => {
       socket?.emit('JOIN_PRIVATE_LOBBY', {
-        private_room: invite.id,
+        private_room: invite.game_id,
         guest: {
           username: getItem('USERNAME'),
           character: character.name,
         },
       });
-      navigation.navigate('Lobby', { private_room: invite.id, mode: 'PRIVATE_MATCH' });
+      navigation.navigate('Lobby', { private_room: invite.game_id, mode: 'PRIVATE_MATCH' });
     },
     [navigation, socket]
   );
 
   const rejectNotification = (item: inviteProps) => {
-    console.log(item.id);
-    useAppStore.setState((state) => ({
-      invites: state.invites?.filter((invite) => invite.id !== item.id),
-    }));
+    console.log(item.game_id);
+    // useAppStore.setState((state) => ({
+    //   invites: state.invites?.filter((invite) => invite.game_id !== item.game_id),
+    // }));
   };
+
+  if (isLoading) {
+    return null;
+  }
+
+  console.log({ invites });
 
   return (
     <View style={styles.container}>
+      {/* <Avatar avatarObject={invites[0].avatar} /> */}
       <TabPanel tabs={tabs} activeTab={activeTab} setactiveTab={setactiveTab} />
       {activeTab === 'INVITES' && (
-        <InvitationPanel rejectInvite={rejectNotification} acceptCreation={acceptCreation} />
+        <InvitationPanel
+          invites={invites as inviteProps[]}
+          rejectInvite={rejectNotification}
+          acceptCreation={acceptCreation}
+        />
       )}
       {activeTab === 'MESSAGES' && (
-        <InvitationPanel rejectInvite={rejectNotification} acceptCreation={acceptCreation} />
+        <InvitationPanel
+          invites={invites as inviteProps[]}
+          rejectInvite={rejectNotification}
+          acceptCreation={acceptCreation}
+        />
       )}
     </View>
   );

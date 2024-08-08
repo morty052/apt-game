@@ -58,7 +58,7 @@ export const ProgressBar = ({
 
 export default function PlayerLevel() {
   const navigation = useNavigation<any>();
-  const total_score = useAppStore().stats.points;
+  const total_score = useAppStore().stats?.points;
   const distanceFromLastLevel = useMemo(() => getDistanceFromLastLevel(total_score), [total_score]);
   const level = useMemo(() => Math.floor(total_score / 1000), [total_score]);
 

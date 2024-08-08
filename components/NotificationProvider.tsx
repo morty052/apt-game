@@ -3,10 +3,26 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { handleNotification } from 'utils/handleNotification';
+import { Platform, View } from 'react-native';
 import { setItem } from 'utils/storage';
+
+import Toast, { notificationDataTypes } from './Toast';
+
+const handleNotification = ({
+  type,
+  showToast,
+  data,
+}: {
+  type: notificationDataTypes;
+  showToast: (data: { type: notificationDataTypes; data?: any }) => void;
+  data?: any;
+}) => {
+  if (type === 'INVITE') {
+    showToast({ type, data });
+    return;
+  }
+  showToast({ type });
+};
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -53,20 +69,6 @@ async function registerForPushNotificationsAsync() {
   return token?.data;
 }
 
-const Toast = () => {
-  const [showing, setShowing] = useState(false);
-  if (!showing) {
-    return null;
-  }
-  return (
-    <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <Text>Toast</Text>
-      </SafeAreaView>
-    </View>
-  );
-};
-
 /**
  * Creates a notifications provider component that handles push notifications and sets up listeners for received notifications and response.
  * displays a toast for invites and friend requests
@@ -79,13 +81,19 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
   const [notification, setNotification] = useState<Notifications.Notification>();
   const notificationListener = useRef<Notifications.Subscription | null>(null);
   const responseListener = useRef<Notifications.Subscription | null>(null);
+  const [showToast, setShowToast] = useState<{ type: notificationDataTypes; data?: any } | null>(
+    null
+  );
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-      console.log({ notification: notification.request.content.data });
-      handleNotification(notification.request.content.data?.type);
+      handleNotification({
+        type: notification.request.content.data?.type,
+        showToast: setShowToast,
+        data: notification.request.content.data,
+      });
       setNotification(notification);
     });
 
@@ -105,21 +113,9 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       {children}
-      <Toast />
+      <Toast setShowing={setShowToast} showing={showToast} />
     </View>
   );
 };
 
 export default NotificationsProvider;
-
-const styles = StyleSheet.create({
-  container: {
-    height: 100,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'orange',
-    flex: 1,
-  },
-});

@@ -1,5 +1,5 @@
 import { charactersArray } from 'constants/characters';
-import { CharacterProps, GameModes, inviteProps, StatsProps } from 'types';
+import { CharacterProps, GameModes, inviteDataProps, inviteProps, StatsProps } from 'types';
 import { create } from 'zustand';
 
 type AppStoreProps = {
@@ -14,7 +14,7 @@ type AppStoreProps = {
   matchmaking: boolean;
   matchFound: boolean;
   stats: StatsProps;
-  invites: inviteProps[] | [] | undefined;
+  invites: number;
 };
 
 export const useAppStore = create<AppStoreProps>((set, state) => ({
@@ -27,7 +27,7 @@ export const useAppStore = create<AppStoreProps>((set, state) => ({
   character: charactersArray[0],
   matchmaking: false,
   matchFound: false,
-  invites: [],
+  invites: 0,
   rewardCount: 1,
   stats: {
     level: 0,

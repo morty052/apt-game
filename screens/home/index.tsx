@@ -1,24 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import BottomNav from 'components/BottomNav';
 import { Character } from 'components/CharacterSelectWindow';
-import LoadingScreen from 'components/LoadingScreen';
 import TopNav from 'components/TopNav';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
 import NotificationsButton from 'components/action-buttons/NotificationsButton';
 import SocketContext from 'contexts/SocketContext';
+import { useDB } from 'hooks/useDb';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useContext } from 'react';
 import { StyleSheet, View, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
 import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
-import { inviteProps, playerProps, StatsProps } from 'types';
+import { inviteDataProps, inviteProps, playerProps, StatsProps } from 'types';
 import { getItem } from 'utils/storage';
-import { getInvites } from 'utils/supabase';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
-import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
-import { useDB } from 'hooks/useDb';
 
 function RightNav() {
   return (
@@ -30,10 +28,23 @@ function RightNav() {
   );
 }
 
+const getInvites = async (DB: any) => {
+  const allRows = await DB.query.Invites.findMany({
+    columns: {
+      game_id: true,
+      avatar: true,
+      host: true,
+      guests: true,
+      created_at: true,
+    },
+  });
+
+  return allRows;
+};
+
 const getUserData = async (DB: any): Promise<{ stats: StatsProps; invites: inviteProps[] }> => {
   try {
-    const username = getItem('USERNAME');
-    const invites = await getInvites(username as string);
+    const invites = await getInvites(DB);
     const allRows = await DB.query.Stats.findMany({
       columns: {
         level: true,
@@ -46,6 +57,7 @@ const getUserData = async (DB: any): Promise<{ stats: StatsProps; invites: invit
     });
 
     const stats = allRows[0];
+
     return { stats, invites };
   } catch (error) {
     console.log(error);
@@ -66,7 +78,7 @@ export const Home = () => {
     queryKey: ['userData'],
     queryFn: async () => {
       const { stats, invites } = await getUserData(DB);
-      useAppStore.setState(() => ({ invites, stats }));
+      useAppStore.setState(() => ({ invites: invites.length, stats }));
       return stats;
     },
   });

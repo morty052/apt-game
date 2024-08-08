@@ -14,15 +14,18 @@ const sendNotification = async ({
   to,
   title,
   body,
+  data,
 }: {
   to: string;
   title: string;
   body: string;
+  data?: any;
 }) => {
   const payload = {
     to,
     title,
     body,
+    data,
   };
 
   try {
@@ -44,10 +47,12 @@ const broadcast = async ({
   list,
   title,
   body,
+  data,
 }: {
   list: string[];
   title: string;
   body: string;
+  data: any;
 }) => {
   try {
     const { data: playersToNotify, error } = await supabase
@@ -63,6 +68,7 @@ const broadcast = async ({
         to: playersToNotify[player].expo_push_token,
         title: 'New private match',
         body,
+        data,
       });
     }
 
@@ -116,18 +122,21 @@ const getFriendRequests = async (username: string) => {
       .select('friend_requests')
       .eq('username', `${username}`);
 
+    console.log({ friends: data });
+
     if (error) {
       throw error;
     }
 
     // * if there are no friend requests, return an empty array
-    if (!data[0].friend_requests) {
+    if (!data[0]?.friend_requests) {
       return [];
     }
 
     return data[0].friend_requests;
   } catch (error) {
-    console.log(error);
+    console.log(error, 'occured here');
+    return [];
   }
 };
 
@@ -224,13 +233,13 @@ export const getPlayerDetails = async (username: string): Promise<any> => {
     const { data, error }: any = await supabase
       .from('users')
       .select('*')
-      .eq('username', `${username}`);
+      .ilike('username', `${username}`);
 
     if (error) {
       throw error;
     }
 
-    return data;
+    return data[0];
   } catch (error) {
     console.error(error);
     return { error: error };
@@ -253,11 +262,22 @@ export const sendFriendRequest = async ({
     // * add sender's username to friend requests
     const updatedFriendRequests = [...friends, senderUsername];
 
+    //* get user to update and notify
+    const targetPlayer = await getPlayerDetails(receiverUsername);
+
     const { data, error } = await supabase
       .from('users')
       .update({ friend_requests: updatedFriendRequests })
-      .eq('username', `${receiverUsername}`)
-      .select('*, avatar(*)');
+      .eq('username', `${targetPlayer.username}`);
+
+    console.log({ targetPlayer: targetPlayer.expo_push_token });
+
+    await sendNotification({
+      to: targetPlayer.expo_push_token,
+      title: 'Friend Request',
+      body: `You have a friend request from ${senderUsername}`,
+      data: { type: 'FRIEND_REQUEST' },
+    });
 
     if (error) {
       throw error;
@@ -348,8 +368,6 @@ const updateGuestsInvites = async ({
     if (error) {
       throw error;
     }
-
-    console.log({ dataInvites: data });
   } catch (error) {
     console.error(error);
   }
@@ -359,10 +377,12 @@ export const createPrivateMatch = async ({
   host_id,
   guests,
   username,
+  avatar,
 }: {
   host_id: string;
   guests: string[];
   username: string;
+  avatar: AvatarObject;
 }): Promise<any> => {
   try {
     const { data, error }: any = await supabase
@@ -379,10 +399,13 @@ export const createPrivateMatch = async ({
       list: guests,
       body: `join ${username} in a new private match.`,
       title: `${username} has invited you to a private match.`,
+      data: {
+        type: 'INVITE',
+        data: { host: { username, avatar }, game_id: data[0].id, guests },
+      },
     });
 
     // * add game to guests invite list
-
     await updateGuestsInvites({
       host: username,
       game_id: data[0].id,

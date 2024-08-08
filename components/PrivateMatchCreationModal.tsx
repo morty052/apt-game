@@ -14,7 +14,7 @@ import { friend } from 'types';
 import { getItem } from 'utils/storage';
 import { createPrivateMatch } from 'utils/supabase';
 
-import Avatar from './Avatar';
+import Avatar, { AvatarObject } from './Avatar';
 import FriendCard from './cards/FriendCard';
 
 const Header = ({ handleClose }: { handleClose: () => void }) => {
@@ -69,8 +69,16 @@ export default function PrivateMatchCreationModal({
     const host_id = getItem('ID') as string;
     const username = getItem('USERNAME') as string;
 
+    const avatarData = getItem('AVATAR');
+    const avatar = JSON.parse(avatarData || '{}');
+
     const guests = invitedFriends.map((friend) => friend.username);
-    const { data, error } = await createPrivateMatch({ host_id, guests, username });
+    const { data, error } = await createPrivateMatch({
+      host_id,
+      guests,
+      username,
+      avatar,
+    });
     if (error) {
       return;
     }
@@ -78,7 +86,6 @@ export default function PrivateMatchCreationModal({
     const privateRoomGuests = guests.map((guest) => {
       return { username: guest };
     });
-    console.log(private_room, privateRoomGuests, username, character.name);
     socket?.emit(
       'CREATE_PRIVATE_MATCH',
       {
@@ -87,7 +94,6 @@ export default function PrivateMatchCreationModal({
         host: { username, character: character.name },
       },
       () => {
-        console.log('callback received');
         navigation.navigate('Lobby', { private_room, mode: 'PRIVATE_MATCH' });
       }
     );
