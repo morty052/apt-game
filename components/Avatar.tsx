@@ -122,7 +122,7 @@ function Avatar({
       'numBackgroundColor',
       avatarObject.BackgroundColor
     );
-  }, [loaded]);
+  }, [loaded, avatarObject]);
 
   return (
     <View onLayout={() => setloaded(true)}>

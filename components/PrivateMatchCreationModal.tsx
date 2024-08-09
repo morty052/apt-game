@@ -94,7 +94,7 @@ export default function PrivateMatchCreationModal({
         host: { username, character: character.name },
       },
       () => {
-        navigation.navigate('Lobby', { private_room, mode: 'PRIVATE_MATCH' });
+        navigation.navigate('Lobby', { private_room, mode: 'PRIVATE_MATCH', guests });
       }
     );
   }, [invitedFriends, navigation]);

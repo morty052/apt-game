@@ -6,6 +6,7 @@ import { TabPanel } from 'components/ui/TabComponent';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
+import { eq } from 'drizzle-orm';
 import { ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
 import { useDB } from 'hooks/useDb';
 import { useRefreshOnFocus } from 'hooks/useRefreshOnFocus';
@@ -14,6 +15,7 @@ import React, { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { inviteProps } from 'types';
 import { getItem } from 'utils/storage';
+
 import * as SchemaProps from '../../schema';
 
 function InvitationCard({
@@ -142,13 +144,24 @@ export default function NotificationsScreen() {
           character: character.name,
         },
       });
-      navigation.navigate('Lobby', { private_room: invite.game_id, mode: 'PRIVATE_MATCH' });
+      navigation.navigate('Lobby', {
+        private_room: invite.game_id,
+        mode: 'PRIVATE_MATCH',
+        guests: invite.guests,
+      });
     },
     [navigation, socket]
   );
 
-  const rejectNotification = (item: inviteProps) => {
+  // TODO: ADD DELETING FROM LOCAL DB
+  const rejectNotification = async (item: inviteProps) => {
     console.log(item.game_id);
+    const res = await DB.delete(SchemaProps.Invites)
+      .where(eq(SchemaProps.Invites.game_id, item.game_id))
+      .returning();
+    useAppStore.setState((state) => ({
+      invites: state.invites - 1,
+    }));
     // useAppStore.setState((state) => ({
     //   invites: state.invites?.filter((invite) => invite.game_id !== item.game_id),
     // }));

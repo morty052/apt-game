@@ -39,6 +39,7 @@ export type GameStackParamList = {
   Lobby: {
     mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
     private_room?: string;
+    guests?: string[];
   };
   HomeScreen: undefined;
   RoadMapScreen: undefined;
@@ -98,7 +99,17 @@ const GameRoutes = ({ navigation }: any) => {
           name="NotificationsScreen"
           component={NotificationsScreen}
         />
-        <Stack.Screen name="Lobby" component={Lobby} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerStyle: { backgroundColor: Colors.tertiary },
+          }}
+          name="Lobby"
+          component={Lobby}
+        />
       </Stack.Navigator>
     </SocketContextComponent>
   );

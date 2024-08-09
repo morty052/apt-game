@@ -419,6 +419,21 @@ export const createPrivateMatch = async ({
   }
 };
 
+export const getHost = async (room_id: string) => {
+  try {
+    const { data, error }: any = await supabase
+      .from('created_games')
+      .select('host(username, avatar(*))')
+      .eq('id', room_id);
+    if (error) {
+      throw new Error(error);
+    }
+    return data[0];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const getPlayerStats = async ({ username }: { username: string }) => {
   try {
     const { data, error }: any = await supabase
