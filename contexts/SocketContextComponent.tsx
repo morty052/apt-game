@@ -13,16 +13,16 @@ export type ISocketContextComponentProps = PropsWithChildren;
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = (props) => {
   const { children } = props;
 
-  const socket = useSocket(`https://apt-server.onrender.com/user`, {
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-    autoConnect: false,
-  });
-  // const socket = useSocket(`https://ecbd-102-216-10-2.ngrok-free.app/user`, {
+  // const socket = useSocket(`https://apt-server.onrender.com/user`, {
   //   reconnectionAttempts: 5,
   //   reconnectionDelay: 1000,
   //   autoConnect: false,
   // });
+  const socket = useSocket(`https://fabc-102-216-10-2.ngrok-free.app/user`, {
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
+    autoConnect: false,
+  });
 
   const [SocketState, SocketDispatch] = useReducer(SocketReducer, defaultSocketContextState);
   const [loading, setLoading] = useState(true);

@@ -10,8 +10,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRefreshOnFocus } from 'hooks/useRefreshOnFocus';
 import { useGameStore } from 'models/gameStore';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View, Image, ScrollView } from 'react-native';
-import { playerProps } from 'types';
+import { ActivityIndicator, StyleSheet, View, Image, ScrollView, Pressable } from 'react-native';
+import { inviteProps, playerProps } from 'types';
 import { getItem } from 'utils/storage';
 import { getHost, getPlayers } from 'utils/supabase';
 
@@ -19,6 +19,10 @@ import coin from '../../assets/icons/alph-a--min.png';
 import friendsIcon from '../../assets/icons/friends-icon--min.png';
 import removeAdsIcons from '../../assets/icons/removeAds-min.png';
 import energy from '../../assets/icons/thunderbolt-icon--min.png';
+import { useDB } from 'hooks/useDb';
+import * as SchemaProps from '../../schema';
+import { eq } from 'drizzle-orm';
+import { useAppStore } from 'models/appStore';
 
 const delay = () => {
   return new Promise<void>((resolve, reject) => {
@@ -130,6 +134,8 @@ function Lobby({
   const { socket } = React.useContext(SocketContext);
   const { initGame } = useGameStore();
 
+  const DB = useDB();
+
   // const { character } = useAppStore();
 
   const { isLoading, refetch, isError, isFetching } = useQuery({
@@ -157,8 +163,22 @@ function Lobby({
       console.log('player joined', data);
     });
 
-    socket?.on('PLAYER_LEFT', (data) => {
-      console.log(data);
+    socket?.on('PLAYER_LEFT', async (data) => {
+      const { username } = data;
+      const isUserLeft = username === getItem('USERNAME');
+      if (isUserLeft) {
+        console.log('you left', username);
+
+        await DB.delete(SchemaProps.Invites)
+          .where(eq(SchemaProps.Invites.game_id, private_room as string))
+          .returning();
+        useAppStore.setState((state) => ({
+          invites: state.invites - 1,
+        }));
+        navigation.goBack();
+      } else {
+        console.log('user left', username);
+      }
     });
 
     socket?.on('START_PRIVATE_MATCH', (data: { queue: playerProps[]; room: string }) => {
@@ -229,12 +249,22 @@ function Lobby({
                 {isUser && (
                   <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                     <CharacterSelectButton />
-                    <Image
-                      style={{ height: 55, width: 55 }}
-                      source={{
-                        uri: 'https://res.cloudinary.com/dg6bgaasp/image/upload/v1723159925/puz1ukbqkfyzcpqybgkh.png',
-                      }}
-                    />
+                    <Pressable
+                      onPress={() =>
+                        socket?.emit('EXIT_PRIVATE_LOBBY', {
+                          private_room,
+                          guest: {
+                            username: getItem('USERNAME'),
+                          },
+                        })
+                      }>
+                      <Image
+                        style={{ height: 55, width: 55 }}
+                        source={{
+                          uri: 'https://res.cloudinary.com/dg6bgaasp/image/upload/v1723159925/puz1ukbqkfyzcpqybgkh.png',
+                        }}
+                      />
+                    </Pressable>
                   </View>
                 )}
               </View>
