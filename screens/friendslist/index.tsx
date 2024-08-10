@@ -1,9 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack';
+import { BackButton } from 'components/ui/BackButton';
+import { Colors } from 'constants/colors';
 
 import { FriendRequestsScreen } from './components/FriendRequestsScreen';
 import { FriendsHomeScreen } from './components/FriendsHomeScreen';
-import { BackButton } from 'components/ui/BackButton';
-import { Colors } from 'constants/colors';
 
 const Stack = createStackNavigator();
 

@@ -84,7 +84,7 @@ export default function App() {
         <SQLiteProvider databaseName="preloadedData.db" useSuspense>
           <NotificationsProvider>
             {/* <TestScreen /> */}
-            <RootStack onboarded={false} />
+            <RootStack onboarded={onboarded} />
           </NotificationsProvider>
         </SQLiteProvider>
       </React.Suspense>
