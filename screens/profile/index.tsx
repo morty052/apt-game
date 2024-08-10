@@ -126,7 +126,7 @@ function PlayerInfo() {
         </View>
       </LinearGradient>
 
-      <LinearGradient
+      {/* <LinearGradient
         // Button Linear Gradient
         colors={[Colors.tertiary, 'gold']}
         start={{ x: 0, y: 0 }}
@@ -145,7 +145,7 @@ function PlayerInfo() {
           <ProgressBar level={0} distanceFromLastLevel={0} />
         </View>
         <Button title="View Achievements" />
-      </LinearGradient>
+      </LinearGradient> */}
 
       <View>
         <StatContainer>
@@ -246,8 +246,8 @@ export default function Profile({ navigation }: any) {
             }}>
             <PlayerAvatar height={avatarWidth} width={avatarWidth} />
             <Pressable
-              // onPress={() => navigation.navigate('AvatarEditor')}
-              onPress={() => updateStats()}
+              onPress={() => navigation.navigate('AvatarEditor')}
+              // onPress={() => updateStats()}
               style={{
                 backgroundColor: 'white',
                 position: 'absolute',
