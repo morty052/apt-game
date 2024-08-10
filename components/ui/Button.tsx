@@ -8,19 +8,23 @@ type ButtonProps = {
   style?: any;
   fontSize?: number;
   textColor?: string;
+  children?: any;
 } & PressableProps;
 
 export const Button = forwardRef<any, ButtonProps>(
-  ({ onPress, title, style, fontSize, textColor }, ref) => {
+  ({ onPress, title, style, fontSize, textColor, children }, ref) => {
     return (
       <Pressable ref={ref} style={[styles.button, style]} onPress={onPress}>
-        <Text
-          style={[
-            styles.buttonText,
-            { fontSize: fontSize ? fontSize : 20, color: textColor ? textColor : 'black' },
-          ]}>
-          {title}
-        </Text>
+        {!children && (
+          <Text
+            style={[
+              styles.buttonText,
+              { fontSize: fontSize ? fontSize : 20, color: textColor ? textColor : 'black' },
+            ]}>
+            {title}
+          </Text>
+        )}
+        {children && children}
       </Pressable>
     );
   }

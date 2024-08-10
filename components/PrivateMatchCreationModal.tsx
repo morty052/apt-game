@@ -14,28 +14,27 @@ import { friend } from 'types';
 import { getItem } from 'utils/storage';
 import { createPrivateMatch } from 'utils/supabase';
 
-import Avatar, { AvatarObject } from './Avatar';
+import Avatar from './Avatar';
 import FriendCard from './cards/FriendCard';
 
+// TODO ADD OR REMOVE HELP BUTTON PERMANENTLY
 const Header = ({ handleClose }: { handleClose: () => void }) => {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <BackButton onPress={handleClose} />
-      <Text style={{ textAlign: 'center', color: 'white', fontSize: 24, flex: 1 }}>
+      <Text style={{ textAlign: 'center', color: 'black', fontSize: 24, flex: 1 }}>
         Create match
       </Text>
       <Pressable
-        onPress={() => {}}
         style={{
           height: 40,
           width: 40,
-          backgroundColor: 'yellow',
+          backgroundColor: 'transparent',
           borderRadius: 40,
           justifyContent: 'center',
           alignItems: 'center',
-        }}>
-        <Ionicons name="help" size={24} color="black" />
-      </Pressable>
+        }}
+      />
     </View>
   );
 };
@@ -101,7 +100,7 @@ export default function PrivateMatchCreationModal({
 
   return (
     <Modal animationType="slide" statusBarTranslucent visible={open}>
-      <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
+      <View style={{ flex: 1, backgroundColor: Colors.plain }}>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={styles.container}>
             <View style={{ gap: 20 }}>
@@ -111,7 +110,7 @@ export default function PrivateMatchCreationModal({
                 onChangeText={setquery}
                 style={styles.searchInput}
                 placeholder="Search friends"
-                placeholderTextColor="white"
+                placeholderTextColor="black"
               />
               <FlatList
                 horizontal
@@ -162,12 +161,13 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     height: 50,
-    borderColor: 'white',
+    borderColor: Colors.gray,
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
     // textAlign: 'center',
     fontFamily: 'Crispy-Tofu',
-    color: 'white',
+    color: 'black',
+    backgroundColor: Colors.lightBlack,
   },
 });

@@ -230,32 +230,31 @@ const ClaimModal = ({
               flex: 1,
               justifyContent: 'center',
               paddingBottom: 80,
+              gap: 20,
             }}>
-            <View style={{ backgroundColor: 'white', padding: 30, gap: 20, borderRadius: 10 }}>
+            <View style={{ alignItems: 'center' }}>
+              <Text>Congratulations</Text>
+              <Text>You received:</Text>
+            </View>
+            <View style={{ flexDirection: 'row' }}>
               <View style={{ alignItems: 'center' }}>
-                <Text>Congratulations</Text>
-                <Text>You received:</Text>
+                <Image
+                  source={coin}
+                  style={{ height: 100, width: 100, borderWidth: 1, borderRadius: 15 }}
+                />
+                <Text>x5</Text>
               </View>
-              <View style={{ flexDirection: 'row' }}>
-                <View style={{ alignItems: 'center' }}>
-                  <Image
-                    source={coin}
-                    style={{ height: 100, width: 100, borderWidth: 1, borderRadius: 15 }}
-                  />
-                  <Text>x5</Text>
-                </View>
-                <View style={{ alignItems: 'center' }}>
-                  <Image
-                    source={energy}
-                    style={{ height: 100, width: 100, borderWidth: 1, borderRadius: 15 }}
-                  />
-                  <Text>x5</Text>
-                </View>
+              <View style={{ alignItems: 'center' }}>
+                <Image
+                  source={energy}
+                  style={{ height: 100, width: 100, borderWidth: 1, borderRadius: 15 }}
+                />
+                <Text>x5</Text>
               </View>
-              <View>
-                <Text style={{ fontSize: 14, textAlign: 'center' }}>Come back tomorrow</Text>
-                <Text style={{ fontSize: 14, textAlign: 'center' }}>for more rewards</Text>
-              </View>
+            </View>
+            <View>
+              <Text style={{ fontSize: 14, textAlign: 'center' }}>Come back tomorrow</Text>
+              <Text style={{ fontSize: 14, textAlign: 'center' }}>for more rewards</Text>
             </View>
           </View>
           {/* @ts-ignore */}

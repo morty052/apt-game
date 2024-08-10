@@ -89,12 +89,12 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
     registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      setNotification(notification);
       handleNotification({
         type: notification.request.content.data?.type,
         showToast: setShowToast,
         data: notification.request.content.data,
       });
-      setNotification(notification);
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(

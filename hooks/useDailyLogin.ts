@@ -86,7 +86,7 @@ export const useDailyLogin = () => {
       lastLogin: `was ${dayjs().diff(lastLogin, 'minutes')} minutes ago`,
     });
     //* handle updating last login time
-    setItem('LAST_LOGIN', `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`);
+    // setItem('LAST_LOGIN', `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`);
     setLoadedReward(true);
   }, []);
 

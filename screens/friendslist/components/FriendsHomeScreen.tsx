@@ -17,6 +17,9 @@ import { getItem } from 'utils/storage';
 import { getSearchResults, getUserFriends, sendFriendRequest } from 'utils/supabase';
 
 import friendsIcon from '../../../assets/icons/friends-icon--min.png';
+import { StatusBar } from 'expo-status-bar';
+import { useRefreshOnFocus } from 'hooks/useRefreshOnFocus';
+import LoadingScreen from 'components/LoadingScreen';
 
 const FriendRequestsBadge = ({ requests }: { requests: number }) => {
   return (
@@ -46,19 +49,19 @@ function Header({ friendRequests }: { friendRequests: string[] }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <BackButton onPress={() => navigation.goBack()} />
-      <Text style={{ textAlign: 'center', color: 'white', fontSize: 24, flex: 1 }}>Friends</Text>
+      <Text style={{ textAlign: 'center', color: 'black', fontSize: 24, flex: 1 }}>Friends</Text>
       <Pressable
         onPress={() => navigation.navigate('FriendRequests', { friendRequests })}
         style={{
           height: 40,
           width: 40,
-          backgroundColor: 'yellow',
+          backgroundColor: Colors.tertiary,
           borderRadius: 40,
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
         }}>
-        <Ionicons name="mail" size={24} color="black" />
+        <Ionicons name="mail" size={24} color="white" />
         <FriendRequestsBadge requests={friendRequests?.length} />
       </Pressable>
     </View>
@@ -103,14 +106,15 @@ const PlayerResultItem = ({
 }) => {
   return (
     <View style={styles.playerRankingCard}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 0 }}>
         <Avatar avatarObject={player.avatar} />
-        <View style={{ flex: 1, paddingTop: 10 }}>
-          <Text>{player.username}</Text>
-          <Text>{player.totalscore}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 16 }}>{player.username}</Text>
         </View>
+        <Button style={styles.addButton} onPress={onPress}>
+          <Ionicons name="add" size={24} color="white" />
+        </Button>
       </View>
-      <Button onPress={onPress} title="Add Friend" />
     </View>
   );
 };
@@ -136,10 +140,12 @@ export function FriendsHomeScreen({ navigation }: any) {
   const [results, setResults] = useState<null | any[]>(null);
   const [creatingMatch, setCreatingMatch] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['friendlist'],
     queryFn: () => getUserFriends(getItem('USERNAME') as string),
   });
+
+  useRefreshOnFocus(refetch);
 
   const friends = useMemo(() => {
     if (!query) {
@@ -189,12 +195,12 @@ export function FriendsHomeScreen({ navigation }: any) {
   }, [query, friends]);
 
   if (isLoading) {
-    return null;
+    return <LoadingScreen />;
   }
 
   return (
     <>
-      <View style={{ flex: 1, backgroundColor: Colors.tertiary }}>
+      <View style={{ flex: 1, backgroundColor: Colors.plain }}>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={styles.container}>
             <Header friendRequests={data?.friendRequests} />
@@ -206,12 +212,16 @@ export function FriendsHomeScreen({ navigation }: any) {
                   setResults(null);
                 }
               }}
-              placeholderTextColor="white"
-              cursorColor="white"
+              placeholderTextColor={Colors.gray}
+              cursorColor="black"
               placeholder="Search Friend or players"
               style={styles.searchInput}
             />
             {!query && <CreateMatchCard onPress={() => setCreatingMatch(true)} />}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={{ fontSize: 15 }}>{query ? 'Results' : 'Friends'}</Text>
+              <Text style={{ fontSize: 15 }}>{query ? results?.length : friends?.length}</Text>
+            </View>
             {results && <ResultsUi onPress={() => addFriendMutation(query)} results={results} />}
             <FriendsUi friends={friends} />
           </View>
@@ -222,6 +232,7 @@ export function FriendsHomeScreen({ navigation }: any) {
         handleClose={() => setCreatingMatch(false)}
         friends={data?.friends}
       />
+      <StatusBar style="dark" />
     </>
   );
 }
@@ -230,12 +241,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    backgroundColor: Colors.tertiary,
+    backgroundColor: Colors.plain,
     gap: 30,
     paddingTop: 20,
   },
   playerRankingCard: {
-    backgroundColor: Colors.plain,
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 10,
     gap: 10,
@@ -250,13 +261,13 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     height: 50,
-    borderColor: 'white',
+    borderColor: 'black',
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
     // textAlign: 'center',
     fontFamily: 'Crispy-Tofu',
-    color: 'white',
+    color: 'black',
   },
   badge: {
     position: 'absolute',
@@ -292,5 +303,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 5,
     shadowColor: 'black',
+  },
+  addButton: {
+    height: 35,
+    padding: 0,
+    width: 80,
+    backgroundColor: Colors.backGround,
+    borderColor: 'skyblue',
   },
 });

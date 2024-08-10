@@ -10,7 +10,6 @@ import { useDailyLogin } from 'hooks/useDailyLogin';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import React from 'react';
 import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
-import { TestScreen } from 'screens/testscreen';
 import { getItem, setItem } from 'utils/storage';
 
 import RootStack from './navigation';
@@ -84,9 +83,9 @@ export default function App() {
       <React.Suspense>
         <SQLiteProvider databaseName="preloadedData.db" useSuspense>
           <NotificationsProvider>
+            {/* <TestScreen /> */}
             <RootStack onboarded={onboarded} />
           </NotificationsProvider>
-          {/* <TestScreen /> */}
         </SQLiteProvider>
       </React.Suspense>
       <StatusBar style="light" />

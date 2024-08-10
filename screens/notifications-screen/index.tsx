@@ -112,6 +112,7 @@ const getInvites = async (DB: ExpoSQLiteDatabase<typeof SchemaProps>) => {
 
 export default function NotificationsScreen() {
   const [activeTab, setactiveTab] = useState<string>('INVITES');
+  const [invites, setInvites] = useState<null | any[]>(null);
 
   const navigation = useNavigation<any>();
   const { socket } = React.useContext(SocketContext);
@@ -120,15 +121,11 @@ export default function NotificationsScreen() {
 
   const DB = useDB();
 
-  const {
-    data: invites,
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['userNotifications'],
     queryFn: async () => {
       const invites = await getInvites(DB);
-
+      setInvites(invites);
       return invites;
     },
   });
