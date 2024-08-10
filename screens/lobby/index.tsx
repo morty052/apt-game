@@ -6,23 +6,21 @@ import CharacterSelectButton from 'components/action-buttons/CharacterSelectButt
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
+import { eq } from 'drizzle-orm';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useDB } from 'hooks/useDb';
 import { useRefreshOnFocus } from 'hooks/useRefreshOnFocus';
+import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View, Image, ScrollView, Pressable } from 'react-native';
-import { inviteProps, playerProps } from 'types';
+import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 import { getHost, getPlayers } from 'utils/supabase';
 
-import coin from '../../assets/icons/alph-a--min.png';
 import friendsIcon from '../../assets/icons/friends-icon--min.png';
-import removeAdsIcons from '../../assets/icons/removeAds-min.png';
-import energy from '../../assets/icons/thunderbolt-icon--min.png';
-import { useDB } from 'hooks/useDb';
 import * as SchemaProps from '../../schema';
-import { eq } from 'drizzle-orm';
-import { useAppStore } from 'models/appStore';
+import AdFreeBundle from 'components/cards/AdfreeBundle';
 
 const delay = () => {
   return new Promise<void>((resolve, reject) => {
@@ -60,62 +58,6 @@ const LobbyInfoCard = () => {
           <Text style={{ color: 'white' }}>Private Match</Text>
           <Text style={{ fontSize: 12, color: 'white' }}>Waiting for other players</Text>
         </View>
-      </View>
-    </LinearGradient>
-  );
-};
-const AdFreeBundle = () => {
-  return (
-    <LinearGradient
-      colors={[Colors.backGround, 'lightblue']}
-      style={{
-        padding: 10,
-        height: 140,
-        borderRadius: 10,
-        elevation: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-      }}>
-      <View style={{ gap: 10, flex: 1.5 }}>
-        <View style={{ gap: 5 }}>
-          <Text style={{ fontSize: 12, color: 'white' }}>
-            Get the ad free bundle by referring friends
-          </Text>
-        </View>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              alignItems: 'center',
-              borderRadius: 10,
-              padding: 5,
-            }}>
-            <Image style={{ height: 60, width: 60 }} source={energy} />
-            <Text style={{ fontSize: 14 }}>x100</Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              alignItems: 'center',
-              borderRadius: 10,
-              padding: 5,
-            }}>
-            <Image style={{ height: 60, width: 60 }} source={coin} />
-            <Text style={{ fontSize: 14 }}>x100</Text>
-          </View>
-        </View>
-      </View>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-        }}>
-        <Image
-          resizeMode="contain"
-          style={{ height: '95%', width: '95%' }}
-          source={removeAdsIcons}
-        />
       </View>
     </LinearGradient>
   );

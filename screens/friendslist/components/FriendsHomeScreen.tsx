@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import Avatar, { AvatarObject } from 'components/Avatar';
+import LoadingScreen from 'components/LoadingScreen';
 import PrivateMatchCreationModal from 'components/PrivateMatchCreationModal';
 import FriendCard from 'components/cards/FriendCard';
 import { BackButton } from 'components/ui/BackButton';
@@ -9,6 +10,8 @@ import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { useRefreshOnFocus } from 'hooks/useRefreshOnFocus';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, View, StyleSheet, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,9 +20,6 @@ import { getItem } from 'utils/storage';
 import { getSearchResults, getUserFriends, sendFriendRequest } from 'utils/supabase';
 
 import friendsIcon from '../../../assets/icons/friends-icon--min.png';
-import { StatusBar } from 'expo-status-bar';
-import { useRefreshOnFocus } from 'hooks/useRefreshOnFocus';
-import LoadingScreen from 'components/LoadingScreen';
 
 const FriendRequestsBadge = ({ requests }: { requests: number }) => {
   return (
@@ -62,7 +62,7 @@ function Header({ friendRequests }: { friendRequests: string[] }) {
           position: 'relative',
         }}>
         <Ionicons name="mail" size={24} color="white" />
-        <FriendRequestsBadge requests={friendRequests?.length} />
+        {friendRequests?.length > 0 && <FriendRequestsBadge requests={friendRequests?.length} />}
       </Pressable>
     </View>
   );
@@ -212,7 +212,7 @@ export function FriendsHomeScreen({ navigation }: any) {
                   setResults(null);
                 }
               }}
-              placeholderTextColor={Colors.gray}
+              placeholderTextColor="black"
               cursorColor="black"
               placeholder="Search Friend or players"
               style={styles.searchInput}
@@ -255,19 +255,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
     paddingHorizontal: 10,
     borderRadius: 10,
-    elevation: 10,
+    elevation: 15,
     gap: 15,
     paddingVertical: 20,
   },
   searchInput: {
     height: 50,
-    borderColor: 'black',
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
-    // textAlign: 'center',
+    borderColor: Colors.gray,
     fontFamily: 'Crispy-Tofu',
     color: 'black',
+    backgroundColor: Colors.lightBlack,
   },
   badge: {
     position: 'absolute',

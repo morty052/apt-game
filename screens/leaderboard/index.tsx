@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import Avatar, { AvatarObject } from 'components/Avatar';
+import PlayerProfileModal from 'components/PlayerProfileModal';
 import { BackButton } from 'components/ui/BackButton';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getLeaderBoard } from 'utils/supabase';
@@ -39,6 +40,8 @@ const PlayerRankingCard = ({
 };
 
 const LeaderBoard = ({ navigation }: any) => {
+  const [viewingPlayer, setViewingPlayer] = useState(false);
+  const [playerToView, setplayerToView] = useState();
   const { data: players, isLoading } = useQuery({
     queryKey: ['leaderboard'],
     queryFn: getLeaderBoard,
@@ -55,13 +58,15 @@ const LeaderBoard = ({ navigation }: any) => {
           {players?.map((player, index) => (
             <PlayerRankingCard
               onPress={() => {
-                navigation.navigate('PlayerScreen', {
-                  username: player.username,
-                  avatar: player.avatar,
-                  points_to_compare: player.total_score,
-                  high_score_to_compare: player.highscore,
-                  level_to_compare: player.level,
-                });
+                // navigation.navigate('PlayerScreen', {
+                //   username: player.username,
+                //   avatar: player.avatar,
+                //   points_to_compare: player.total_score,
+                //   high_score_to_compare: player.highscore,
+                //   level_to_compare: player.level,
+                // });
+                setplayerToView(player);
+                setViewingPlayer(true);
               }}
               key={index}
               player={player}
@@ -70,6 +75,11 @@ const LeaderBoard = ({ navigation }: any) => {
           ))}
         </View>
       </ScrollView>
+      <PlayerProfileModal
+        playerToView={playerToView}
+        visible={viewingPlayer}
+        setVisible={setViewingPlayer}
+      />
     </View>
   );
 };

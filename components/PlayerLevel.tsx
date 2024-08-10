@@ -10,7 +10,7 @@ const getDistanceFromLastLevel = (total_score: number) => {
   return `${Math.floor((total_score % 1000) * 0.1)}%`;
 };
 
-export const ProgressBar = ({
+const ProgressBar = ({
   distanceFromLastLevel,
   level,
 }: {

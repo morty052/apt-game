@@ -6,13 +6,15 @@ export const ModalComponent = ({
   visible,
   children,
   style,
+  transparent,
 }: {
   visible: boolean;
   children: ReactNode;
   style?: ViewStyle;
+  transparent?: boolean;
 }) => {
   return (
-    <Modal animationType="slide" statusBarTranslucent visible={visible}>
+    <Modal transparent={transparent} animationType="slide" statusBarTranslucent visible={visible}>
       <View style={[{ flex: 1 }, style]}>
         <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
       </View>

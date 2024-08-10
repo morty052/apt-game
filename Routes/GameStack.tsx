@@ -15,7 +15,6 @@ import Lobby from 'screens/lobby';
 import MarketScreen from 'screens/market';
 import ModeScreen from 'screens/modes-screen';
 import NotificationsScreen from 'screens/notifications-screen';
-import PlayerScreen from 'screens/playerscreen';
 import Profile from 'screens/profile';
 import RoadMapScreen from 'screens/roadmap';
 import SettingsScreen from 'screens/settings-screen';
@@ -172,18 +171,6 @@ export default function GameStack({ navigation }: any) {
           component={MarketScreen}
         />
         <Stack.Screen name="HelpScreen" component={HelpScreen} />
-        <Stack.Screen
-          options={{
-            headerShown: true,
-            headerTitleAlign: 'center',
-            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-            headerStyle: { backgroundColor: Colors.tertiary },
-            headerTitle: 'Profile',
-          }}
-          name="PlayerScreen"
-          component={PlayerScreen}
-        />
         <Stack.Screen
           name="Profile"
           options={{
