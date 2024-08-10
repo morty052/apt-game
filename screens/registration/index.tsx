@@ -1,30 +1,179 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { Button } from 'components/ui/Button';
 import Input from 'components/ui/Input';
+import { Text } from 'components/ui/Text';
+import { Colors } from 'constants/colors';
 import { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, ImageBackground, Keyboard, StyleSheet, View } from 'react-native';
 import UserAvatarCreator from 'screens/user-avatar-creator/UserAvatarCreator';
 
-import { checkIfemailExists } from './features';
-import { getItem, setItem } from 'utils/storage';
-import { handleSignup } from 'utils/supabase';
+import { checkIfemailExists, checkIfUsernameExists } from './features';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInDown,
+  SlideInUp,
+  SlideOutDown,
+} from 'react-native-reanimated';
 
 const Stack = createStackNavigator();
 
+const OverLay = () => {
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        bottom: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+      }}
+    />
+  );
+};
+
+const RegisterForm = ({
+  email,
+  password,
+  error,
+  setError,
+  setPassword,
+  setEmail,
+  loading,
+  handleSubmit,
+}: {
+  email: string;
+  password: string;
+  error: string;
+  setError: (value: string) => void;
+  setPassword: (value: string) => void;
+  setEmail: (value: string) => void;
+  loading: boolean;
+  handleSubmit: () => void;
+}) => {
+  return (
+    <Animated.View entering={SlideInDown} style={styles.form}>
+      <View>
+        <Text style={{ color: 'black', fontSize: 30 }}>Welcome</Text>
+        <Text style={{ color: 'black', fontSize: 16 }}>Create a new account to play</Text>
+      </View>
+      <View style={{ gap: 10 }}>
+        <Input
+          autoCapitalize="none"
+          onBlur={() => checkIfemailExists(email)}
+          onFocus={() => setError('')}
+          keyboardType="email-address"
+          value={email}
+          onChangeText={(value) => {
+            if (error) {
+              setError('');
+            }
+            setEmail(value);
+          }}
+          placeholder="Email"
+          style={{
+            backgroundColor: 'white',
+          }}
+        />
+        <Input
+          style={{
+            backgroundColor: 'white',
+          }}
+          secureTextEntry
+          value={password}
+          onChangeText={(value) => {
+            if (error) {
+              setError('');
+            }
+            setPassword(value);
+          }}
+          placeholder="Password"
+          onFocus={() => setError('')}
+        />
+        <Text style={{ color: 'red', fontSize: 12, textAlign: 'center' }}>{error}</Text>
+      </View>
+      <Button onPress={handleSubmit}>
+        {loading ? <ActivityIndicator /> : <Text>Continue</Text>}
+      </Button>
+      <Text style={{ textAlign: 'center', fontSize: 10, color: 'gray' }}>
+        By continuing, you agree to our Terms of Service and Privacy Policy
+      </Text>
+    </Animated.View>
+  );
+};
+
 const UsernameScreen = ({ route, navigation }: any) => {
   const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const { email, password } = route.params;
 
-  async function handleSubmit() {
+  const handleButtonPress = async () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    if (!username) {
+      setError('Please enter a username');
+      setLoading(false);
+      return;
+    }
+    const usernameTaken = await checkIfUsernameExists(username);
+    if (usernameTaken) {
+      setError('Username already taken');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
     navigation.navigate('UserAvatarCreator', { email, password, username });
-  }
+  };
 
   return (
-    <SafeAreaView style={{ paddingTop: 20, paddingHorizontal: 10, gap: 20 }}>
-      <Input placeholder="Username" value={username} onChangeText={setUsername} />
-      <Button title="Register" onPress={handleSubmit} />
-    </SafeAreaView>
+    <ImageBackground
+      resizeMode="cover"
+      source={require('../../assets/registration_background.png')}
+      style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          zIndex: 1,
+          justifyContent: 'flex-end',
+        }}>
+        <Animated.View entering={SlideInDown} style={styles.form}>
+          <View style={{ gap: 3 }}>
+            <Text>Create a username</Text>
+            <Text style={{ color: 'black', fontSize: 12 }}>
+              Your username will be visible on your profile
+            </Text>
+          </View>
+          <View style={{ gap: 5 }}>
+            <Input
+              placeholder="Username"
+              value={username}
+              onChangeText={(username) => {
+                if (error) {
+                  setError('');
+                }
+                if (username.length + 1 > 21) {
+                  setError('Username cannot be longer than 20 characters');
+                  return;
+                }
+                setUsername(username);
+              }}
+              maxLength={21}
+            />
+            <Text style={{ color: 'red', fontSize: 12, textAlign: 'center' }}>{error}</Text>
+          </View>
+          <Button onPress={handleButtonPress}>
+            {loading ? <ActivityIndicator /> : <Text>Register</Text>}
+          </Button>
+        </Animated.View>
+      </View>
+      <OverLay />
+    </ImageBackground>
   );
 };
 
@@ -32,33 +181,52 @@ const EmailAndPasswordScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit() {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
     if (!email || !password) {
       setError('Email and password are required');
+      setLoading(false);
       return;
     }
     const enrolled = await checkIfemailExists(email);
     if (enrolled) {
       setError('Email already exists');
+      setLoading(false);
       return;
     }
+    setLoading(false);
     navigation.navigate('UsernameScreen', { email, password });
   }
 
   return (
-    <SafeAreaView style={{ gap: 10, paddingTop: 20, paddingHorizontal: 10 }}>
-      <Input
-        autoCapitalize="none"
-        onBlur={() => checkIfemailExists(email)}
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <Input secureTextEntry value={password} onChangeText={setPassword} />
-      <Text>{error}</Text>
-      <Button title="Register" onPress={handleSubmit} />
-    </SafeAreaView>
+    <ImageBackground
+      resizeMode="cover"
+      source={require('../../assets/registration_background.png')}
+      style={{ flex: 1, backgroundColor: Colors.backGround }}>
+      <View
+        style={{
+          flex: 1,
+          zIndex: 1,
+          justifyContent: 'flex-end',
+        }}>
+        <RegisterForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          error={error}
+          setError={setError}
+          handleSubmit={handleSubmit}
+          loading={loading}
+        />
+      </View>
+      <OverLay />
+    </ImageBackground>
   );
 };
 
@@ -74,4 +242,6 @@ const RegistrationScreen = () => {
 
 export default RegistrationScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  form: { gap: 20, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 20 },
+});
