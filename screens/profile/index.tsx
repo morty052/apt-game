@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
 import { PlayerAvatar } from 'components/Avatar';
 import { Button } from 'components/ui/Button';
 import { Container } from 'components/ui/Container';
@@ -15,6 +14,7 @@ import { Dimensions, Pressable, ScrollView, StyleSheet, View } from 'react-nativ
 import { Stats } from 'schema';
 import { StatsProps } from 'types';
 import { getItem } from 'utils/storage';
+import { getDistanceFromLastLevel, ProgressBar } from 'components/ProgressBar';
 
 const avatarWidth = Dimensions.get('window').width * 0.7;
 
@@ -28,50 +28,6 @@ const tabs = [
     title: 'Inventory',
   },
 ];
-
-const ProgressBar = ({
-  distanceFromLastLevel,
-  level,
-}: {
-  distanceFromLastLevel: any;
-  level: number;
-}) => {
-  return (
-    <View
-      style={{
-        backgroundColor: 'gray',
-        flex: 1,
-        borderRadius: 20,
-        borderWidth: 2,
-        borderColor: 'white',
-        height: 30,
-        position: 'relative',
-      }}>
-      <View
-        style={{
-          backgroundColor: '#00daff',
-          borderTopRightRadius: 0,
-          borderBottomRightRadius: 0,
-          height: 26,
-          width: `${distanceFromLastLevel}%`,
-          justifyContent: 'center',
-        }}
-      />
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          justifyContent: 'center',
-          zIndex: 1,
-        }}>
-        <Text style={{ color: 'white', textAlign: 'center', fontSize: 14 }}>{level}</Text>
-      </View>
-    </View>
-  );
-};
 
 const StatContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -105,26 +61,20 @@ function PlayerInfo() {
   const username = useMemo(() => getItem('USERNAME'), []);
   const email = useMemo(() => getItem('EMAIL'), []);
   const stats = useAppStore().stats;
-  const { level, wins, losses, points, games_played, high_score } = stats;
+  const { wins, losses, points, games_played, high_score } = stats;
+  const distanceFromLastLevel = useMemo(() => getDistanceFromLastLevel(points), [points]);
+  const level = useMemo(() => Math.floor(points / 1000), [points]);
   return (
     <View style={{ gap: 20 }}>
-      <LinearGradient
+      <View
         // Button Linear Gradient
-        colors={[Colors.backGround, '#00aecc']}
-        start={{ x: 0, y: 0 }}
         style={styles.playerInfoCard}>
         <View>
-          <Text style={{ color: 'white' }}>{username}</Text>
-          <Text style={{ color: 'white' }}>{email}</Text>
+          <Text style={{}}>{username}</Text>
+          <Text style={{ fontSize: 12 }}>{email}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <ProgressBar level={0} distanceFromLastLevel={0} />
-        </View>
-      </LinearGradient>
+        <ProgressBar level={level} distanceFromLastLevel={distanceFromLastLevel} />
+      </View>
 
       {/* <LinearGradient
         // Button Linear Gradient
@@ -297,11 +247,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   playerInfoCard: {
-    backgroundColor: Colors.secondary,
+    backgroundColor: 'white',
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 20,
     gap: 15,
+    elevation: 5,
   },
   achievementCard: {
     backgroundColor: Colors.secondary,
