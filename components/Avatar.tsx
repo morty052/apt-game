@@ -79,7 +79,7 @@ export function PlayerAvatar({ width, height }: { width?: number; height?: numbe
       <Rive
         style={{
           width: width || 60,
-          height: height || 60,
+          maxHeight: height || 60,
           // borderWidth: 1,
         }}
         ref={riveRef}
@@ -129,7 +129,7 @@ function Avatar({
       <Rive
         style={{
           width: width || 60,
-          height: height || 60,
+          maxHeight: height || 60,
           // borderWidth: 1,
         }}
         ref={riveRef}

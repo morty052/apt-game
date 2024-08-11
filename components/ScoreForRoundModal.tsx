@@ -1,11 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { getPointsForPlayer, useGameStore } from 'models/gameStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
-import { useEffect, useState } from 'react';
-import { Modal, View, Text } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Image, Modal, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SocketProps } from 'types';
 import { getItem } from 'utils/storage';
+import { Text } from './ui/Text';
+import HappyFace from '../assets/icons/happy-face-min.png';
+import SadFace from '../assets/icons/hurt-face-min.png';
+import SuprisedFace from '../assets/icons/surprised-min.png';
+
+const faces = {
+  happy: HappyFace,
+  sad: SadFace,
+  surprised: SuprisedFace,
+};
 
 const ScoreForRoundModal = ({
   open,
@@ -36,6 +46,38 @@ const ScoreForRoundModal = ({
     });
   }, [open]);
 
+  const expression = useMemo(() => {
+    if (scoreForRound <= 50) {
+      return 'sad';
+    }
+
+    if (scoreForRound <= 150) {
+      return 'happy';
+    }
+
+    if (scoreForRound >= 175) {
+      return 'surprised';
+    }
+
+    return 'happy';
+  }, [scoreForRound]);
+
+  const remark = useMemo(() => {
+    if (scoreForRound <= 50) {
+      return 'Aw shucks!';
+    }
+
+    if (scoreForRound <= 150) {
+      return 'Good job!';
+    }
+
+    if (scoreForRound >= 175) {
+      return 'Stupendous!';
+    }
+
+    return 'Aw shucks!';
+  }, [scoreForRound]);
+
   return (
     <Modal animationType="fade" statusBarTranslucent visible={open}>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }}>
@@ -58,9 +100,20 @@ const ScoreForRoundModal = ({
             style={{ alignSelf: 'flex-end' }}
             color="red"
           />
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Text style={{ fontSize: 20 }}>You scored</Text>
-            <Text style={{ fontSize: 30, fontWeight: '700' }}>{scoreForRound}</Text>
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingBottom: 50,
+              gap: 20,
+            }}>
+            <Text style={{ fontSize: 25 }}>{remark}</Text>
+            <Image source={faces[expression]} style={{ width: 200, height: 200 }} />
+            <View style={{ gap: 4, alignItems: 'center' }}>
+              <Text style={{ fontSize: 28 }}>You scored</Text>
+              <Text style={{ fontSize: 35, fontWeight: '700' }}>{scoreForRound}</Text>
+            </View>
           </View>
         </View>
       </SafeAreaView>

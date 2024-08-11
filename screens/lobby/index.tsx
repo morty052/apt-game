@@ -96,8 +96,8 @@ function Lobby({
   useRefreshOnFocus(refetch);
 
   function handleStartMatch(queue: playerProps[], room: string) {
-    // initGame({ queue, room });
-    // navigation.navigate('GameScreen', { room: private_room as string });
+    initGame({ queue, room });
+    navigation.navigate('GameScreen', { room: private_room as string });
   }
 
   useEffect(() => {
