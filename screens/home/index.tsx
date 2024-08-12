@@ -126,7 +126,7 @@ export const Home = () => {
 
   return (
     <>
-      <ImageBackground source={GameBackgroundImage} style={styles.container}>
+      <ImageBackground resizeMode="cover" source={GameBackgroundImage} style={styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
           <View>
             <TopNav />

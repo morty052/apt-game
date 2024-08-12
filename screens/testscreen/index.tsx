@@ -442,16 +442,27 @@
 
 import { Button } from 'components/ui/Button';
 import { Colors } from 'constants/colors';
-import { useSoundTrackModel } from 'models/soundtrackModel';
-import React, { useEffect } from 'react';
+import { dictionaryUrl } from 'constants/index';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export function TestScreen() {
-  const { playOuterGameSound } = useSoundTrackModel();
+  const [fetching, setFetching] = useState(false);
 
-  useEffect(() => {
-    playOuterGameSound('MATCH_FOUND');
-  }, []);
+  const fetchWord = useCallback(async () => {
+    try {
+      setFetching(true);
+      const data = await fetch(`${dictionaryUrl}/brigadier`);
+      const res = await data.json();
+      console.log(JSON.stringify(res[0].meanings[0].definitions[0].definition, null, 2));
+      setFetching(false);
+    } catch (error) {
+      console.error(error);
+      setFetching(false);
+    } finally {
+      setFetching(false);
+    }
+  }, [dictionaryUrl]);
 
   return (
     <View
@@ -465,11 +476,7 @@ export function TestScreen() {
         justifyContent: 'flex-end',
       }}>
       {/* @ts-ignore */}
-      <Button
-        onPress={() => playOuterGameSound('MATCH_FOUND')}
-        style={{ width: '100%' }}
-        title="Confirm"
-      />
+      <Button onPress={() => fetchWord()} style={{ width: '100%' }} title="Confirm" />
     </View>
   );
 }

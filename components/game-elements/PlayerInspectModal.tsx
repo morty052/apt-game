@@ -6,13 +6,13 @@ import { Modal, Pressable, View, Image, ImageSourcePropType, StyleSheet } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { playerProps, SocketProps } from 'types';
 
-import Wizard from './rive/Wizard';
-import { Button } from './ui/Button';
-import { Text } from './ui/Text';
-import AnimalIcon from '../assets/icons/animal-icon.png';
-import NameIcon from '../assets/icons/friends-icon--min.png';
-import PlaceIcon from '../assets/icons/place-icon.png';
-import ThingIcon from '../assets/icons/thing-icon.png';
+import Wizard from '../rive/Wizard';
+import { Button } from '../ui/Button';
+import { Text } from '../ui/Text';
+import AnimalIcon from '../../assets/icons/animal-icon.png';
+import NameIcon from '../../assets/icons/friends-icon--min.png';
+import PlaceIcon from '../../assets/icons/place-icon.png';
+import ThingIcon from '../../assets/icons/thing-icon.png';
 
 type VerdictProps = { isReal: boolean; description: string };
 

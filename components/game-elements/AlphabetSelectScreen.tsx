@@ -5,7 +5,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SocketProps } from 'types';
 
-import { Button } from './ui/Button';
+import { Button } from '../ui/Button';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

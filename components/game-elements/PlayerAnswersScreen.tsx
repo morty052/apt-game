@@ -11,8 +11,8 @@ import { getItem } from 'utils/storage';
 import HUD from './Hud';
 import { Mic } from './Mic';
 import { usePlayingTime } from './Timer';
-import { Button } from './ui/Button';
-import { Text } from './ui/Text';
+import { Button } from '../ui/Button';
+import { Text } from '../ui/Text';
 
 // * All background colors
 const backgroundColors = {

@@ -9,8 +9,8 @@ import HUD from './Hud';
 import PlayerCard from './PlayerCard';
 import PlayerInspectModal from './PlayerInspectModal';
 import { useTallyTime } from './Timer';
-import { Button } from './ui/Button';
-import { Text } from './ui/Text';
+import { Button } from '../ui/Button';
+import { Text } from '../ui/Text';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 
 const OpponentCard = ({

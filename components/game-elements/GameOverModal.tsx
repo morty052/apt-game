@@ -17,9 +17,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getItem } from 'utils/storage';
 import { updatePlayerHighScore } from 'utils/supabase';
 
-import PerformanceMeter, { performanceAnimationNames } from './rive/PerformanceMeter';
-import { Button } from './ui/Button';
-import { Text } from './ui/Text';
+import PerformanceMeter, { performanceAnimationNames } from '../rive/PerformanceMeter';
+import { Button } from '../ui/Button';
+import { Text } from '../ui/Text';
 import { useDB } from 'hooks/useDb';
 import { Stats } from 'schema';
 import { eq } from 'drizzle-orm';

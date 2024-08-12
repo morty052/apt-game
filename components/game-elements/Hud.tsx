@@ -1,7 +1,7 @@
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from './ui/Text';
+import { Text } from '../ui/Text';
 
 const HUD = ({ seconds }: { seconds: number }) => {
   const { activeLetter, totalScore, round } = useGameStore();

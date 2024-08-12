@@ -2,12 +2,12 @@ import { useGameStore } from 'models/gameStore';
 import { ReactNode, useMemo } from 'react';
 import { Pressable, StyleSheet, View, Image, ImageSourcePropType } from 'react-native';
 
-import Avatar from './Avatar';
-import { Text } from './ui/Text';
-import AnimalIcon from '../assets/icons/animal-icon.png';
-import ThingIcon from '../assets/icons/thing-icon.png';
-import PlaceIcon from '../assets/icons/place-icon.png';
-import NameIcon from '../assets/icons/friends-icon--min.png';
+import Avatar from '../Avatar';
+import { Text } from '../ui/Text';
+import AnimalIcon from '../../assets/icons/animal-icon.png';
+import ThingIcon from '../../assets/icons/thing-icon.png';
+import PlaceIcon from '../../assets/icons/place-icon.png';
+import NameIcon from '../../assets/icons/friends-icon--min.png';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 const avatarObject = {

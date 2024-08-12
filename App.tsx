@@ -13,6 +13,8 @@ import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
 import { getItem, setItem } from 'utils/storage';
 
 import RootStack from './navigation';
+import { TestScreen } from 'screens/testscreen';
+import SinglePlayerGame from 'screens/singleplayer';
 
 const loadDataBase = async () => {
   const dbName = 'preloadedData.db';
@@ -80,14 +82,14 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <React.Suspense>
-        <SQLiteProvider databaseName="preloadedData.db" useSuspense>
-          <NotificationsProvider>
-            {/* <TestScreen /> */}
-            <RootStack onboarded={onboarded} />
-          </NotificationsProvider>
-        </SQLiteProvider>
-      </React.Suspense>
+      <NotificationsProvider>
+        <React.Suspense>
+          <SQLiteProvider databaseName="preloadedData.db" useSuspense>
+            <SinglePlayerGame />
+            {/* <RootStack onboarded={onboarded} /> */}
+          </SQLiteProvider>
+        </React.Suspense>
+      </NotificationsProvider>
       <StatusBar style="light" />
     </QueryClientProvider>
   );

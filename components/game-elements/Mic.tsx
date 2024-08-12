@@ -4,9 +4,9 @@ import Voice, {
   SpeechErrorEvent,
 } from '@react-native-voice/voice';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Image, TouchableHighlight, Pressable } from 'react-native';
+import { StyleSheet, View, Image, Pressable } from 'react-native';
 // @ts-ignore
-import mickey from '../assets/mickey.png';
+import mickey from '../../assets/mickey.png';
 
 export function Mic({
   results,

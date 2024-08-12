@@ -1,8 +1,8 @@
-import AlphabetSelectScreen from 'components/AlphabetSelectScreen';
-import GameOverModal from 'components/GameOverModal';
-import PlayerAnswersView from 'components/PlayerAnswersScreen';
-import ScoreForRoundModal from 'components/ScoreForRoundModal';
-import TallyScreen from 'components/TallyScreen';
+import AlphabetSelectScreen from 'components/game-elements/AlphabetSelectScreen';
+import GameOverModal from 'components/game-elements/GameOverModal';
+import PlayerAnswersView from 'components/game-elements/PlayerAnswersScreen';
+import ScoreForRoundModal from 'components/game-elements/ScoreForRoundModal';
+import TallyScreen from 'components/game-elements/TallyScreen';
 import SocketContext from 'contexts/SocketContext';
 import { useGameStore } from 'models/gameStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
