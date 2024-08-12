@@ -77,11 +77,9 @@ export const SinglePlayerTallyScreen = () => {
   const [verifyingAnswer, setVerifyingAnswer] = useState(false);
   const [viewingFinalTally, setViewingFinalTally] = useState(false);
 
-  const { player, tallying } = useSinglePlayerStore();
+  const { player } = useSinglePlayerStore();
 
   const { answers } = player;
-
-  const { seconds } = useTallyTime();
 
   const { playSound } = useSoundTrackModel();
 
@@ -135,6 +133,7 @@ export const SinglePlayerTallyScreen = () => {
       .filter((a) => a === '');
     if (hasForfeitedAnswers.length > 0) {
       console.log({ hasForfeitedAnswers, answers, values: Object.values(answers) });
+      useSinglePlayerStore.setState((state) => ({ lives: state.lives - 1 }));
       handleForfeitedAnswers(hasForfeitedAnswers);
       setViewingFinalTally(true);
       setVerifyingAnswer(false);
@@ -144,6 +143,7 @@ export const SinglePlayerTallyScreen = () => {
     if (!isReal) {
       console.log(wrongItems);
       handleBurstAnswer(wrongItems);
+      useSinglePlayerStore.setState((state) => ({ lives: state.lives - 1 }));
     }
     setVerifyingAnswer(false);
     setViewingFinalTally(true);
@@ -153,6 +153,7 @@ export const SinglePlayerTallyScreen = () => {
     handleForfeitedAnswers,
     setViewingFinalTally,
     setVerifyingAnswer,
+    useSinglePlayerStore,
   ]);
 
   const handleCloseScoreModal = () => {
@@ -165,7 +166,7 @@ export const SinglePlayerTallyScreen = () => {
       {/* <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} /> */}
       <SafeAreaView style={styles.alphabetScreencontainer}>
         <View onLayout={() => playSound('ROUND_END')} style={{ paddingHorizontal: 10, gap: 20 }}>
-          <SinglePlayerHud seconds={seconds} />
+          <SinglePlayerHud />
           <SinglePlayerCard username={player.username} />
 
           <Button title="Ready" onPress={handleTally}>

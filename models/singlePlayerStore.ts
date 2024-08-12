@@ -1,8 +1,8 @@
+import { getItem } from 'utils/storage';
 import { create } from 'zustand';
 
 import { MAX_POINTS_PER_ANSWER, ALPHABETS } from '../constants';
 import { CharacterNames, playerProps } from '../types';
-import { getItem } from 'utils/storage';
 
 type singlePlayer = {
   username: string;
@@ -14,6 +14,7 @@ type GameProps = {
   player: singlePlayer;
   round: number;
   totalScore: number;
+  lives: number;
   winner: null | playerProps;
   activeLetter: string;
   alphabets: string[];
@@ -102,6 +103,7 @@ export const useSinglePlayerStore = create<GameProps>((set, state) => ({
   round: 0,
   activeLetter: 'A',
   totalScore: 0,
+  lives: 3,
   alphabets: ALPHABETS,
   selectingLetter: true,
   playing: false,
