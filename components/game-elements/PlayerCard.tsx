@@ -44,15 +44,7 @@ const Field = ({ value, children }: { value: string; children: ReactNode }) => {
   return <Animated.View style={[styles.answerContainer, animatedStyles]}>{children}</Animated.View>;
 };
 
-const PlayerCard = ({
-  username,
-  onPress,
-  inTallyMode,
-}: {
-  username: string;
-  onPress: () => void;
-  inTallyMode: boolean;
-}) => {
+const PlayerCard = ({ username }: { username: string }) => {
   const { totalScore, player } = useGameStore();
 
   const answers = useMemo(() => {
@@ -60,7 +52,7 @@ const PlayerCard = ({
   }, [player]);
 
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.playerInfo}>
         <Avatar avatarObject={avatarObject} />
         <View style={{ paddingLeft: 10, gap: 5 }}>
@@ -86,7 +78,7 @@ const PlayerCard = ({
           <FieldDisplay title="Thing" value={answers[3]} />
         </Field>
       </View>
-    </Pressable>
+    </View>
   );
 };
 

@@ -106,7 +106,7 @@ const PlayerInspectModal = ({
   open: boolean;
   handleClose: () => void;
   room: string;
-  socket: SocketProps | null;
+  socket: SocketProps | null | undefined;
 }) => {
   const [verifyingAnswer, setVerifyingAnswer] = React.useState(false);
   const [query, setQuery] = React.useState<string | undefined>('');

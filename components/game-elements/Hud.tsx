@@ -1,9 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useGameStore } from 'models/gameStore';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import { Text } from '../ui/Text';
 
-const HUD = ({ seconds }: { seconds: number }) => {
+const HUD = ({ seconds, isSinglePlayer }: { seconds: number; isSinglePlayer?: boolean }) => {
   const { activeLetter, totalScore, round } = useGameStore();
 
   // React.useEffect(() => {
@@ -35,7 +37,6 @@ const HUD = ({ seconds }: { seconds: number }) => {
         }}>
         <Text style={{ color: 'white' }}>{totalScore}</Text>
       </View>
-      {/* {playing && <Timer />} */}
       <View
         style={{
           width: 40,
@@ -47,6 +48,13 @@ const HUD = ({ seconds }: { seconds: number }) => {
         }}>
         <Text style={{ color: 'black' }}>{seconds}</Text>
       </View>
+      {isSinglePlayer && (
+        <View style={{ position: 'absolute', right: 10, top: 51 }}>
+          <View style={{ backgroundColor: 'white', padding: 5, borderRadius: 10 }}>
+            <Ionicons name="heart" size={30} color="red" />
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -63,5 +71,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     borderColor: 'white',
+    position: 'relative',
   },
 });

@@ -22,11 +22,13 @@ const ScoreForRoundModal = ({
   handleClose,
   socket,
   room,
+  isSinglePlayer,
 }: {
   open: boolean;
   handleClose: () => void;
-  socket: SocketProps | null;
-  room: string;
+  socket?: SocketProps | null;
+  room?: string;
+  isSinglePlayer?: boolean;
 }) => {
   const [scoreForRound, setScoreForRound] = useState(0);
   const { player, opponents } = useGameStore();

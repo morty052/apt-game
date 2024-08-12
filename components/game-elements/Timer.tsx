@@ -2,6 +2,30 @@ import { useGameStore } from 'models/gameStore';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+export const useSinglePlayerTimer = () => {
+  const [seconds, setSeconds] = React.useState(30);
+  const [timeUp, setTimeUp] = React.useState(false);
+
+  const { playing } = useGameStore();
+
+  React.useEffect(() => {
+    if (!playing) {
+      return;
+    }
+    const dec = setInterval(() => {
+      setSeconds((prev) => prev - 1);
+      if (seconds === 0) {
+        setTimeUp(true);
+        setSeconds(30);
+      }
+    }, 1000);
+
+    return () => clearInterval(dec);
+  }, [seconds, playing]);
+
+  return { seconds, timeUp };
+};
+
 export const usePlayingTime = () => {
   const [seconds, setSeconds] = React.useState(30);
   const [timeUp] = React.useState(false);

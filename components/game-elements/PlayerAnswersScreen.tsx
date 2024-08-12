@@ -10,7 +10,7 @@ import { getItem } from 'utils/storage';
 
 import HUD from './Hud';
 import { Mic } from './Mic';
-import { usePlayingTime } from './Timer';
+import { usePlayingTime, useSinglePlayerTimer } from './Timer';
 import { Button } from '../ui/Button';
 import { Text } from '../ui/Text';
 
@@ -176,6 +176,129 @@ const AnswerView = ({
   );
 };
 
+export const SinglePlayerAnswersView = ({
+  socket,
+  room,
+  isSinglePlayer,
+}: {
+  socket?: SocketProps | null;
+  room?: string;
+  isSinglePlayer?: boolean;
+}) => {
+  const [index, setIndex] = React.useState(0);
+  const [answers, setAnswers] = React.useState({
+    Name: '',
+    Animal: '',
+    Place: '',
+    Thing: '',
+  });
+
+  const { readyTallyMode, updateAnswers } = useGameStore();
+  const { playSound } = useSoundTrackModel();
+
+  const { seconds, timeUp } = useSinglePlayerTimer();
+
+  const color = useSharedValue(backgroundColors[0]);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      backgroundColor: color.value,
+    };
+  });
+
+  function handleIndexChange() {
+    //* Increase current index
+    const newValue = index + 1;
+
+    // * Move to next answer
+    setIndex(newValue);
+
+    // * change color of background
+    color.value = withTiming(backgroundColors[newValue as keyof typeof backgroundColors]);
+  }
+
+  function handlePlayerFinish() {
+    readyTallyMode();
+  }
+
+  function handleAnswerSubmit(title: string, value: string) {
+    //* handle empty answers
+    if (!value) {
+      //* update value to "FORFEITED"
+      setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
+      updateAnswers({ answer: 'FORFEITED', field: title });
+    }
+
+    // * handle last answer
+    if (index === 3) {
+      console.log('last');
+      if (!value) {
+        console.log('title is', title);
+        //* update value to "FORFEITED"
+        setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
+        updateAnswers({ answer: 'FORFEITED', field: title });
+      }
+      updateAnswers({ answer: value, field: title });
+      handlePlayerFinish();
+      return;
+    }
+
+    updateAnswers({ answer: value, field: title });
+    handleIndexChange();
+  }
+
+  // * Watch for clock
+  React.useEffect(() => {
+    if (!timeUp) {
+      return;
+    }
+
+    handlePlayerFinish();
+  }, [timeUp]);
+
+  return (
+    <AnimatedSafeAreaView style={[{ flex: 1, gap: 20, paddingTop: 10 }, animatedStyles]}>
+      <View onLayout={() => playSound('ROUND_START')} style={{ paddingHorizontal: 10 }}>
+        <HUD isSinglePlayer={isSinglePlayer} seconds={seconds} />
+      </View>
+      <>
+        {index === 0 && (
+          <AnswerView
+            handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
+            value={answers.Name}
+            setValue={setAnswers}
+            title="Name"
+          />
+        )}
+        {index === 1 && (
+          <AnswerView
+            handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
+            value={answers.Animal}
+            setValue={setAnswers}
+            title="Animal"
+          />
+        )}
+        {index === 2 && (
+          <AnswerView
+            handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
+            value={answers.Place}
+            setValue={setAnswers}
+            title="Place"
+          />
+        )}
+        {index === 3 && (
+          <AnswerView
+            handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
+            value={answers.Thing}
+            setValue={setAnswers}
+            title="Thing"
+          />
+        )}
+      </>
+    </AnimatedSafeAreaView>
+  );
+};
+
 const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room: string }) => {
   const [index, setIndex] = React.useState(0);
   const [answers, setAnswers] = React.useState({
@@ -210,13 +333,6 @@ const PlayerAnswersView = ({ socket, room }: { socket: SocketProps | null; room:
   }
 
   function handlePlayerFinish() {
-    socket?.emit('SUBMIT_ANSWERS', {
-      room,
-      player: {
-        username: getItem('USERNAME'),
-        answers,
-      },
-    });
     readyTallyMode();
   }
 

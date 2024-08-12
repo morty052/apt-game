@@ -38,6 +38,37 @@ const OpponentCard = ({
   );
 };
 
+export const SinglePlayerTallyScreen = () => {
+  const [playerToInspect, setPlayerToInspect] = React.useState<playerProps | null>();
+
+  const { player } = useGameStore();
+
+  const { seconds, setPaused } = useTallyTime();
+
+  const { playSound } = useSoundTrackModel();
+
+  React.useEffect(() => {}, []);
+
+  return (
+    <>
+      {/* <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} /> */}
+      <SafeAreaView style={styles.alphabetScreencontainer}>
+        <View onLayout={() => playSound('ROUND_END')} style={{ paddingHorizontal: 10, gap: 20 }}>
+          <HUD seconds={seconds} />
+          <PlayerCard username={player.username} />
+
+          <Button
+            title="Ready"
+            onPress={() => {
+              console.log('player ready');
+            }}
+          />
+        </View>
+      </SafeAreaView>
+    </>
+  );
+};
+
 const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: string }) => {
   const [playerToInspect, setPlayerToInspect] = React.useState<playerProps | null>();
   const [inspectionModalOpen, setInspectionModalOpen] = React.useState(false);
@@ -98,7 +129,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
     <>
       <PlayerInspectModal
         socket={socket}
-        room={room}
+        room={room as string}
         handleClose={handleCloseInspectionModal}
         open={inspectionModalOpen}
         player={playerToInspect as playerProps}
@@ -107,11 +138,7 @@ const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: strin
       <SafeAreaView style={styles.alphabetScreencontainer}>
         <View onLayout={() => playSound('ROUND_END')} style={{ paddingHorizontal: 10, gap: 20 }}>
           <HUD seconds={seconds} />
-          <PlayerCard
-            inTallyMode
-            onPress={() => handlePlayerInspect(player)}
-            username={player.username}
-          />
+          <PlayerCard username={player.username} />
           <Text style={{ color: 'white' }}>Opponents</Text>
           <View style={{ gap: 10, paddingTop: 10 }}>
             {opponents.map((opponent) => (
