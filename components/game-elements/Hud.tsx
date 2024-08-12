@@ -4,6 +4,56 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '../ui/Text';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
+
+export const SinglePlayerHud = ({ seconds }: { seconds: number }) => {
+  const { activeLetter, totalScore, tallying } = useSinglePlayerStore();
+
+  return (
+    <View style={styles.container}>
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 10,
+          backgroundColor: 'gold',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text style={{ color: 'black' }}>{activeLetter}</Text>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'transparent',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text style={{ color: 'white' }}>{totalScore}</Text>
+      </View>
+      {!tallying && (
+        <View
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            backgroundColor: 'gold',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text style={{ color: 'black' }}>{seconds}</Text>
+        </View>
+      )}
+      {tallying && (
+        <View style={{}}>
+          <View style={{ backgroundColor: 'white', padding: 5, borderRadius: 10 }}>
+            <Ionicons name="heart" size={30} color="red" />
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
 
 const HUD = ({ seconds, isSinglePlayer }: { seconds: number; isSinglePlayer?: boolean }) => {
   const { activeLetter, totalScore, round } = useGameStore();

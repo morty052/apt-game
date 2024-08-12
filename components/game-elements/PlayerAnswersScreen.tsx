@@ -8,11 +8,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { answerProps, SocketProps } from 'types';
 import { getItem } from 'utils/storage';
 
-import HUD from './Hud';
+import HUD, { SinglePlayerHud } from './Hud';
 import { Mic } from './Mic';
 import { usePlayingTime, useSinglePlayerTimer } from './Timer';
 import { Button } from '../ui/Button';
 import { Text } from '../ui/Text';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 // * All background colors
 const backgroundColors = {
@@ -176,15 +177,110 @@ const AnswerView = ({
   );
 };
 
-export const SinglePlayerAnswersView = ({
-  socket,
-  room,
-  isSinglePlayer,
+const SinglePlayerView = ({
+  title,
+  value,
+  setValue,
+  handleSubmit,
 }: {
-  socket?: SocketProps | null;
-  room?: string;
-  isSinglePlayer?: boolean;
+  title: string;
+  value: string;
+  setValue: React.Dispatch<
+    React.SetStateAction<{ Name: string; Animal: string; Place: string; Thing: string }>
+  >;
+  handleSubmit: (title: string, value: string) => void;
 }) => {
+  const [listening, setListening] = React.useState(false);
+  const [results, setResults] = React.useState<string | undefined>('');
+
+  const [error, setError] = React.useState(false);
+
+  const { activeLetter } = useSinglePlayerStore();
+
+  const { playSound } = useSoundTrackModel();
+
+  const handlePlayerInput = React.useCallback(
+    async (value: string) => {
+      if (!value) {
+        setValue((prev) => ({ ...prev, [title]: '' }));
+        return;
+      }
+
+      if (value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
+        setError(false);
+      }
+
+      if (!value.toLowerCase().startsWith(activeLetter.toLowerCase())) {
+        setError(true);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        playSound('WRONG_LETTER');
+        return;
+        // setValue((prev) => ({ ...prev, [title]: '' }));
+      }
+
+      setValue((prev) => ({ ...prev, [title]: value }));
+    },
+    [activeLetter, title, setValue, value]
+  );
+
+  return (
+    <View
+      style={{
+        paddingHorizontal: 10,
+        flex: 1,
+        justifyContent: 'space-between',
+        paddingBottom: 30,
+      }}>
+      <View
+        style={{
+          gap: 10,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingBottom: 100,
+        }}>
+        <View
+          style={{
+            // flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            paddingBottom: 20,
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 30,
+              textAlign: 'center',
+            }}>
+            {title}
+          </Text>
+        </View>
+        <GameTextInput
+          error={error}
+          setError={setError}
+          handlePlayerInput={handlePlayerInput}
+          title={title}
+          value={value}
+          setValue={setValue}
+        />
+        <View style={{ alignSelf: 'center', paddingTop: 20 }}>
+          <Mic
+            results={results}
+            setResults={(results) => handlePlayerInput(results as string)}
+            listening={listening}
+            setListening={setListening}
+          />
+        </View>
+      </View>
+      <View>
+        <Button onPress={() => handleSubmit(title, value)} title={value ? 'Submit' : 'Skip'} />
+      </View>
+    </View>
+  );
+};
+
+export const SinglePlayerAnswersView = () => {
   const [index, setIndex] = React.useState(0);
   const [answers, setAnswers] = React.useState({
     Name: '',
@@ -193,7 +289,7 @@ export const SinglePlayerAnswersView = ({
     Thing: '',
   });
 
-  const { readyTallyMode, updateAnswers } = useGameStore();
+  const { readyTallyMode, updateAnswers } = useSinglePlayerStore();
   const { playSound } = useSoundTrackModel();
 
   const { seconds, timeUp } = useSinglePlayerTimer();
@@ -259,11 +355,11 @@ export const SinglePlayerAnswersView = ({
   return (
     <AnimatedSafeAreaView style={[{ flex: 1, gap: 20, paddingTop: 10 }, animatedStyles]}>
       <View onLayout={() => playSound('ROUND_START')} style={{ paddingHorizontal: 10 }}>
-        <HUD isSinglePlayer={isSinglePlayer} seconds={seconds} />
+        <SinglePlayerHud seconds={seconds} />
       </View>
       <>
         {index === 0 && (
-          <AnswerView
+          <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Name}
             setValue={setAnswers}
@@ -271,7 +367,7 @@ export const SinglePlayerAnswersView = ({
           />
         )}
         {index === 1 && (
-          <AnswerView
+          <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Animal}
             setValue={setAnswers}
@@ -279,7 +375,7 @@ export const SinglePlayerAnswersView = ({
           />
         )}
         {index === 2 && (
-          <AnswerView
+          <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Place}
             setValue={setAnswers}
@@ -287,7 +383,7 @@ export const SinglePlayerAnswersView = ({
           />
         )}
         {index === 3 && (
-          <AnswerView
+          <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Thing}
             setValue={setAnswers}

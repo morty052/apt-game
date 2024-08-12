@@ -1,8 +1,8 @@
 import { Colors } from 'constants/colors';
-import { useGameStore } from 'models/gameStore';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'components/ui/Text';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 const selectLetter = (alphabets: string[]) => {
   const hardLetters = ['X', 'Y', 'Z'];
@@ -14,7 +14,8 @@ const selectLetter = (alphabets: string[]) => {
 export default function SinglePlayerLetterSelect() {
   const [thinking, setThinking] = useState(true);
   const [seconds, setSeconds] = useState(3);
-  const { alphabets, playing, tallying, confirmLetterSelection, activeLetter } = useGameStore();
+  const { alphabets, playing, tallying, confirmLetterSelection, activeLetter } =
+    useSinglePlayerStore();
 
   useEffect(() => {
     if (playing || tallying) {
@@ -23,7 +24,7 @@ export default function SinglePlayerLetterSelect() {
     const letter = selectLetter(alphabets);
     const selectLetterTimeout = setTimeout(() => {
       console.log('letter', letter);
-      useGameStore.setState({ activeLetter: letter });
+      useSinglePlayerStore.setState({ activeLetter: letter });
       setThinking(false);
     }, 3000);
     return () => clearTimeout(selectLetterTimeout);

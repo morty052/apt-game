@@ -1,4 +1,5 @@
 import { useGameStore } from 'models/gameStore';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -6,7 +7,7 @@ export const useSinglePlayerTimer = () => {
   const [seconds, setSeconds] = React.useState(30);
   const [timeUp, setTimeUp] = React.useState(false);
 
-  const { playing } = useGameStore();
+  const { playing } = useSinglePlayerStore();
 
   React.useEffect(() => {
     if (!playing) {

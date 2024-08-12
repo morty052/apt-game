@@ -1,14 +1,15 @@
 import { useGameStore } from 'models/gameStore';
 import { ReactNode, useMemo } from 'react';
 import { Pressable, StyleSheet, View, Image, ImageSourcePropType } from 'react-native';
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
+import AnimalIcon from '../../assets/icons/animal-icon.png';
+import NameIcon from '../../assets/icons/friends-icon--min.png';
+import PlaceIcon from '../../assets/icons/place-icon.png';
+import ThingIcon from '../../assets/icons/thing-icon.png';
 import Avatar from '../Avatar';
 import { Text } from '../ui/Text';
-import AnimalIcon from '../../assets/icons/animal-icon.png';
-import ThingIcon from '../../assets/icons/thing-icon.png';
-import PlaceIcon from '../../assets/icons/place-icon.png';
-import NameIcon from '../../assets/icons/friends-icon--min.png';
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 const avatarObject = {
   BodyColor: 1,
@@ -42,6 +43,45 @@ const Field = ({ value, children }: { value: string; children: ReactNode }) => {
   });
 
   return <Animated.View style={[styles.answerContainer, animatedStyles]}>{children}</Animated.View>;
+};
+
+//TODO fix LEAVING FORFEITED HERE OR NOT
+export const SinglePlayerCard = ({ username }: { username: string }) => {
+  const { totalScore, player } = useSinglePlayerStore();
+
+  const answers = useMemo(() => {
+    return Object.values(player.answers);
+  }, [player]);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.playerInfo}>
+        <Avatar avatarObject={avatarObject} />
+        <View style={{ paddingLeft: 10, gap: 5 }}>
+          <Text>{username}</Text>
+          <Text>Points {totalScore}</Text>
+        </View>
+      </View>
+      <View style={{ gap: 20 }}>
+        <Field value={answers[0]}>
+          <FieldImage icon={NameIcon} />
+          <FieldDisplay title="Name" value={answers[0] || 'FORFEITED'} />
+        </Field>
+        <Field value={answers[1]}>
+          <FieldImage icon={AnimalIcon} />
+          <FieldDisplay title="Animal" value={answers[1] || 'FORFEITED'} />
+        </Field>
+        <Field value={answers[2]}>
+          <FieldImage icon={PlaceIcon} />
+          <FieldDisplay title="Place" value={answers[2] || 'FORFEITED'} />
+        </Field>
+        <Field value={answers[3]}>
+          <FieldImage icon={ThingIcon} />
+          <FieldDisplay title="Thing" value={answers[3] || 'FORFEITED'} />
+        </Field>
+      </View>
+    </View>
+  );
 };
 
 const PlayerCard = ({ username }: { username: string }) => {

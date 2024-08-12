@@ -1,39 +1,29 @@
 import LoadingScreen from 'components/LoadingScreen';
 import { SinglePlayerAnswersView } from 'components/game-elements/PlayerAnswersScreen';
-import ScoreForRoundModal from 'components/game-elements/ScoreForRoundModal';
 import { SinglePlayerTallyScreen } from 'components/game-elements/TallyScreen';
-import { useGameStore } from 'models/gameStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import SinglePlayerLetterSelect from './components/SinglePlayerLetterSelect';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 // TODO
 // ! FIX SOUNDS PLAYING TWICE ON MOUNT
 export default function SinglePlayerGame() {
-  const [viewingFinalTally, setViewingFinalTally] = useState(false);
   const [loadedSounds, setloadedSounds] = useState(false);
   const [gameOver, setgameOver] = useState(false);
 
   const { loadGameSoundtrack } = useSoundTrackModel();
-  const { selectingLetter, playing, tallying } = useGameStore();
+  const { selectingLetter, playing, tallying } = useSinglePlayerStore();
 
-  const handleLoadSounds = () => {
+  useEffect(() => {
+    if (loadedSounds) return;
     loadGameSoundtrack(true).then(() => {
       console.log('game loaded');
       setloadedSounds(true);
     });
-  };
-
-  const handleCloseScoreModal = () => {
-    // readyNextRound();
-    setViewingFinalTally(false);
-  };
-
-  useEffect(() => {
-    handleLoadSounds();
-  }, []);
+  }, [loadedSounds]);
 
   if (!loadedSounds) {
     return <LoadingScreen />;
@@ -44,11 +34,6 @@ export default function SinglePlayerGame() {
       {selectingLetter && !gameOver && <SinglePlayerLetterSelect />}
       {playing && !gameOver && <SinglePlayerAnswersView />}
       {tallying && !gameOver && <SinglePlayerTallyScreen />}
-      <ScoreForRoundModal
-        isSinglePlayer
-        open={viewingFinalTally}
-        handleClose={() => handleCloseScoreModal()}
-      />
     </View>
   );
 }
