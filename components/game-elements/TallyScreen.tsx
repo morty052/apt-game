@@ -1,5 +1,6 @@
 import { baseUrl, dictionaryUrl } from 'constants/index';
 import { useGameStore } from 'models/gameStore';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useCallback, useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
@@ -10,11 +11,10 @@ import { getItem } from 'utils/storage';
 import HUD, { SinglePlayerHud } from './Hud';
 import PlayerCard, { SinglePlayerCard } from './PlayerCard';
 import PlayerInspectModal from './PlayerInspectModal';
+import { SinglePlayerScoreForRoundModal } from './ScoreForRoundModal';
 import { useTallyTime } from './Timer';
 import { Button } from '../ui/Button';
 import { Text } from '../ui/Text';
-import { SinglePlayerScoreForRoundModal } from './ScoreForRoundModal';
-import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 const OpponentCard = ({
   username,

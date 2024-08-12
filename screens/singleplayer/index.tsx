@@ -1,12 +1,12 @@
 import LoadingScreen from 'components/LoadingScreen';
 import { SinglePlayerAnswersView } from 'components/game-elements/PlayerAnswersScreen';
 import { SinglePlayerTallyScreen } from 'components/game-elements/TallyScreen';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import SinglePlayerLetterSelect from './components/SinglePlayerLetterSelect';
-import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 // TODO
 // ! FIX SOUNDS PLAYING TWICE ON MOUNT

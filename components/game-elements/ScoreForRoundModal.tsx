@@ -1,17 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Button } from 'components/ui/Button';
 import { getPointsForPlayer, useGameStore } from 'models/gameStore';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image, Modal, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SocketProps } from 'types';
 import { getItem } from 'utils/storage';
-import { Text } from '../ui/Text';
+
 import HappyFace from '../../assets/icons/happy-face-min.png';
 import SadFace from '../../assets/icons/hurt-face-min.png';
 import SuprisedFace from '../../assets/icons/surprised-min.png';
-import { Button } from 'components/ui/Button';
-import { useSinglePlayerStore } from 'models/singlePlayerStore';
+import { Text } from '../ui/Text';
 
 const faces = {
   happy: HappyFace,
@@ -27,13 +28,13 @@ export const SinglePlayerScoreForRoundModal = ({
   handleClose: () => void;
 }) => {
   const [scoreForRound, setScoreForRound] = useState(0);
-  const { player, opponents, round, readyNextRound } = useSinglePlayerStore();
+  const { player, round, readyNextRound, getPointsForPlayer } = useSinglePlayerStore();
   const { playSound } = useSoundTrackModel();
 
   useEffect(() => {
     if (!open) return;
 
-    const totalPoints = getPointsForPlayer({ player, opponents });
+    const totalPoints = getPointsForPlayer({ player });
     setScoreForRound(totalPoints);
   }, [open]);
 

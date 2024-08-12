@@ -1,5 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import { useGameStore } from 'models/gameStore';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import React from 'react';
 import { View, TextInput } from 'react-native';
@@ -13,7 +14,6 @@ import { Mic } from './Mic';
 import { usePlayingTime, useSinglePlayerTimer } from './Timer';
 import { Button } from '../ui/Button';
 import { Text } from '../ui/Text';
-import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 // * All background colors
 const backgroundColors = {
