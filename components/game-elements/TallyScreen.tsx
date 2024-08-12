@@ -1,17 +1,15 @@
-import { baseUrl, dictionaryUrl } from 'constants/index';
+import { dictionaryUrl } from 'constants/index';
 import { useGameStore } from 'models/gameStore';
-import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
-import { useCallback, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { answerProps, playerProps, SocketProps } from 'types';
+import { playerProps, SocketProps } from 'types';
 import { getItem } from 'utils/storage';
 
-import HUD, { SinglePlayerHud } from './Hud';
-import PlayerCard, { SinglePlayerCard } from './PlayerCard';
+import HUD from './Hud';
+import PlayerCard from './PlayerCard';
 import PlayerInspectModal from './PlayerInspectModal';
-import { SinglePlayerScoreForRoundModal } from './ScoreForRoundModal';
 import { useTallyTime } from './Timer';
 import { Button } from '../ui/Button';
 import { Text } from '../ui/Text';
@@ -54,132 +52,6 @@ const checkDictionaryForItem = async (item: string) => {
   } catch (error) {
     console.error(error);
   }
-};
-
-const verifySinglePlayerAnswer = async (payload: answerProps) => {
-  const data = await fetch(`${baseUrl}/api/verify-answers`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-  const res = await data.json();
-
-  const verdict = JSON.parse(res.verdict);
-
-  console.log({ isReal: verdict.isReal });
-
-  return { isReal: verdict.isReal, wrongItems: verdict.wrongItems };
-};
-
-export const SinglePlayerTallyScreen = () => {
-  const [verifyingAnswer, setVerifyingAnswer] = useState(false);
-  const [viewingFinalTally, setViewingFinalTally] = useState(false);
-
-  const { player } = useSinglePlayerStore();
-
-  const { answers } = player;
-
-  const { playSound } = useSoundTrackModel();
-
-  const handleBurstAnswer = useCallback(
-    (wrongItems: any) => {
-      const answerEntries = Object.entries(answers);
-      const updatedAnswers = answerEntries.map(([key, value]) => {
-        if (wrongItems.includes(value)) {
-          return { [key]: 'BUSTED' };
-        }
-        return { [key]: value };
-      });
-      const newAnswers = Object.assign({}, ...updatedAnswers);
-      console.log({ answerEntries, updatedAnswers, newAnswers });
-      useGameStore.setState((state) => ({
-        player: {
-          ...state.player,
-          answers: newAnswers,
-        },
-      }));
-      // return;
-    },
-    [answers]
-  );
-
-  const handleForfeitedAnswers = useCallback(
-    (forfeitedAnswers: string[]) => {
-      const answerEntries = Object.entries(answers);
-      const updatedAnswers = answerEntries.map(([key, value]) => {
-        if (forfeitedAnswers.includes(value as any)) {
-          return { [key]: 'FORFEITED' };
-        }
-        return { [key]: value };
-      });
-      const newAnswers = Object.assign({}, ...updatedAnswers);
-      console.log({ answerEntries, updatedAnswers, newAnswers });
-      useGameStore.setState((state) => ({
-        player: {
-          ...state.player,
-          answers: newAnswers,
-        },
-      }));
-    },
-    [answers, useGameStore]
-  );
-
-  const handleTally = useCallback(async () => {
-    setVerifyingAnswer(true);
-    const hasForfeitedAnswers = Object.values(answers)
-      .filter((a) => a !== 'FORFEITED')
-      .filter((a) => a === '');
-    if (hasForfeitedAnswers.length > 0) {
-      console.log({ hasForfeitedAnswers, answers, values: Object.values(answers) });
-      useSinglePlayerStore.setState((state) => ({ lives: state.lives - 1 }));
-      handleForfeitedAnswers(hasForfeitedAnswers);
-      setViewingFinalTally(true);
-      setVerifyingAnswer(false);
-      return;
-    }
-    const { isReal, wrongItems } = await verifySinglePlayerAnswer(answers);
-    if (!isReal) {
-      console.log(wrongItems);
-      handleBurstAnswer(wrongItems);
-      useSinglePlayerStore.setState((state) => ({ lives: state.lives - 1 }));
-    }
-    setVerifyingAnswer(false);
-    setViewingFinalTally(true);
-  }, [
-    answers,
-    handleBurstAnswer,
-    handleForfeitedAnswers,
-    setViewingFinalTally,
-    setVerifyingAnswer,
-    useSinglePlayerStore,
-  ]);
-
-  const handleCloseScoreModal = () => {
-    // readyNextRound();
-    setViewingFinalTally(false);
-  };
-
-  return (
-    <>
-      {/* <FinalTallYModal open={viewingFinalTally} handleClose={() => handleCloseTallyScreen()} /> */}
-      <SafeAreaView style={styles.alphabetScreencontainer}>
-        <View onLayout={() => playSound('ROUND_END')} style={{ paddingHorizontal: 10, gap: 20 }}>
-          <SinglePlayerHud />
-          <SinglePlayerCard username={player.username} />
-
-          <Button title="Ready" onPress={handleTally}>
-            <Text>{verifyingAnswer ? 'Verifying...' : 'Ready'}</Text>
-          </Button>
-        </View>
-      </SafeAreaView>
-      <SinglePlayerScoreForRoundModal
-        open={viewingFinalTally}
-        handleClose={handleCloseScoreModal}
-      />
-    </>
-  );
 };
 
 const TallyScreen = ({ socket, room }: { socket: SocketProps | null; room: string }) => {

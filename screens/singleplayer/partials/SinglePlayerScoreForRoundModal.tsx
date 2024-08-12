@@ -1,16 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
-import { getPointsForPlayer, useGameStore } from 'models/gameStore';
+import { Button } from 'components/ui/Button';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
-import { useEffect, useMemo, useState } from 'react';
-import { Image, Modal, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Modal, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SocketProps } from 'types';
-import { getItem } from 'utils/storage';
+import { Text } from 'components/ui/Text';
 
-import HappyFace from '../../assets/icons/happy-face-min.png';
-import SadFace from '../../assets/icons/hurt-face-min.png';
-import SuprisedFace from '../../assets/icons/surprised-min.png';
-import { Text } from '../ui/Text';
+import HappyFace from '../../../assets/icons/happy-face-min.png';
+import SadFace from '../../../assets/icons/hurt-face-min.png';
+import SuprisedFace from '../../../assets/icons/surprised-min.png';
 
 const faces = {
   happy: HappyFace,
@@ -18,33 +17,22 @@ const faces = {
   surprised: SuprisedFace,
 };
 
-const ScoreForRoundModal = ({
+const SinglePlayerScoreForRoundModal = ({
   open,
   handleClose,
-  socket,
-  room,
 }: {
   open: boolean;
   handleClose: () => void;
-  socket: SocketProps | null;
-  room: string;
 }) => {
   const [scoreForRound, setScoreForRound] = useState(0);
-  const { player, opponents } = useGameStore();
+  const { player, round, readyNextRound, getPointsForPlayer } = useSinglePlayerStore();
   const { playSound } = useSoundTrackModel();
 
   useEffect(() => {
     if (!open) return;
 
-    const totalPoints = getPointsForPlayer({ player, opponents });
+    const totalPoints = getPointsForPlayer({ player });
     setScoreForRound(totalPoints);
-
-    // * SEND SCORES TO SERVER
-    socket?.emit('UPDATE_SCORES', {
-      player: { username: getItem('USERNAME') },
-      scoreForRound: totalPoints,
-      room,
-    });
   }, [open]);
 
   const expression = useMemo(() => {
@@ -78,6 +66,12 @@ const ScoreForRoundModal = ({
 
     return 'Aw shucks!';
   }, [scoreForRound]);
+
+  const handLeFinishRound = useCallback(() => {
+    const nextRound = round + 1;
+    readyNextRound(nextRound);
+    handleClose();
+  }, [readyNextRound, handleClose]);
 
   return (
     <Modal animationType="fade" statusBarTranslucent visible={open}>
@@ -115,6 +109,9 @@ const ScoreForRoundModal = ({
               <Text style={{ fontSize: 28 }}>You scored</Text>
               <Text style={{ fontSize: 35, fontWeight: '700' }}>{scoreForRound}</Text>
             </View>
+            <View style={{ width: '100%' }}>
+              <Button title="Continue" onPress={handLeFinishRound} />
+            </View>
           </View>
         </View>
       </SafeAreaView>
@@ -122,4 +119,4 @@ const ScoreForRoundModal = ({
   );
 };
 
-export default ScoreForRoundModal;
+export default SinglePlayerScoreForRoundModal;
