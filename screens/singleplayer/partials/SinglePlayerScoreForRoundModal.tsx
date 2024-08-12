@@ -69,6 +69,11 @@ const SinglePlayerScoreForRoundModal = ({
 
   const handLeFinishRound = useCallback(() => {
     const nextRound = round + 1;
+    console.log({ nextRound });
+    if (nextRound >= 7) {
+      useSinglePlayerStore.setState({ gameOver: true });
+      return;
+    }
     readyNextRound(nextRound);
     handleClose();
   }, [readyNextRound, handleClose]);
@@ -86,15 +91,7 @@ const SinglePlayerScoreForRoundModal = ({
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             padding: 10,
-            marginTop: 40,
           }}>
-          <Ionicons
-            name="close"
-            size={24}
-            onPress={handleClose}
-            style={{ alignSelf: 'flex-end' }}
-            color="red"
-          />
           <View
             style={{
               flex: 1,

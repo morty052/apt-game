@@ -32,7 +32,7 @@ export const SinglePlayerTallyScreen = () => {
   const [verifyingAnswer, setVerifyingAnswer] = useState(false);
   const [viewingFinalTally, setViewingFinalTally] = useState(false);
 
-  const { player } = useSinglePlayerStore();
+  const { player, lives } = useSinglePlayerStore();
 
   const { answers } = player;
 
@@ -81,6 +81,16 @@ export const SinglePlayerTallyScreen = () => {
     [answers, useSinglePlayerStore]
   );
 
+  const handlePlayerDeath = useCallback(() => {
+    if (lives - 1 < 0) {
+      useSinglePlayerStore.setState((state) => ({ gameOver: true }));
+      console.log('player died');
+      return true;
+    }
+    useSinglePlayerStore.setState((state) => ({ lives: state.lives - 1 }));
+    console.log('Dmage taken');
+  }, [lives, useSinglePlayerStore]);
+
   const handleTally = useCallback(async () => {
     setVerifyingAnswer(true);
     const hasForfeitedAnswers = Object.values(answers)
@@ -88,7 +98,10 @@ export const SinglePlayerTallyScreen = () => {
       .filter((a) => a === '');
     if (hasForfeitedAnswers.length > 0) {
       console.log({ hasForfeitedAnswers, answers, values: Object.values(answers) });
-      useSinglePlayerStore.setState((state) => ({ lives: state.lives - 1 }));
+      const playerDied = handlePlayerDeath();
+      if (playerDied) {
+        return;
+      }
       handleForfeitedAnswers(hasForfeitedAnswers);
       setViewingFinalTally(true);
       setVerifyingAnswer(false);
@@ -98,7 +111,10 @@ export const SinglePlayerTallyScreen = () => {
     if (!isReal) {
       console.log(wrongItems);
       handleBurstAnswer(wrongItems);
-      useSinglePlayerStore.setState((state) => ({ lives: state.lives - 1 }));
+      const playerDied = handlePlayerDeath();
+      if (playerDied) {
+        return;
+      }
     }
     setVerifyingAnswer(false);
     setViewingFinalTally(true);
@@ -111,10 +127,9 @@ export const SinglePlayerTallyScreen = () => {
     useSinglePlayerStore,
   ]);
 
-  const handleCloseScoreModal = () => {
-    // readyNextRound();
+  const handleCloseScoreModal = useCallback(() => {
     setViewingFinalTally(false);
-  };
+  }, [setViewingFinalTally]);
 
   return (
     <>

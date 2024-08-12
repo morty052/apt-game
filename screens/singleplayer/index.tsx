@@ -7,15 +7,15 @@ import { StyleSheet, View } from 'react-native';
 import SinglePlayerAnswersView from './components/SinglePlayerAnswersView';
 import SinglePlayerLetterSelect from './components/SinglePlayerLetterSelect';
 import { SinglePlayerTallyScreen } from './components/SinglePlayerTallyScreen';
+import { Text } from 'components/ui/Text';
 
 // TODO
 // ! FIX SOUNDS PLAYING TWICE ON MOUNT
 export default function SinglePlayerGame() {
   const [loadedSounds, setloadedSounds] = useState(false);
-  const [gameOver, setgameOver] = useState(false);
 
   const { loadGameSoundtrack } = useSoundTrackModel();
-  const { selectingLetter, playing, tallying } = useSinglePlayerStore();
+  const { selectingLetter, playing, tallying, gameOver } = useSinglePlayerStore();
 
   useEffect(() => {
     if (loadedSounds) return;
@@ -34,6 +34,11 @@ export default function SinglePlayerGame() {
       {selectingLetter && !gameOver && <SinglePlayerLetterSelect />}
       {playing && !gameOver && <SinglePlayerAnswersView />}
       {tallying && !gameOver && <SinglePlayerTallyScreen />}
+      {gameOver && (
+        <View>
+          <Text>Game Over</Text>
+        </View>
+      )}
     </View>
   );
 }

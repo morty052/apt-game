@@ -195,7 +195,7 @@ const SinglePlayerAnswersView = () => {
     };
   });
 
-  function handleIndexChange() {
+  const handleIndexChange = useCallback(() => {
     //* Increase current index
     const newValue = index + 1;
 
@@ -204,37 +204,40 @@ const SinglePlayerAnswersView = () => {
 
     // * change color of background
     color.value = withTiming(backgroundColors[newValue as keyof typeof backgroundColors]);
-  }
+  }, [backgroundColors, setIndex, index]);
 
-  function handlePlayerFinish() {
+  const handlePlayerFinish = useCallback(() => {
     readyTallyMode();
-  }
+  }, [readyTallyMode]);
 
-  function handleAnswerSubmit(title: string, value: string) {
-    //* handle empty answers
-    if (!value) {
-      //* update value to "FORFEITED"
-      setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
-      updateAnswers({ answer: 'FORFEITED', field: title });
-    }
-
-    // * handle last answer
-    if (index === 3) {
-      console.log('last');
+  const handleAnswerSubmit = useCallback(
+    (title: string, value: string) => {
+      //* handle empty answers
       if (!value) {
-        console.log('title is', title);
         //* update value to "FORFEITED"
         setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
         updateAnswers({ answer: 'FORFEITED', field: title });
       }
-      updateAnswers({ answer: value, field: title });
-      handlePlayerFinish();
-      return;
-    }
 
-    updateAnswers({ answer: value, field: title });
-    handleIndexChange();
-  }
+      // * handle last answer
+      if (index === 3) {
+        console.log('last');
+        if (!value) {
+          console.log('title is', title);
+          //* update value to "FORFEITED"
+          setAnswers((prev) => ({ ...prev, [title]: 'FORFEITED' }));
+          updateAnswers({ answer: 'FORFEITED', field: title });
+        }
+        updateAnswers({ answer: value, field: title });
+        handlePlayerFinish();
+        return;
+      }
+
+      updateAnswers({ answer: value, field: title });
+      handleIndexChange();
+    },
+    [index, updateAnswers, setAnswers, handlePlayerFinish, updateAnswers, handleIndexChange]
+  );
 
   // * Watch for clock
   useEffect(() => {
