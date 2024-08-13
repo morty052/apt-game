@@ -78,7 +78,7 @@ const useTally = () => {
 
   const handlePlayerDeath = useCallback(() => {
     if (lives - 1 < 0) {
-      useSinglePlayerStore.setState((state) => ({ gameOver: true }));
+      useSinglePlayerStore.setState((state) => ({ gameOver: true, takenDamage: true }));
       console.log('player died');
       return true;
     }

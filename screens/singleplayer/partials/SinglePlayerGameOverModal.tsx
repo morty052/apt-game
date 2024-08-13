@@ -26,6 +26,8 @@ import PerformanceMeter, {
 import { Button } from '../../../components/ui/Button';
 import { Text } from '../../../components/ui/Text';
 
+import SadFace from '../../../assets/icons/hurt-face-min.png';
+
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 type matchStatsProps = {
@@ -57,10 +59,41 @@ function WinnersCrown() {
   );
 }
 
+function LosersFace() {
+  const y = useSharedValue(0);
+
+  useEffect(() => {
+    y.value = withRepeat(withTiming(10, { duration: 1000 }), -1, true);
+  }, []);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: y.value }, { rotate: '-20deg' }],
+    };
+  });
+
+  return (
+    <AnimatedImage
+      style={[{ height: 300, width: 300, alignSelf: 'center' }, animatedStyles]}
+      source={SadFace}
+    />
+  );
+}
+
 const LoadingButton = () => {
   return (
-    <Pressable style={styles.loadingButton}>
+    <Pressable style={styles.Button}>
       <ActivityIndicator />
+    </Pressable>
+  );
+};
+
+const PlayAgainButton = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[styles.Button, { backgroundColor: Colors.backGround, borderColor: '#00c5ee' }]}>
+      <Text style={{ color: 'white' }}>Play Again</Text>
     </Pressable>
   );
 };
@@ -78,11 +111,11 @@ function WinOrLoseView({
 }) {
   return (
     <View style={[styles.container]}>
-      <Text style={{ textAlign: 'center', color: 'white', fontSize: 30 }}>
+      <Text style={{ textAlign: 'center', color: 'white', fontSize: 30, marginBottom: 20 }}>
         {isWinner ? 'You Win!' : 'Better luck next time'}
       </Text>
-      <View style={{ gap: 20, flex: 1 }}>
-        <WinnersCrown />
+      <View style={{ gap: 40, flex: 1 }}>
+        {isWinner ? <WinnersCrown /> : <LosersFace />}
         <View style={{ gap: 10 }}>
           <Text style={{ textAlign: 'center', color: 'white' }}>You Scored</Text>
           <Text style={{ textAlign: 'center', fontSize: 40, color: 'white' }}>
@@ -98,9 +131,11 @@ function WinOrLoseView({
 export function PerformanceView({
   matchStats,
   onPressContinue,
+  onPressPlayAgain,
 }: {
   matchStats: matchStatsProps | null;
   onPressContinue: () => void;
+  onPressPlayAgain: () => void;
 }) {
   const performance = useMemo(() => {
     let animation: performanceAnimationNames = 'zero';
@@ -157,7 +192,10 @@ export function PerformanceView({
           </Text>
         </View>
       </View>
-      <Button title="Continue" onPress={onPressContinue} />
+      <View style={{ gap: 20 }}>
+        <PlayAgainButton onPress={onPressPlayAgain} />
+        <Button title="Continue" onPress={onPressContinue} />
+      </View>
     </SafeAreaView>
   );
 }
@@ -166,9 +204,20 @@ export default function SinglePlayerGameOverModal() {
   const [gettingStats, setGettingStats] = useState(false);
   const [viewingPerformance, setViewingPerformance] = useState(false);
   const [matchStats, setMatchStats] = useState<matchStatsProps | null>(null);
-  const { totalScore, winner } = useSinglePlayerStore();
+  const { totalScore, winner, lives, takenDamage } = useSinglePlayerStore();
 
-  const isWinner = useMemo(() => winner?.username === getItem('USERNAME'), [winner]);
+  const isWinner = useMemo(() => {
+    console.log({ lives, takenDamage });
+    if (lives === 0 && takenDamage) {
+      return false;
+    }
+
+    if (lives > 0) {
+      return true;
+    }
+
+    return false;
+  }, [winner]);
 
   const { playSound } = useSoundTrackModel();
 
@@ -259,27 +308,35 @@ export default function SinglePlayerGameOverModal() {
       tallying: false,
       gameOver: false,
       lives: 3,
+      takenDamage: false,
     }));
     useSoundTrackModel.setState({ matchSoundEffects: [] });
-    navigation.navigate('HomeScreen');
   };
 
   const handleMatchFinish = async () => {
     updateAppStateStats();
     await updateDBStats();
     resetGame();
+    navigation.navigate('HomeScreen');
+  };
+
+  const handlePlayAgain = async () => {
+    updateAppStateStats();
+    await updateDBStats();
+    resetGame();
+    navigation.navigate('SinglePlayerLoader');
   };
 
   return (
-    <View
-      onLayout={() =>
-        playSound(winner?.username === getItem('USERNAME') ? 'WINNER_SOUND' : 'LOSER_SOUND')
-      }
-      style={{ flex: 1 }}>
+    <View onLayout={() => playSound(isWinner ? 'WINNER_SOUND' : 'LOSER_SOUND')} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.tertiary }}>
         <LinearGradient colors={[Colors.tertiary, Colors.primary]} style={{ flex: 1 }}>
           {viewingPerformance ? (
-            <PerformanceView onPressContinue={handleMatchFinish} matchStats={matchStats} />
+            <PerformanceView
+              onPressPlayAgain={handlePlayAgain}
+              onPressContinue={handleMatchFinish}
+              matchStats={matchStats}
+            />
           ) : (
             <WinOrLoseView
               gettingStats={gettingStats}
@@ -302,7 +359,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 10,
   },
-  loadingButton: {
+  Button: {
     alignItems: 'center',
     backgroundColor: Colors.ButtonOutline,
     borderRadius: 24,

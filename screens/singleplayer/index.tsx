@@ -4,6 +4,7 @@ import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 import SinglePlayerAnswersView from './components/SinglePlayerAnswersView';
 import SinglePlayerLetterSelect from './components/SinglePlayerLetterSelect';
@@ -16,12 +17,17 @@ const Stack = createStackNavigator();
 function PreLoadGameScreen({ navigation }: any) {
   const { loadGameSoundtrack } = useSoundTrackModel();
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
+    if (!isFocused) {
+      return;
+    }
     loadGameSoundtrack(true).then(() => {
       console.log('game loaded');
       navigation.navigate('SinglePlayerGameScreenMain');
     });
-  }, [loadGameSoundtrack]);
+  }, [loadGameSoundtrack, isFocused, navigation]);
 
   return <LoadingScreen />;
 }
