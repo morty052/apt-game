@@ -258,6 +258,7 @@ export default function SinglePlayerGameOverModal() {
       playing: false,
       tallying: false,
       gameOver: false,
+      lives: 3,
     }));
     useSoundTrackModel.setState({ matchSoundEffects: [] });
     navigation.navigate('HomeScreen');

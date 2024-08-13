@@ -1,8 +1,18 @@
-import { Colors } from 'constants/colors';
-import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
 import { Text } from 'components/ui/Text';
+import { Colors } from 'constants/colors';
 import { useSinglePlayerStore } from 'models/singlePlayerStore';
+import { useSoundTrackModel } from 'models/soundtrackModel';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import Animated, {
+  BounceInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
+
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const selectLetter = (alphabets: string[]) => {
   const hardLetters = ['X', 'Y', 'Z'];
@@ -11,11 +21,36 @@ const selectLetter = (alphabets: string[]) => {
   return letter;
 };
 
+function ThinkingBubble() {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    scale.value = withRepeat(withTiming(0.95, { duration: 1000 }), -1, true);
+  }, []);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
+
+  return (
+    <AnimatedImage
+      style={[{ height: 300, width: 300, alignSelf: 'center' }, animatedStyles]}
+      source={{
+        uri: 'https://res.cloudinary.com/dg6bgaasp/image/upload/v1723542674/m09sqv4dnya63rpgaexq.png',
+      }}
+    />
+  );
+}
+
 export default function SinglePlayerLetterSelect() {
   const [thinking, setThinking] = useState(true);
   const [seconds, setSeconds] = useState(3);
   const { alphabets, playing, tallying, confirmLetterSelection, activeLetter } =
     useSinglePlayerStore();
+
+  const { playSound } = useSoundTrackModel();
 
   useEffect(() => {
     if (playing || tallying) {
@@ -26,6 +61,7 @@ export default function SinglePlayerLetterSelect() {
       console.log('letter', letter);
       useSinglePlayerStore.setState({ activeLetter: letter });
       setThinking(false);
+      playSound('SCORE_FOR_ROUND_SOUND');
     }, 3000);
     return () => clearTimeout(selectLetterTimeout);
   }, [playing, tallying]);
@@ -56,11 +92,28 @@ export default function SinglePlayerLetterSelect() {
     <View style={styles.container}>
       {!thinking && (
         <View style={styles.container}>
-          <Text style={styles.activeLetter}>{activeLetter}</Text>
-          <Text style={{ fontSize: 20 }}>Round starts in {seconds}</Text>
+          <Animated.View
+            entering={BounceInUp}
+            style={{
+              backgroundColor: 'white',
+              height: 150,
+              width: 150,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 30,
+              // transform: [{ rotate: '-10deg' }],
+            }}>
+            <Text style={styles.activeLetter}>{activeLetter}</Text>
+          </Animated.View>
+          <Text style={{ fontSize: 20, color: 'white' }}>Round starts in {seconds}</Text>
         </View>
       )}
-      {thinking && <Text>thinking...</Text>}
+      {thinking && (
+        <>
+          <ThinkingBubble />
+          <Text style={{ fontSize: 24, color: 'white' }}>thinking...</Text>
+        </>
+      )}
     </View>
   );
 }
@@ -71,9 +124,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tertiary,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 30,
   },
   activeLetter: {
     color: 'black',
-    fontSize: 50,
+    fontSize: 80,
   },
 });

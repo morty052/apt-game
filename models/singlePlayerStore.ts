@@ -15,6 +15,7 @@ type GameProps = {
   round: number;
   totalScore: number;
   lives: number;
+  takenDamage: boolean;
   gameOver: boolean;
   winner: null | playerProps;
   activeLetter: string;
@@ -106,6 +107,7 @@ export const useSinglePlayerStore = create<GameProps>((set, state) => ({
   activeLetter: 'A',
   totalScore: 0,
   lives: 3,
+  takenDamage: false,
   gameOver: false,
   alphabets: ALPHABETS,
   selectingLetter: true,
