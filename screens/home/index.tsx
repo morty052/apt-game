@@ -4,17 +4,12 @@ import { Character } from 'components/CharacterSelectWindow';
 import TopNav from 'components/TopNav';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
 import NotificationsButton from 'components/action-buttons/NotificationsButton';
-import SocketContext from 'contexts/SocketContext';
 import { useDB } from 'hooks/useDb';
 import { useAppStore } from 'models/appStore';
-import { useGameStore } from 'models/gameStore';
-import React, { useContext } from 'react';
 import { StyleSheet, View, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
-import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
-import { inviteDataProps, inviteProps, playerProps, StatsProps } from 'types';
-import { getItem } from 'utils/storage';
+import { inviteProps, StatsProps } from 'types';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
 
@@ -66,13 +61,9 @@ const getUserData = async (DB: any): Promise<{ stats: StatsProps; invites: invit
 };
 
 export const Home = () => {
-  const { socket } = useContext(SocketContext);
-
   const DB = useDB();
 
-  const { initGame } = useGameStore();
-  const { character, networkState, matchmaking, mode } = useAppStore();
-  const { connected } = networkState;
+  const { character } = useAppStore();
 
   const { isLoading } = useQuery({
     queryKey: ['userData'],
@@ -83,44 +74,7 @@ export const Home = () => {
     },
   });
 
-  const handleFindMatch = React.useCallback(() => {
-    if (matchmaking) {
-      return;
-    }
-    const username = getItem('USERNAME') as string;
-    useAppStore.setState(() => ({ matchmaking: true }));
-    socket?.emit(
-      'FIND_MATCH',
-      {
-        lobbyType: mode,
-        player: {
-          username,
-          character: character.name,
-        },
-      },
-      (data: { matchId?: string }) => {
-        console.log('joined queue');
-      }
-    );
-    console.log(mode);
-  }, [character, socket, matchmaking, useAppStore, getItem]);
-
-  function handleMatchFound(queue: playerProps[], room: string) {
-    //* save current player room and opponents to state
-    initGame({ queue, room });
-
-    //* open match found modal clear matchmaking state
-    useAppStore.setState(() => ({ matchmaking: false, matchFound: true }));
-    // navigation.navigate('GameScreen', { room });
-  }
-
-  React.useEffect(() => {
-    socket?.on('MATCH_FOUND', (data: { queue: playerProps[]; room: string }) => {
-      handleMatchFound(data.queue, data.room);
-    });
-  }, [socket]);
-
-  if (!connected || isLoading) {
+  if (isLoading) {
     return <GameLoadingScreen />;
   }
 
@@ -133,10 +87,9 @@ export const Home = () => {
             <RightNav />
             <Character url={character.url} />
           </View>
-          <BottomNav onPressPlay={handleFindMatch} />
+          <BottomNav onPressPlay={() => {}} />
         </SafeAreaView>
       </ImageBackground>
-      {matchmaking && <PendingMatchScreen />}
     </>
   );
 };

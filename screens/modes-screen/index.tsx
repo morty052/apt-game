@@ -1,15 +1,13 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { GameStackParamList } from 'Routes/GameStack';
-import { Colors } from 'constants/colors';
-import { useAppStore } from 'models/appStore';
-
-import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { Text } from 'components/ui/Text';
-import { BackButton } from 'components/ui/BackButton';
-import { Ionicons } from '@expo/vector-icons';
+import { Colors } from 'constants/colors';
+import SocketContext from 'contexts/SocketContext';
+import { useAppStore } from 'models/appStore';
+import { useGameStore } from 'models/gameStore';
+import React, { ReactNode, useContext, useEffect } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
+import { playerProps } from 'types';
+import { getItem } from 'utils/storage';
 
 type gameModeProps = {
   value: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
@@ -19,28 +17,17 @@ type gameModeProps = {
 const gameModes: gameModeProps[] = [
   { value: 'HEAD_TO_HEAD', title: 'Head to Head' },
   { value: 'FULL_HOUSE', title: 'Full House' },
-  { value: 'PRIVATE_MATCH', title: 'Private Match' },
+  // { value: 'PRIVATE_MATCH', title: 'Private Match' },
   { value: 'SURVIVAL_MATCH', title: 'Survival Match' },
 ];
 
 function ModeSelectBox({
-  title,
-  value,
-  setSelectingMode,
+  handleSelect,
+  children,
 }: {
-  title: string;
-  value: gameModeProps['value'];
-  setSelectingMode: React.Dispatch<React.SetStateAction<boolean>>;
+  handleSelect: () => void;
+  children: ReactNode;
 }) {
-  // const handleSelect = React.useCallback(() => {
-  //   navigation.navigate('Lobby', { mode: value });
-  // }, [value, navigation]);
-
-  const handleSelect = () => {
-    useAppStore.setState(() => ({ mode: value }));
-    setSelectingMode(false);
-  };
-
   return (
     <Pressable
       onPress={handleSelect}
@@ -54,7 +41,7 @@ function ModeSelectBox({
         alignItems: 'center',
         backgroundColor: 'yellow',
       }}>
-      <Text>{title}</Text>
+      {children}
     </Pressable>
   );
 }
@@ -92,51 +79,64 @@ export const ModeSelectWindow = ({
       <ModeSelectBox title="Full House" />
       <ModeSelectBox title="Private Match" />
       <ModeSelectBox title="Survival Match" /> */}
-      {gameModes.map((mode, index) => (
-        <ModeSelectBox
-          setSelectingMode={setSelectingMode}
-          key={index}
-          title={mode.title}
-          value={mode.value}
-        />
-      ))}
     </View>
   );
 };
 
 export const ModeScreen = ({ navigation }: any) => {
+  const { socket } = useContext(SocketContext);
+  const { initGame } = useGameStore();
+  const { character, matchmaking } = useAppStore();
+
+  const handleFindMatch = React.useCallback(
+    (mode: gameModeProps['value']) => {
+      if (matchmaking) {
+        return;
+      }
+      const username = getItem('USERNAME') as string;
+      useAppStore.setState(() => ({ matchmaking: true }));
+      socket?.emit(
+        'FIND_MATCH',
+        {
+          lobbyType: mode,
+          player: {
+            username,
+            character: character.name,
+          },
+        },
+        (data: { matchId?: string }) => {
+          console.log('joined queue');
+        }
+      );
+      console.log(mode);
+    },
+    [character, socket, matchmaking, useAppStore, getItem]
+  );
+
+  function handleMatchFound(queue: playerProps[], room: string) {
+    //* save current player room and opponents to state
+    initGame({ queue, room });
+
+    //* open match found modal clear matchmaking state
+    useAppStore.setState(() => ({ matchmaking: false, matchFound: true }));
+    // navigation.navigate('GameScreen', { room });
+  }
+
+  useEffect(() => {
+    socket?.on('MATCH_FOUND', (data: { queue: playerProps[]; room: string }) => {
+      handleMatchFound(data.queue, data.room);
+    });
+  }, [socket]);
+
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BackButton onPress={() => navigation.goBack()} />
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 24, flex: 1 }}>
-              Game Mode
-            </Text>
-            <Pressable
-              style={{
-                height: 40,
-                width: 40,
-                backgroundColor: 'yellow',
-                borderRadius: 40,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Ionicons name="help" size={24} color="black" />
-            </Pressable>
-          </View>
-          <LimitedTimeMode />
-          {gameModes.map((mode, index) => (
-            <ModeSelectBox
-              setSelectingMode={() => {}}
-              key={index}
-              title={mode.title}
-              value={mode.value}
-            />
-          ))}
-        </View>
-      </SafeAreaView>
+    <View style={{ flex: 1, backgroundColor: Colors.plain }}>
+      <View style={styles.container}>
+        <LimitedTimeMode />
+        <ModeSelectBox handleSelect={() => handleFindMatch('HEAD_TO_HEAD')}>
+          <Text>Head to Head</Text>
+        </ModeSelectBox>
+      </View>
+      {matchmaking && <PendingMatchScreen />}
     </View>
   );
 };
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    backgroundColor: Colors.backGround,
+    backgroundColor: Colors.plain,
     gap: 20,
     paddingTop: 20,
   },

@@ -1,11 +1,14 @@
+import { useNavigation } from '@react-navigation/native';
 import { Colors } from 'constants/colors';
-import { Pressable, StyleSheet, Text} from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable);
 
 export default function PlayButton({ onPress }: { onPress: () => void }) {
+  const navigation = useNavigation<any>();
+
   const buttonScale = useSharedValue(1);
 
   const tapGesture = Gesture.Tap()
@@ -25,7 +28,9 @@ export default function PlayButton({ onPress }: { onPress: () => void }) {
 
   return (
     <GestureDetector gesture={tapGesture}>
-      <AnimatedTouchableOpacity onPress={onPress} style={[styles.container, animatedStyles]}>
+      <AnimatedTouchableOpacity
+        onPress={() => navigation.navigate('ModeSelectScreen')}
+        style={[styles.container, animatedStyles]}>
         <Text style={styles.playText}>Play</Text>
       </AnimatedTouchableOpacity>
     </GestureDetector>

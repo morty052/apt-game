@@ -105,6 +105,18 @@ const GameRoutes = ({ navigation }: any) => {
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
             headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
             headerStyle: { backgroundColor: Colors.tertiary },
+            headerTitle: 'Game Modes',
+          }}
+          name="ModeSelectScreen"
+          component={ModeScreen}
+        />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerStyle: { backgroundColor: Colors.tertiary },
           }}
           name="Lobby"
           component={Lobby}
@@ -158,7 +170,7 @@ export default function GameStack({ navigation }: any) {
           name="SettingsScreen"
           component={SettingsScreen}
         />
-        <Stack.Screen name="ModeSelectScreen" component={ModeScreen} />
+
         <Stack.Screen
           options={{
             headerShown: true,
