@@ -257,6 +257,7 @@ export default function SinglePlayerGameOverModal() {
       selectingLetter: true,
       playing: false,
       tallying: false,
+      gameOver: false,
     }));
     useSoundTrackModel.setState({ matchSoundEffects: [] });
     navigation.navigate('HomeScreen');

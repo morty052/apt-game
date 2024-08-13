@@ -22,6 +22,7 @@ type GameProps = {
   selectingLetter: boolean;
   playing: boolean;
   tallying: boolean;
+  viewingResults: boolean;
   getPointsForPlayer: ({ player }: { player: singlePlayer }) => number;
   updateScoreForRound: () => void;
   confirmLetterSelection: (letter: string) => void;
@@ -110,6 +111,7 @@ export const useSinglePlayerStore = create<GameProps>((set, state) => ({
   selectingLetter: true,
   playing: false,
   tallying: false,
+  viewingResults: false,
   confirmLetterSelection: (letter) => {
     set((state) => ({
       selectingLetter: false,

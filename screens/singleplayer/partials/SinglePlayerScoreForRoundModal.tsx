@@ -17,23 +17,18 @@ const faces = {
   surprised: SuprisedFace,
 };
 
-const SinglePlayerScoreForRoundModal = ({
-  open,
-  handleClose,
-}: {
-  open: boolean;
-  handleClose: () => void;
-}) => {
+const SinglePlayerScoreForRoundModal = ({ open }: { open: boolean }) => {
   const [scoreForRound, setScoreForRound] = useState(0);
-  const { player, round, readyNextRound, getPointsForPlayer } = useSinglePlayerStore();
+  const { player, round, readyNextRound, getPointsForPlayer, viewingResults } =
+    useSinglePlayerStore();
   const { playSound } = useSoundTrackModel();
 
   useEffect(() => {
-    if (!open) return;
+    if (!viewingResults) return;
 
     const totalPoints = getPointsForPlayer({ player });
     setScoreForRound(totalPoints);
-  }, [open]);
+  }, [viewingResults]);
 
   const expression = useMemo(() => {
     if (scoreForRound <= 50) {
@@ -75,8 +70,8 @@ const SinglePlayerScoreForRoundModal = ({
       return;
     }
     readyNextRound(nextRound);
-    handleClose();
-  }, [readyNextRound, handleClose]);
+    useSinglePlayerStore.setState({ viewingResults: false });
+  }, [readyNextRound]);
 
   return (
     <Modal animationType="fade" statusBarTranslucent visible={open}>

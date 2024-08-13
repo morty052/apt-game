@@ -9,6 +9,7 @@ import SinglePlayerAnswersView from './components/SinglePlayerAnswersView';
 import SinglePlayerLetterSelect from './components/SinglePlayerLetterSelect';
 import { SinglePlayerTallyScreen } from './components/SinglePlayerTallyScreen';
 import SinglePlayerGameOverModal from './partials/SinglePlayerGameOverModal';
+import SinglePlayerScoreForRoundModal from './partials/SinglePlayerScoreForRoundModal';
 
 const Stack = createStackNavigator();
 
@@ -26,13 +27,14 @@ function PreLoadGameScreen({ navigation }: any) {
 }
 
 function MainGameScreen() {
-  const { selectingLetter, playing, tallying, gameOver } = useSinglePlayerStore();
+  const { selectingLetter, playing, tallying, gameOver, viewingResults } = useSinglePlayerStore();
   return (
     <View style={styles.container}>
       {selectingLetter && !gameOver && <SinglePlayerLetterSelect />}
       {playing && !gameOver && <SinglePlayerAnswersView />}
       {tallying && !gameOver && <SinglePlayerTallyScreen />}
       {gameOver && <SinglePlayerGameOverModal />}
+      {viewingResults && <SinglePlayerScoreForRoundModal open={viewingResults} />}
     </View>
   );
 }
