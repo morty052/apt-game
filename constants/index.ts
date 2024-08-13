@@ -10,8 +10,8 @@ export const Colors = {
 };
 
 export const dictionaryUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en';
-// export const baseUrl = 'https://apt-server.onrender.com';
-export const baseUrl = 'https://5aaa-102-216-11-2.ngrok-free.app';
+export const baseUrl = 'https://apt-server.onrender.com';
+// export const baseUrl = 'https://5aaa-102-216-11-2.ngrok-free.app';
 
 export const ALPHABETS = [
   'A',

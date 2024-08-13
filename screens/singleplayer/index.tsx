@@ -1,3 +1,4 @@
+import { createStackNavigator } from '@react-navigation/stack';
 import LoadingScreen from 'components/LoadingScreen';
 import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
@@ -7,39 +8,43 @@ import { StyleSheet, View } from 'react-native';
 import SinglePlayerAnswersView from './components/SinglePlayerAnswersView';
 import SinglePlayerLetterSelect from './components/SinglePlayerLetterSelect';
 import { SinglePlayerTallyScreen } from './components/SinglePlayerTallyScreen';
-import { Text } from 'components/ui/Text';
+import SinglePlayerGameOverModal from './partials/SinglePlayerGameOverModal';
 
-// TODO
-// ! FIX SOUNDS PLAYING TWICE ON MOUNT
-export default function SinglePlayerGame() {
-  const [loadedSounds, setloadedSounds] = useState(false);
+const Stack = createStackNavigator();
 
+function PreLoadGameScreen({ navigation }: any) {
   const { loadGameSoundtrack } = useSoundTrackModel();
-  const { selectingLetter, playing, tallying, gameOver } = useSinglePlayerStore();
 
   useEffect(() => {
-    if (loadedSounds) return;
     loadGameSoundtrack(true).then(() => {
       console.log('game loaded');
-      setloadedSounds(true);
+      navigation.navigate('SinglePlayerGameScreenMain');
     });
-  }, [loadedSounds]);
+  }, [loadGameSoundtrack]);
 
-  if (!loadedSounds) {
-    return <LoadingScreen />;
-  }
+  return <LoadingScreen />;
+}
 
+function MainGameScreen() {
+  const { selectingLetter, playing, tallying, gameOver } = useSinglePlayerStore();
   return (
     <View style={styles.container}>
       {selectingLetter && !gameOver && <SinglePlayerLetterSelect />}
       {playing && !gameOver && <SinglePlayerAnswersView />}
       {tallying && !gameOver && <SinglePlayerTallyScreen />}
-      {gameOver && (
-        <View>
-          <Text>Game Over</Text>
-        </View>
-      )}
+      {gameOver && <SinglePlayerGameOverModal />}
     </View>
+  );
+}
+
+// TODO
+// ! FIX SOUNDS PLAYING TWICE ON MOUNT
+export default function SinglePlayerGame() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="SinglePlayerLoader">
+      <Stack.Screen name="SinglePlayerLoader" component={PreLoadGameScreen} />
+      <Stack.Screen name="SinglePlayerGameScreenMain" component={MainGameScreen} />
+    </Stack.Navigator>
   );
 }
 

@@ -18,6 +18,7 @@ import NotificationsScreen from 'screens/notifications-screen';
 import Profile from 'screens/profile';
 import RoadMapScreen from 'screens/roadmap';
 import SettingsScreen from 'screens/settings-screen';
+import SinglePlayerGame from 'screens/singleplayer';
 import { UserAvatarEditor } from 'screens/user-avatar-creator/UserAvatarCreator';
 
 export type GameStackParamList = {
@@ -34,6 +35,7 @@ export type GameStackParamList = {
     username: string;
   };
   GameScreen: { room: string };
+  SinglePlayerGameScreen: undefined;
   NotificationsScreen: { room: string };
   Lobby: {
     mode: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
@@ -131,6 +133,7 @@ export default function GameStack({ navigation }: any) {
     <>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="GameTabs" component={GameRoutes} />
+        <Stack.Screen name="SinglePlayerGameScreen" component={SinglePlayerGame} />
         <Stack.Screen
           options={{
             headerShown: true,

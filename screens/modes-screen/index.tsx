@@ -132,6 +132,9 @@ export const ModeScreen = ({ navigation }: any) => {
     <View style={{ flex: 1, backgroundColor: Colors.plain }}>
       <View style={styles.container}>
         <LimitedTimeMode />
+        <ModeSelectBox handleSelect={() => navigation.navigate('SinglePlayerGameScreen')}>
+          <Text>Single Player</Text>
+        </ModeSelectBox>
         <ModeSelectBox handleSelect={() => handleFindMatch('HEAD_TO_HEAD')}>
           <Text>Head to Head</Text>
         </ModeSelectBox>
