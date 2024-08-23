@@ -250,36 +250,19 @@ export const getPlayerDetails = async (username: string): Promise<any> => {
 
 // TODO: STOP USER FROM ADDING THEMSELVES AS A FRIEND
 // TODO STOP USERS FROM SENDING MULTIPLE FRIEND REQUESTS
-export const sendFriendRequest = async ({
-  receiverUsername,
-  senderUsername,
-}: {
-  receiverUsername: string;
-  senderUsername: string;
-}) => {
+export const sendFriendRequest = async ({ receiverUsername }: { receiverUsername: string }) => {
+  const senderUsername = getItem('USERNAME') || '';
+  const url = `${baseUrl}/friends/send-friend-request`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ senderUsername, receiverUsername }),
+  };
   try {
-    // * get users existing friend requests
-    const friends = await getFriendRequests(receiverUsername);
-
-    // * add sender's username to friend requests
-    const updatedFriendRequests = [...friends, senderUsername];
-
-    //* get user to update and notify
-    const targetPlayer = await getPlayerDetails(receiverUsername);
-
-    const { data, error } = await supabase
-      .from('users')
-      .update({ friend_requests: updatedFriendRequests })
-      .eq('username', `${targetPlayer.username}`);
-
-    console.log({ targetPlayer: targetPlayer.expo_push_token });
-
-    await sendNotification({
-      to: targetPlayer.expo_push_token,
-      title: 'Friend Request',
-      body: `You have a friend request from ${senderUsername}`,
-      data: { type: 'FRIEND_REQUEST' },
-    });
+    const response = await fetch(url, options);
+    const { data, error } = await response.json();
 
     if (error) {
       throw error;

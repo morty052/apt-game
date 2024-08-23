@@ -168,17 +168,13 @@ export function FriendsHomeScreen({ navigation }: any) {
   }, [setResults, query]);
 
   const addFriendMutation = async (receiverUsername: string) => {
-    const senderUsername = getItem('USERNAME');
     const { data, error } = await sendFriendRequest({
       receiverUsername,
-      senderUsername: senderUsername as string,
     });
 
     if (error) {
       console.error(error);
     }
-
-    console.log(data);
   };
 
   useEffect(() => {
