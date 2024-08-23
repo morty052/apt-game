@@ -156,6 +156,7 @@ export function FriendsHomeScreen({ navigation }: any) {
     );
   }, [query, data?.friends]);
 
+  // FIXME DON'T QUERY DATABASE IF QUERY IS AMONG FRIENDS
   const searchUsers = useCallback(async () => {
     const { data: users, error } = await getSearchResults(query);
 

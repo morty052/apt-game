@@ -189,11 +189,17 @@ export async function getUserFriends(): Promise<any> {
 }
 
 export const getSearchResults = async (username: string) => {
+  const url = `${baseUrl}/user/search-user`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username }),
+  };
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*, avatar(*)')
-      .ilike('username', `${username}`);
+    const response = await fetch(url, options);
+    const { data, error } = await response.json();
 
     if (error) {
       throw error;
@@ -202,7 +208,7 @@ export const getSearchResults = async (username: string) => {
     return { data, error: null };
   } catch (error) {
     console.log(error);
-    return { data: null, error: error };
+    return { data: null, error };
   }
 };
 
