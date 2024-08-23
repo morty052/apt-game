@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
+import { getSearchResults, getUserFriends, sendFriendRequest } from 'api/index';
 import Avatar, { AvatarObject } from 'components/Avatar';
 import LoadingScreen from 'components/LoadingScreen';
 import PrivateMatchCreationModal from 'components/PrivateMatchCreationModal';
@@ -17,7 +18,6 @@ import { Pressable, View, StyleSheet, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { friend } from 'types';
 import { getItem } from 'utils/storage';
-import { getSearchResults, getUserFriends, sendFriendRequest } from 'utils/supabase';
 
 import friendsIcon from '../../../assets/icons/friends-icon--min.png';
 
@@ -142,7 +142,7 @@ export function FriendsHomeScreen({ navigation }: any) {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['friendlist'],
-    queryFn: () => getUserFriends(getItem('USERNAME') as string),
+    queryFn: getUserFriends,
   });
 
   useRefreshOnFocus(refetch);
