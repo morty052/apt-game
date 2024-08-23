@@ -1,6 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
-import Avatar from 'components/Avatar';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getFriendRequests, acceptFriendRequest } from 'api/index';
+import Avatar, { AvatarObject } from 'components/Avatar';
+import FriendRequestCard from 'components/cards/FriendRequestCard';
 import { Button } from 'components/ui/Button';
 import { TabPanel } from 'components/ui/TabComponent';
 import { Text } from 'components/ui/Text';
@@ -65,8 +67,8 @@ const tabs = [
     title: 'Invites',
   },
   {
-    value: 'MESSAGES',
-    title: 'Messages',
+    value: 'REQUESTS',
+    title: 'Friend Requests',
   },
 ];
 
@@ -92,6 +94,70 @@ const InvitationPanel = ({
         />
       )}
     />
+  );
+};
+
+const RequestsPanel = () => {
+  const [requests, setRequests] = useState([]);
+  const { isLoading, refetch } = useQuery({
+    queryKey: ['friendRequests'],
+    queryFn: async () => {
+      const { friendRequests } = await getFriendRequests();
+      console.log({ friendRequestsggg: friendRequests });
+      setRequests(friendRequests);
+      return friendRequests;
+    },
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({ senderUsername }: { senderUsername: string }) =>
+      acceptFriendRequest({ senderUsername }),
+    mutationKey: ['acceptFriendRequest'],
+    onSuccess: ({ error, filteredRequests }) => {
+      console.log('friend request accepted', { error, filteredRequests });
+      // setRequests(data.filteredRequests);
+      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+    },
+  });
+
+  const acceptFriend = async (senderUsername: string) => {
+    mutate({ senderUsername });
+  };
+
+  useRefreshOnFocus(refetch);
+
+  if (isLoading) {
+    return null;
+  }
+
+  return (
+    <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
+      <View style={styles.container}>
+        {requests?.map((sender: { username: string; avatar: AvatarObject }) => (
+          <FriendRequestCard
+            key={sender.username}
+            sender={sender}
+            acceptFriend={(username) => acceptFriend(username)}
+            accepting={isPending}
+          />
+        ))}
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 200 }}>
+          {!isLoading && requests?.length === 0 && (
+            <Text
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                marginTop: 20,
+              }}>
+              No new friend requests
+            </Text>
+          )}
+        </View>
+      </View>
+    </View>
   );
 };
 
@@ -168,8 +234,6 @@ export default function NotificationsScreen() {
     return null;
   }
 
-  console.log({ invites });
-
   return (
     <View style={styles.container}>
       {/* <Avatar avatarObject={invites[0].avatar} /> */}
@@ -181,13 +245,7 @@ export default function NotificationsScreen() {
           acceptCreation={acceptCreation}
         />
       )}
-      {activeTab === 'MESSAGES' && (
-        <InvitationPanel
-          invites={invites as inviteProps[]}
-          rejectInvite={rejectNotification}
-          acceptCreation={acceptCreation}
-        />
-      )}
+      {activeTab === 'REQUESTS' && <RequestsPanel />}
     </View>
   );
 }

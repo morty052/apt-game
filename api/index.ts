@@ -110,7 +110,47 @@ const getFriendsList = async (username: string) => {
   }
 };
 
-const getFriendRequests = async (username: string) => {
+export const getFriendRequests = async () => {
+  const username = getItem('USERNAME') || '';
+  try {
+    const url = `${baseUrl}/friends/user-friend-requests`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username }),
+    };
+
+    const response = await fetch(url, options);
+    const { friendRequests, error } = await response.json();
+
+    if (error) {
+      throw error;
+    }
+
+    // * if there are no friend requests, return an empty array
+    if (!friendRequests) {
+      return {
+        friendRequests: [],
+        error: null,
+      };
+    }
+
+    return {
+      friendRequests,
+      error: null,
+    };
+  } catch (error) {
+    console.log(error, 'occured here');
+    return {
+      friendRequests: [],
+      error,
+    };
+  }
+};
+
+const getFriendRequestArray = async (username: string) => {
   try {
     const { data, error } = await supabase
       .from('users')
@@ -271,60 +311,35 @@ export const sendFriendRequest = async ({ receiverUsername }: { receiverUsername
     return { data, error: null };
   } catch (error) {
     console.log(error);
-    return { data: null, error: error };
+    return { data: null, error };
   }
 };
 
-export const acceptFriendRequest = async ({
-  receiverUsername,
-  senderUsername,
-}: {
-  receiverUsername: string;
-  senderUsername: string;
-}) => {
+export const acceptFriendRequest = async ({ senderUsername }: { senderUsername: string }) => {
   try {
-    // * get receivers existing friends
-    const friends = await getFriendsList(receiverUsername);
+    const receiverUsername = getItem('USERNAME') || '';
+    const url = `${baseUrl}/friends/accept-friend-request`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ senderUsername, receiverUsername }),
+    };
 
-    console.log({ friends });
+    const response = await fetch(url, options);
+    const { error, filteredRequests } = await response.json();
 
-    // * get senders existing friends
-    const sendersFriends = await getFriendsList(senderUsername);
-
-    // * add sender's username to receivers friends list
-    const updatedFriends = [...friends, senderUsername];
-
-    // * add receiver's username to senders friends list
-    const updatedSendersFriends = [...sendersFriends, receiverUsername];
-
-    // * remove sender's username from receivers friend requests
-    const existingRequests = await getFriendRequests(receiverUsername);
-    const filteredRequests = existingRequests.filter(
-      (request: string) => request !== senderUsername
-    );
-
-    // * add sender's username to receivers friends list
-    const { data: receiversUpdateData, error: receiversUpdateError } = await supabase
-      .from('users')
-      .update({ friends: updatedFriends, friend_requests: filteredRequests })
-      .eq('username', `${receiverUsername}`)
-      .select('friend_requests');
-
-    // * add receiver's username to senders friends list
-    const { data: sendersUpdateData, error: sendersUpdateError } = await supabase
-      .from('users')
-      .update({ friends: updatedSendersFriends })
-      .eq('username', `${senderUsername}`)
-      .select('*, avatar(*)');
-
-    if (receiversUpdateError || sendersUpdateError) {
-      throw receiversUpdateError || sendersUpdateError;
+    if (error) {
+      throw error;
     }
+
+    console.log({ error });
 
     return { filteredRequests, error: null };
   } catch (error) {
     console.log(error);
-    return { data: null, error: error };
+    return { error };
   }
 };
 

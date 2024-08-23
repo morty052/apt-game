@@ -1,29 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BackButton } from 'components/ui/BackButton';
-import { Colors } from 'constants/colors';
-import { useState } from 'react';
-import { Pressable, View, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { acceptFriendRequest, getPlayers } from 'utils/supabase';
-import { Text } from 'components/ui/Text';
-import { getItem } from 'utils/storage';
-import { Ionicons } from '@expo/vector-icons';
 import Avatar, { AvatarObject } from 'components/Avatar';
 import { Button } from 'components/ui/Button';
-
-const FriendRequestsBadge = ({ requests }: { requests: number }) => {
-  return (
-    <View style={styles.badge}>
-      <Text
-        style={{
-          fontSize: 14,
-          color: 'white',
-        }}>
-        {requests}
-      </Text>
-    </View>
-  );
-};
+import { Text } from 'components/ui/Text';
+import { Colors } from 'constants/colors';
+import { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { getItem } from 'utils/storage';
+import { acceptFriendRequest, getPlayers } from 'utils/supabase';
 
 export function FriendRequestsScreen({ route, navigation }: any) {
   const [requests, setRequests] = useState([]);

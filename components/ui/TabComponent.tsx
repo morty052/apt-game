@@ -34,7 +34,7 @@ export const TabButton = ({ title, value, onPress, isActive }: tabBarButtonProps
 
   return (
     <AnimatedPressable onPress={() => onPress(value)} style={[styles.tabBarButton, animatedStyles]}>
-      <Text style={{ fontSize: 14, color: isActive ? 'white' : 'black' }}>{title}</Text>
+      <Text style={{ fontSize: 12, color: isActive ? 'white' : 'black' }}>{title}</Text>
     </AnimatedPressable>
   );
 };

@@ -17,7 +17,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, View, StyleSheet, TextInput, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { friend } from 'types';
-import { getItem } from 'utils/storage';
 
 import friendsIcon from '../../../assets/icons/friends-icon--min.png';
 
@@ -168,7 +167,7 @@ export function FriendsHomeScreen({ navigation }: any) {
   }, [setResults, query]);
 
   const addFriendMutation = async (receiverUsername: string) => {
-    const { data, error } = await sendFriendRequest({
+    const { error } = await sendFriendRequest({
       receiverUsername,
     });
 
