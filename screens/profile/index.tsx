@@ -1,33 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import { PlayerAvatar } from 'components/Avatar';
-import { Button } from 'components/ui/Button';
+import { getDistanceFromLastLevel, ProgressBar } from 'components/ProgressBar';
 import { Container } from 'components/ui/Container';
-import { TabPanel } from 'components/ui/TabComponent';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import { eq } from 'drizzle-orm';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useDB } from 'hooks/useDb';
 import { useAppStore } from 'models/appStore';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Stats } from 'schema';
-import { StatsProps } from 'types';
 import { getItem } from 'utils/storage';
-import { getDistanceFromLastLevel, ProgressBar } from 'components/ProgressBar';
 
 const avatarWidth = Dimensions.get('window').width * 0.7;
-
-const tabs = [
-  {
-    value: 'INFO',
-    title: 'Your info',
-  },
-  {
-    value: 'INVENTORY',
-    title: 'Inventory',
-  },
-];
 
 const StatContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -65,7 +47,7 @@ function PlayerInfo() {
   const distanceFromLastLevel = useMemo(() => getDistanceFromLastLevel(points), [points]);
   const level = useMemo(() => Math.floor(points / 1000), [points]);
   return (
-    <View style={{ gap: 20 }}>
+    <View style={{ gap: 20, paddingTop: 20, paddingHorizontal: 5 }}>
       <View
         // Button Linear Gradient
         style={styles.playerInfoCard}>
@@ -99,88 +81,26 @@ function PlayerInfo() {
 
       <View>
         <StatContainer>
-          <StatItem title={'Level'} value={level as number} />
+          <StatItem title="Level" value={level as number} />
           <StatDivider />
-          <StatItem title={'Points'} value={points as number} />
+          <StatItem title="Points" value={points as number} />
         </StatContainer>
         <StatContainer>
-          <StatItem title={'Wins'} value={wins as number} />
+          <StatItem title="Wins" value={wins as number} />
           <StatDivider />
-          <StatItem title={'Losses'} value={losses as number} />
+          <StatItem title="Losses" value={losses as number} />
         </StatContainer>
         <StatContainer>
-          <StatItem title={'Games Played'} value={games_played as number} />
+          <StatItem title="Games Played" value={games_played as number} />
           <StatDivider />
-          <StatItem title={'High Score'} value={high_score as number} />
+          <StatItem title="High Score" value={high_score as number} />
         </StatContainer>
       </View>
     </View>
   );
 }
 
-function PlayerInventory() {
-  return (
-    <View style={{ gap: 20 }}>
-      <LinearGradient
-        // Button Linear Gradient
-        colors={[Colors.tertiary, 'gold']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.playerInfoCard}>
-        <View style={{ gap: 3 }}>
-          <Text style={{ color: 'white' }}>0 items</Text>
-          <Text style={{ color: 'white', fontSize: 14 }}>your inventory is empty</Text>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <ProgressBar level={0} distanceFromLastLevel={0} />
-        </View>
-        <Button title="Browse Store" />
-      </LinearGradient>
-    </View>
-  );
-}
-
 export default function Profile({ navigation }: any) {
-  const [activeTab, setactiveTab] = useState<string>('INFO');
-  const DB = useDB();
-  const getStats = async (): Promise<StatsProps> => {
-    try {
-      const allRows = await DB.query.Stats.findMany({
-        columns: {
-          level: true,
-          points: true,
-          high_score: true,
-          games_played: true,
-          wins: true,
-          losses: true,
-        },
-      });
-
-      const stats = allRows[0];
-      return stats;
-    } catch (error) {
-      console.log(error);
-      return {} as StatsProps;
-    }
-  };
-
-  const updateStats = async () => {
-    try {
-      const transaction = await DB.update(Stats)
-        .set({ level: 0, losses: 0, high_score: 0, points: 0, games_played: 0, wins: 0 })
-        .where(eq(Stats.id, 0))
-        .returning({ updatedId: Stats.level });
-
-      console.log(transaction);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <ScrollView>
       <Container style={{ paddingBottom: 40 }}>
@@ -213,12 +133,13 @@ export default function Profile({ navigation }: any) {
             </Pressable>
           </View>
         </View>
-        <View style={styles.container}>
+        {/* <View style={styles.container}>
           <TabPanel tabs={tabs} activeTab={activeTab} setactiveTab={setactiveTab} />
 
           {activeTab === 'INFO' && <PlayerInfo />}
           {activeTab === 'INVENTORY' && <PlayerInventory />}
-        </View>
+        </View> */}
+        <PlayerInfo />
       </Container>
     </ScrollView>
   );

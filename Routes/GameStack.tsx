@@ -205,6 +205,7 @@ export default function GameStack({ navigation }: any) {
             headerTitleStyle: { color: 'white', fontFamily: 'Crispy-Tofu' },
             headerStyle: { backgroundColor: Colors.tertiary },
             headerRight: () => <SettingsButton />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerShadowVisible: false,
           }}
           component={Profile}
