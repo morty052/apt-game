@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { BackButton } from 'components/ui/BackButton';
 import { Button } from 'components/ui/Button';
@@ -12,10 +11,10 @@ import { TextInput } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { friend } from 'types';
 import { getItem } from 'utils/storage';
-import { createPrivateMatch } from 'utils/supabase';
 
 import Avatar from './Avatar';
 import FriendCard from './cards/FriendCard';
+import { createPrivateMatch } from '../api/index';
 
 // TODO ADD OR REMOVE HELP BUTTON PERMANENTLY
 const Header = ({ handleClose }: { handleClose: () => void }) => {

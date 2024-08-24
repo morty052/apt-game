@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import ALPHABETS from 'constants/alphabets';
 import { Colors } from 'constants/colors';
+import { eq } from 'drizzle-orm';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useDB } from 'hooks/useDb';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
@@ -14,15 +16,13 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stats } from 'schema';
 import { getItem } from 'utils/storage';
-import { updatePlayerHighScore } from 'utils/supabase';
 
+import { updatePlayerHighScore } from '../../api/index';
 import PerformanceMeter, { performanceAnimationNames } from '../rive/PerformanceMeter';
 import { Button } from '../ui/Button';
 import { Text } from '../ui/Text';
-import { useDB } from 'hooks/useDb';
-import { Stats } from 'schema';
-import { eq } from 'drizzle-orm';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 

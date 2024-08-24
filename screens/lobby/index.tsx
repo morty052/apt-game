@@ -16,7 +16,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View, Image, ScrollView, Pressable } from 'react-native';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
-import { getHost, getPlayers } from 'utils/supabase';
+import { getHost, getPlayers } from '../../api/index';
 
 import friendsIcon from '../../assets/icons/friends-icon--min.png';
 import * as SchemaProps from '../../schema';

@@ -16,7 +16,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RiveRef } from 'rive-react-native';
 import { getItem, setItem } from 'utils/storage';
-import { handleSignup } from 'utils/supabase';
+
+import { handleSignup } from '../../api/index';
 
 const STATE_MACHINE_NAME = 'State Machine 1';
 

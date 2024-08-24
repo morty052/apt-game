@@ -7,7 +7,8 @@ import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getItem } from 'utils/storage';
-import { acceptFriendRequest, getPlayers } from 'utils/supabase';
+
+import { acceptFriendRequest, getPlayers } from '../../../api/index';
 
 export function FriendRequestsScreen({ route, navigation }: any) {
   const [requests, setRequests] = useState([]);
@@ -31,7 +32,7 @@ export function FriendRequestsScreen({ route, navigation }: any) {
     }: {
       receiverUsername: string;
       senderUsername: string;
-    }) => acceptFriendRequest({ receiverUsername, senderUsername }),
+    }) => acceptFriendRequest({ senderUsername }),
     mutationKey: ['acceptFriendRequest'],
     onSuccess: (data) => {
       console.log('friend request accepted');

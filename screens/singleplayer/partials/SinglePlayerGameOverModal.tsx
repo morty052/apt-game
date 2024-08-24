@@ -18,7 +18,7 @@ import Animated, {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stats } from 'schema';
 import { getItem } from 'utils/storage';
-import { updatePlayerHighScore } from 'utils/supabase';
+import { updatePlayerHighScore } from '../../../api/index';
 
 import PerformanceMeter, {
   performanceAnimationNames,
