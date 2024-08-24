@@ -73,19 +73,20 @@ const broadcast = async ({
   }
 };
 
-export async function getLeaderBoard() {
+export async function getLeaderBoard(): Promise<any> {
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*, avatar(*)')
-      .order('total_score', { ascending: false })
-      .limit(20);
+    const url = `${baseUrl}/user/leaderboard`;
+
+    const response = await fetch(url);
+    const { data, error } = await response.json();
+
     if (error) {
       throw error;
     }
     return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return error;
   }
 }
 

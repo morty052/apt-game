@@ -11,7 +11,7 @@ export const Colors = {
 
 export const dictionaryUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en';
 // export const baseUrl = 'https://apt-server.onrender.com';
-export const baseUrl = 'https://52ea-102-216-11-2.ngrok-free.app';
+export const baseUrl = 'https://e6bb-102-216-10-2.ngrok-free.app';
 
 export const ALPHABETS = [
   'A',

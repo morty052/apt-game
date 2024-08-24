@@ -4,15 +4,15 @@ import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppStore } from 'models/appStore';
+import { useSoundTrackModel } from 'models/soundtrackModel';
 import { useState } from 'react';
 import { Dimensions, FlatList, Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Rive from 'rive-react-native';
 
 import gift from '../../assets/gifts/giftbox-base.png';
+import coin from '../../assets/icons/alph-a--min.png';
 import removeAdsIcons from '../../assets/icons/removeAds-min.png';
 import energy from '../../assets/icons/thunderbolt-icon--min.png';
-import coin from '../../assets/icons/alph-a--min.png';
-import { useSoundTrackModel } from 'models/soundtrackModel';
 
 const days = [1, 2, 3, 4, 5, 6, 7];
 
@@ -278,13 +278,14 @@ const CoinBundleCard = () => {
     <View
       style={{
         padding: 10,
-        width: Dimensions.get('window').width - 40,
+        width: Dimensions.get('window').width - 20,
         height: 180,
         borderRadius: 10,
         elevation: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
         backgroundColor: 'lightblue',
+        alignSelf: 'center',
       }}>
       <View style={{ gap: 10 }}>
         <View style={{ gap: 5 }}>
@@ -360,17 +361,14 @@ export default function Market({ navigation }: any) {
             <Text style={{ textAlign: 'center', color: 'white' }}>Coin Packs</Text>
           </View>
           <FlatList
+            scrollEnabled={false}
             contentContainerStyle={{
-              gap: 10,
-              maxHeight: 250,
+              gap: 20,
               // backgroundColor: 'red',
               paddingBottom: 10,
-              paddingHorizontal: 2,
             }}
-            horizontal
             data={[1, 2, 3, 4]}
             renderItem={() => <CoinBundleCard />}
-            showsHorizontalScrollIndicator={false}
           />
         </View>
       </ScrollView>

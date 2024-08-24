@@ -3,16 +3,16 @@ import Avatar, { AvatarObject } from 'components/Avatar';
 import PlayerProfileModal from 'components/PlayerProfileModal';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { getItem } from 'utils/storage';
-import { getLeaderBoard } from 'utils/supabase';
 
+import { getLeaderBoard } from '../../api/index';
 import BaseChest from '../../assets/gifts/chest-common.png';
 import EpicChest from '../../assets/gifts/chest-epic.png';
 import LegendaryChest from '../../assets/gifts/chest-legendary.png';
 import RareChest from '../../assets/gifts/chest-rare.png';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const PositionBadge = ({
   number,
@@ -184,16 +184,9 @@ const LeaderBoard = ({ navigation }: any) => {
         <View style={styles.container}>
           <LeaderBoardBanner />
           <View>
-            {players?.map((player, index) => (
+            {players?.map((player: any, index: number) => (
               <PlayerRankingCard
                 onPress={() => {
-                  // navigation.navigate('PlayerScreen', {
-                  //   username: player.username,
-                  //   avatar: player.avatar,
-                  //   points_to_compare: player.total_score,
-                  //   high_score_to_compare: player.highscore,
-                  //   level_to_compare: player.level,
-                  // });
                   setplayerToView(player);
                   setViewingPlayer(true);
                 }}
