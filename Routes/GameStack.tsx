@@ -85,7 +85,18 @@ const GameRoutes = ({ navigation }: any) => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={Home} />
         <Stack.Screen name="GameScreen" component={GameScreen} />
-        <Stack.Screen name="FriendsList" component={FriendListScreen} />
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerStyle: { backgroundColor: Colors.tertiary },
+            headerTitle: 'Friends',
+          }}
+          name="FriendsList"
+          component={FriendListScreen}
+        />
         <Stack.Screen
           options={{
             headerShown: true,

@@ -3,76 +3,6 @@ import { baseUrl } from 'constants/index';
 import { getItem } from 'utils/storage';
 import { supabase } from 'utils/supabase';
 
-const apiUrl = 'https://exp.host/--/api/v2/push/send';
-
-const sendNotification = async ({
-  to,
-  title,
-  body,
-  data,
-}: {
-  to: string;
-  title: string;
-  body: string;
-  data?: any;
-}) => {
-  const payload = {
-    to,
-    title,
-    body,
-    data,
-  };
-
-  try {
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    console.log('Push notification sent successfully:', data);
-  } catch (error) {
-    console.error('Error sending push notification:', error);
-  }
-};
-
-const broadcast = async ({
-  list,
-  title,
-  body,
-  data,
-}: {
-  list: string[];
-  title: string;
-  body: string;
-  data: any;
-}) => {
-  try {
-    const { data: playersToNotify, error } = await supabase
-      .from('users')
-      .select('expo_push_token')
-      .in('username', list);
-    if (error) {
-      throw error;
-    }
-
-    for (const player in playersToNotify) {
-      sendNotification({
-        to: playersToNotify[player].expo_push_token,
-        title: 'New private match',
-        body,
-        data,
-      });
-    }
-
-    console.log({ playersToNotify });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export async function getLeaderBoard(): Promise<any> {
   try {
     const url = `${baseUrl}/user/leaderboard`;
@@ -89,27 +19,6 @@ export async function getLeaderBoard(): Promise<any> {
     return error;
   }
 }
-
-const getFriendsList = async (username: string) => {
-  try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('friends')
-      .eq('username', `${username}`);
-
-    if (error) {
-      throw error;
-    }
-
-    if (data[0].friends === null) {
-      return [];
-    }
-
-    return data[0].friends;
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 export const getFriendRequests = async () => {
   const username = getItem('USERNAME') || '';
@@ -148,51 +57,6 @@ export const getFriendRequests = async () => {
       friendRequests: [],
       error,
     };
-  }
-};
-
-const getFriendRequestArray = async (username: string) => {
-  try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('friend_requests')
-      .eq('username', `${username}`);
-
-    console.log({ friends: data });
-
-    if (error) {
-      throw error;
-    }
-
-    // * if there are no friend requests, return an empty array
-    if (!data[0]?.friend_requests) {
-      return [];
-    }
-
-    return data[0].friend_requests;
-  } catch (error) {
-    console.log(error, 'occured here');
-    return [];
-  }
-};
-
-// TODO LOOK FOR A WAY TO INCLUDE AVATARS
-export const getInvites = async (username: string): Promise<any> => {
-  try {
-    const { data, error } = await supabase
-      .from('created_games')
-      .select('host(username, avatar(*)), id, guests')
-      .containedBy('guests', [`${username}`]);
-
-    if (error) {
-      throw error;
-    }
-
-    console.log({ data });
-
-    return data;
-  } catch (error) {
-    console.log(error);
   }
 };
 
@@ -385,33 +249,21 @@ export const createPrivateMatch = async ({
   username: string;
   avatar: AvatarObject;
 }): Promise<any> => {
+  const url = `${baseUrl}/user/create-private-match`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ host_id, username, guests, avatar }),
+  };
   try {
-    const { data, error }: any = await supabase
-      .from('created_games')
-      .insert({ host: host_id, guests })
-      .select('id');
+    const response = await fetch(url, options);
+    const { data, error }: any = await response.json();
 
     if (error) {
       throw error;
     }
-
-    // * notify guests
-    await broadcast({
-      list: guests,
-      body: `join ${username} in a new private match.`,
-      title: `${username} has invited you to a private match.`,
-      data: {
-        type: 'INVITE',
-        data: { host: { username, avatar }, game_id: data[0].id, guests },
-      },
-    });
-
-    // * add game to guests invite list
-    await updateGuestsInvites({
-      host: username,
-      game_id: data[0].id,
-      guests,
-    });
 
     return { data, error };
   } catch (error) {
