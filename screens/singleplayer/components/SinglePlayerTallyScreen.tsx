@@ -1,3 +1,4 @@
+import { checkWord } from 'api';
 import { SinglePlayerHud } from 'components/game-elements/Hud';
 import { SinglePlayerCard } from 'components/game-elements/PlayerCard';
 import { Button } from 'components/ui/Button';
@@ -87,10 +88,13 @@ const useTally = () => {
   }, [lives, useSinglePlayerStore]);
 
   const handleTally = useCallback(async () => {
-    if (verifyingAnswer) {
-      return;
-    }
+    // * RETURN IF ALREADY VERIFYING
+    // if (verifyingAnswer) {
+    //   return;
+    // }
+
     try {
+      // * SET VERIFYING ANSWER TO TRUE
       setVerifyingAnswer(true);
       // * CHECK IF CHARACTER FORFEITED ANY ANSWER
       const hasForfeitedAnswers = Object.values(answers)
@@ -111,6 +115,16 @@ const useTally = () => {
 
         // * OPEN SCORE FOR ROUND MODAL, UPDATE DAMAGE TAKEN VARIABLE
         useSinglePlayerStore.setState({ viewingResults: true, takenDamage: true });
+        return;
+      }
+
+      // * CHECK IF PLAYER PUT IN CORRECT ANSWERS FOR THING
+      const { isInDatabase, error } = await checkWord({
+        word: answers.Thing,
+      });
+
+      if (!isInDatabase) {
+        console.error(error);
         return;
       }
 

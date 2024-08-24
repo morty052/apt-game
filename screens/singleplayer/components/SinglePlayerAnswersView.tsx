@@ -220,7 +220,7 @@ const SinglePlayerAnswersView = () => {
       }
 
       // * handle last answer
-      if (index === 3) {
+      if (index === 2) {
         console.log('last');
         if (!value) {
           console.log('title is', title);
@@ -254,15 +254,15 @@ const SinglePlayerAnswersView = () => {
         <SinglePlayerHud seconds={seconds} />
       </View>
       <>
-        {index === 0 && (
+        {/* {index === 0 && (
           <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Name}
             setValue={setAnswers}
             title="Name"
           />
-        )}
-        {index === 1 && (
+        )} */}
+        {index === 0 && (
           <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Animal}
@@ -270,7 +270,7 @@ const SinglePlayerAnswersView = () => {
             title="Animal"
           />
         )}
-        {index === 2 && (
+        {index === 1 && (
           <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Place}
@@ -278,7 +278,7 @@ const SinglePlayerAnswersView = () => {
             title="Place"
           />
         )}
-        {index === 3 && (
+        {index === 2 && (
           <SinglePlayerView
             handleSubmit={(title, value) => handleAnswerSubmit(title, value)}
             value={answers.Thing}

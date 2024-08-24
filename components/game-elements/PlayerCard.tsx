@@ -63,21 +63,21 @@ export const SinglePlayerCard = ({ username }: { username: string }) => {
         </View>
       </View>
       <View style={{ gap: 20 }}>
-        <Field value={answers[0]}>
+        {/* <Field value={answers[0]}>
           <FieldImage icon={NameIcon} />
           <FieldDisplay title="Name" value={answers[0] || 'FORFEITED'} />
+        </Field> */}
+        <Field value={answers[0]}>
+          <FieldImage icon={AnimalIcon} />
+          <FieldDisplay title="Animal" value={answers[0] || 'FORFEITED'} />
         </Field>
         <Field value={answers[1]}>
-          <FieldImage icon={AnimalIcon} />
-          <FieldDisplay title="Animal" value={answers[1] || 'FORFEITED'} />
+          <FieldImage icon={PlaceIcon} />
+          <FieldDisplay title="Place" value={answers[1] || 'FORFEITED'} />
         </Field>
         <Field value={answers[2]}>
-          <FieldImage icon={PlaceIcon} />
-          <FieldDisplay title="Place" value={answers[2] || 'FORFEITED'} />
-        </Field>
-        <Field value={answers[3]}>
           <FieldImage icon={ThingIcon} />
-          <FieldDisplay title="Thing" value={answers[3] || 'FORFEITED'} />
+          <FieldDisplay title="Thing" value={answers[2] || 'FORFEITED'} />
         </Field>
       </View>
     </View>

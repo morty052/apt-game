@@ -6,7 +6,11 @@ import { CharacterNames, playerProps } from '../types';
 
 type singlePlayer = {
   username: string;
-  answers: playerProps['answers'];
+  answers: {
+    Animal: string;
+    Place: string;
+    Thing: string;
+  };
   character: CharacterNames | null;
 };
 
@@ -99,7 +103,7 @@ const getPointsForPlayer = ({ player }: { player: singlePlayer }) => {
 export const useSinglePlayerStore = create<GameProps>((set, state) => ({
   player: {
     username: getItem('USERNAME') || 'Guest',
-    answers: { Name: '', Animal: '', Place: '', Thing: '' },
+    answers: { Animal: '', Place: '', Thing: '' },
     character: null,
   },
   winner: null,

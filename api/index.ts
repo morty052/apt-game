@@ -251,6 +251,34 @@ export const getHost = async (room_id: string) => {
   }
 };
 
+export const checkWord = async ({ word }: { word: string }) => {
+  const url = `${baseUrl}/api/check-word`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ word }),
+  };
+  try {
+    const response = await fetch(url, options);
+    const { data, error } = await response.json();
+    console.log({ data });
+    if (error) {
+      throw new Error(error);
+    }
+
+    if (data?.word) {
+      return { isInDatabase: true, error: null };
+    } else {
+      return { isInDatabase: false, error: null };
+    }
+  } catch (error) {
+    console.error(error);
+    return { isInDatabase: false, error: true };
+  }
+};
+
 export const updatePlayerHighScore = async ({
   username,
   scoreForMatch,
