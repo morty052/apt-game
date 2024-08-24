@@ -90,7 +90,7 @@ const GameRoutes = ({ navigation }: any) => {
             headerShown: true,
             headerTitleAlign: 'center',
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerStyle: { backgroundColor: Colors.tertiary },
             headerTitle: 'Friends',
           }}
@@ -105,7 +105,7 @@ const GameRoutes = ({ navigation }: any) => {
             headerTitleAlign: 'center',
             headerBackTitle: '',
             headerStyle: { backgroundColor: Colors.tertiary },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerShadowVisible: false,
           }}
           name="NotificationsScreen"
@@ -152,7 +152,7 @@ export default function GameStack({ navigation }: any) {
             headerTitleAlign: 'center',
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
             headerStyle: { backgroundColor: Colors.tertiary },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerShadowVisible: false,
           }}
           name="CharacterSelect"
@@ -163,7 +163,7 @@ export default function GameStack({ navigation }: any) {
             headerShown: true,
             headerTitleAlign: 'center',
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerStyle: { backgroundColor: Colors.tertiary },
           }}
           name="LeaderBoard"
@@ -178,7 +178,7 @@ export default function GameStack({ navigation }: any) {
             headerTitleAlign: 'center',
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
             headerStyle: { backgroundColor: Colors.tertiary },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerShadowVisible: false,
           }}
           name="SettingsScreen"
@@ -190,7 +190,7 @@ export default function GameStack({ navigation }: any) {
             headerShown: true,
             headerTitleAlign: 'center',
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerStyle: { backgroundColor: Colors.tertiary },
           }}
           name="Store"
