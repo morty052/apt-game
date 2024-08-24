@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { GameStackParamList } from 'Routes/GameStack';
 import Avatar, { AvatarObject } from 'components/Avatar';
 import CharacterSelectButton from 'components/action-buttons/CharacterSelectButton';
+import AdFreeBundle from 'components/cards/AdfreeBundle';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
@@ -16,11 +17,10 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View, Image, ScrollView, Pressable } from 'react-native';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
-import { getHost, getPlayers } from '../../api/index';
 
+import { getHost, getPlayers } from '../../api/index';
 import friendsIcon from '../../assets/icons/friends-icon--min.png';
 import * as SchemaProps from '../../schema';
-import AdFreeBundle from 'components/cards/AdfreeBundle';
 
 const delay = () => {
   return new Promise<void>((resolve, reject) => {

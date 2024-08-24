@@ -1,7 +1,6 @@
 import { AvatarObject } from 'components/Avatar';
 import { baseUrl } from 'constants/index';
 import { getItem } from 'utils/storage';
-import { supabase } from 'utils/supabase';
 
 export async function getLeaderBoard(): Promise<any> {
   try {
@@ -118,38 +117,26 @@ export const getSearchResults = async (username: string) => {
 };
 
 export const getPlayers = async (playerList: string[]): Promise<any> => {
+  const url = `${baseUrl}/api/get-players`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ playerList }),
+  };
   try {
-    const { data, error }: any = await supabase
-      .from('users')
-      .select('username, avatar(*)')
-      .in('username', playerList);
+    const response = await fetch(url, options);
+    const { data, error } = await response.json();
 
     if (error) {
       throw error;
     }
-
+    console.log({ data });
     return data;
   } catch (error) {
     console.log(error);
-    return { error: error };
-  }
-};
-
-export const getPlayerDetails = async (username: string): Promise<any> => {
-  try {
-    const { data, error }: any = await supabase
-      .from('users')
-      .select('*')
-      .ilike('username', `${username}`);
-
-    if (error) {
-      throw error;
-    }
-
-    return data[0];
-  } catch (error) {
-    console.error(error);
-    return { error: error };
+    return { error };
   }
 };
 
@@ -208,36 +195,6 @@ export const acceptFriendRequest = async ({ senderUsername }: { senderUsername: 
   }
 };
 
-const updateGuestsInvites = async ({
-  host,
-  game_id,
-  guests,
-}: {
-  host: string;
-  game_id: string;
-  guests: string[];
-}) => {
-  try {
-    const { data, error }: any = await supabase
-      .from('users')
-      .update({
-        game_invites: {
-          [game_id]: {
-            username: host,
-            game_id,
-          },
-        },
-      })
-      .in('username', guests)
-      .select('id');
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export const createPrivateMatch = async ({
   host_id,
   guests,
@@ -273,35 +230,24 @@ export const createPrivateMatch = async ({
 };
 
 export const getHost = async (room_id: string) => {
+  const url = `${baseUrl}/api/get-host`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ room_id }),
+  };
   try {
-    const { data, error }: any = await supabase
-      .from('created_games')
-      .select('host(username, avatar(*))')
-      .eq('id', room_id);
+    const response = await fetch(url, options);
+    const { data, error }: any = await response.json();
+
     if (error) {
       throw new Error(error);
     }
-    return data[0];
+    return data;
   } catch (error) {
     console.error(error);
-  }
-};
-
-const getPlayerStats = async ({ username }: { username: string }) => {
-  try {
-    const { data, error }: any = await supabase
-      .from('users')
-      .select('highscore, total_score, level')
-      .eq('username', `${username}`);
-    if (error) {
-      throw error;
-    }
-
-    const { highscore, total_score, level } = data[0];
-    return { highscore, total_score, level, error };
-  } catch (error) {
-    console.error(error);
-    return { error };
   }
 };
 
@@ -312,67 +258,22 @@ export const updatePlayerHighScore = async ({
   username: string;
   scoreForMatch: number;
 }) => {
+  const url = `${baseUrl}/user/update-score`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, scoreForMatch }),
+  };
   try {
-    const {
-      highscore,
-      total_score,
-      level,
-      error: playerStatsError,
-    } = await getPlayerStats({ username });
+    const response = await fetch(url, options);
+    const { new_highscore, new_total_score, error }: any = await response.json();
 
-    if (playerStatsError) {
-      throw playerStatsError;
-    }
-
-    const new_total_score = total_score + scoreForMatch;
-    const new_highscore = scoreForMatch > highscore;
-
-    if (new_highscore) {
-      const { error: updateError }: any = await supabase
-        .from('users')
-        .update({
-          total_score: new_total_score,
-          highscore: scoreForMatch,
-        })
-        .eq('username', `${username}`);
-      if (updateError) {
-        throw updateError;
-      }
-    }
-
-    const { error: updateError }: any = await supabase
-      .from('users')
-      .update({
-        total_score: new_total_score,
-      })
-      .eq('username', `${username}`);
-    if (updateError) {
-      throw updateError;
-    }
-
-    return { error: updateError, new_highscore, new_total_score };
+    return { error, new_highscore, new_total_score };
   } catch (error) {
     console.error(error);
     return { updateError: error };
-  }
-};
-
-const createUserAvatar = async (avatarSelections: AvatarObject) => {
-  try {
-    const { data, error } = await supabase
-      .from('avatars')
-      .insert({
-        ...avatarSelections,
-      })
-      .select('id');
-    if (error) {
-      throw error;
-    }
-
-    return data[0].id;
-  } catch (error) {
-    console.error(error);
-    return null;
   }
 };
 
@@ -389,28 +290,25 @@ export const handleSignup = async ({
   expo_push_token: string;
   avatar: AvatarObject;
 }) => {
-  console.log('signup', username, email, password, expo_push_token);
+  const url = `${baseUrl}/api/sign-up`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, email, password, expo_push_token, avatar }),
+  };
 
   try {
-    const AvatarId = await createUserAvatar(avatar);
-
-    const { data, error } = await supabase
-      .from('users')
-      .insert({
-        username,
-        email,
-        password,
-        expo_push_token,
-        avatar: AvatarId,
-      })
-      .select('id');
+    const response = await fetch(url, options);
+    const { data, error } = await response.json();
 
     if (error) {
       console.log(error);
       throw error;
     }
 
-    return data[0].id;
+    return data;
   } catch (error) {
     console.error(error);
   }
