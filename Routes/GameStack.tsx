@@ -90,7 +90,7 @@ const GameRoutes = ({ navigation }: any) => {
             headerShown: true,
             headerTitleAlign: 'center',
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
-            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('HomeScreen')} />,
             headerStyle: { backgroundColor: Colors.tertiary },
             headerTitle: 'Friends',
           }}
@@ -105,7 +105,7 @@ const GameRoutes = ({ navigation }: any) => {
             headerTitleAlign: 'center',
             headerBackTitle: '',
             headerStyle: { backgroundColor: Colors.tertiary },
-            headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('HomeScreen')} />,
             headerShadowVisible: false,
           }}
           name="NotificationsScreen"

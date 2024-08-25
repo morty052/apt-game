@@ -128,12 +128,14 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   settingsItem: {
-    backgroundColor: Colors.secondary,
-    padding: 10,
-    borderRadius: 10,
+    backgroundColor: Colors.plain,
+    paddingHorizontal: 10,
+    paddingBottom: 20,
     flexDirection: 'row',
     columnGap: 5,
     position: 'relative',
+    borderBottomWidth: 1,
+    borderColor: Colors.gray,
   },
   badgeContainer: {
     position: 'absolute',
@@ -158,9 +160,8 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.8)',
     borderRadius: 24,
-    elevation: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     padding: 16,
