@@ -6,12 +6,13 @@ import CharacterSelectButton from 'components/action-buttons/CharacterSelectButt
 import NotificationsButton from 'components/action-buttons/NotificationsButton';
 import { useDB } from 'hooks/useDb';
 import { useAppStore } from 'models/appStore';
-import { StyleSheet, View, ImageBackground } from 'react-native';
+import { StyleSheet, View, ImageBackground, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
 import { inviteProps, StatsProps } from 'types';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
+import { useEffect, useState } from 'react';
 
 function RightNav() {
   return (
@@ -60,7 +61,7 @@ const getUserData = async (DB: any): Promise<{ stats: StatsProps; invites: invit
   }
 };
 
-export const Home = () => {
+export const Home = ({ navigation }: any) => {
   const DB = useDB();
 
   const { character } = useAppStore();

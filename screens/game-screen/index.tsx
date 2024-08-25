@@ -1,21 +1,43 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import ExitConfirmationModal from 'components/ExitConfirmationModal';
 import AlphabetSelectScreen from 'components/game-elements/AlphabetSelectScreen';
 import GameOverModal from 'components/game-elements/GameOverModal';
 import PlayerAnswersView from 'components/game-elements/PlayerAnswersScreen';
 import ScoreForRoundModal from 'components/game-elements/ScoreForRoundModal';
 import TallyScreen from 'components/game-elements/TallyScreen';
+import { Text } from 'components/ui/Text';
+import { ALPHABETS } from 'constants/index';
 import SocketContext from 'contexts/SocketContext';
 import { useGameStore } from 'models/gameStore';
 import { useSoundTrackModel } from 'models/soundtrackModel';
-import React from 'react';
-import { View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Pressable, View } from 'react-native';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 
-const GameScreen = ({ route }: any) => {
+const Stack = createStackNavigator();
+
+const GameForfeitScreen = () => {
+  const navigation = useNavigation();
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+      <Pressable onPress={() => {}}>
+        <Ionicons name="close-outline" size={100} color="red" />
+      </Pressable>
+      <Text>Game Forfeited</Text>
+      <Text style={{ textAlign: 'center', fontSize: 16 }}>You get zero points for this round</Text>
+    </View>
+  );
+};
+
+const GameScreenMain = ({ route, navigation }: any) => {
   const room = route.params.room;
 
   const [viewingFinalTally, setViewingFinalTally] = React.useState(false);
   const [gameOver, setGameOver] = React.useState(false);
+  const [exiting, setExiting] = React.useState(false);
 
   const { socket } = React.useContext(SocketContext);
   const { loadGameSoundtrack } = useSoundTrackModel();
@@ -35,6 +57,67 @@ const GameScreen = ({ route }: any) => {
     round,
     endMatch,
   } = useGameStore();
+
+  const exitGame = () => {
+    useGameStore.setState(() => ({
+      room: '',
+      player: {
+        username: getItem('USERNAME') || 'Guest',
+        answers: { Animal: '', Place: '', Thing: '' },
+        score: 0,
+        inTallyMode: false,
+        turn: 0,
+        strikes: 0,
+        doneTallying: false,
+        character: null,
+      },
+      opponents: [],
+      winner: null,
+      round: 0,
+      activeLetter: 'A',
+      totalScore: 0,
+      alphabets: ALPHABETS,
+      selectingLetter: true,
+      playing: false,
+      tallying: false,
+      currentTurn: 0,
+    }));
+    useSoundTrackModel.setState({ matchSoundEffects: [] });
+    setExiting(false);
+    navigation.replace('HomeScreen');
+  };
+  useEffect(() => {
+    if (exiting) {
+      navigation.removeListener('beforeRemove', () => {});
+      console.log('removed listener');
+      return;
+    }
+    const unsub = navigation.addListener(
+      'beforeRemove',
+      (e: { preventDefault: () => void; data: { action: any } }) => {
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+        setExiting(true);
+        // Prompt the user before leaving the screen
+        // Alert.alert(
+        //   'Discard changes?',
+        //   'You have unsaved changes. Are you sure to discard them and leave the screen?',
+        //   [
+        //     { text: "Don't leave", style: 'cancel', onPress: () => {} },
+        //     {
+        //       text: 'Discard',
+        //       style: 'destructive',
+        //       // If the user confirmed, then we dispatch the action we blocked earlier
+        //       // This will continue the action that had triggered the removal of the screen
+        //       // onPress: () => navigation.dispatch(e.data.action),
+        //       onPress: () => navigation.dispatch(e.data.action),
+        //     },
+        //   ]
+        // );
+      }
+    );
+    return unsub;
+  }, [navigation, exiting, setExiting]);
 
   React.useEffect(() => {
     loadGameSoundtrack(true).then(() => {
@@ -136,7 +219,20 @@ const GameScreen = ({ route }: any) => {
       {/* <Button onPress={() => socket?.emit('START_COUNTDOWN', { room })} /> */}
 
       {gameOver && <GameOverModal />}
+      <ExitConfirmationModal onExit={exitGame} visible={exiting} setVisible={setExiting} />
     </View>
+  );
+};
+
+const GameScreen = ({ route }: any) => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="GameScreenMain">
+      <Stack.Screen name="GameForfeitScreen" component={GameForfeitScreen} />
+      <Stack.Screen
+        name="GameScreenMain"
+        children={({ navigation }) => <GameScreenMain route={route} navigation={navigation} />}
+      />
+    </Stack.Navigator>
   );
 };
 
