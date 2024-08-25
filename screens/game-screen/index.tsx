@@ -20,7 +20,6 @@ import { getItem } from 'utils/storage';
 const Stack = createStackNavigator();
 
 const GameForfeitScreen = () => {
-  const navigation = useNavigation();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
       <Pressable onPress={() => {}}>

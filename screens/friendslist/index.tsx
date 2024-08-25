@@ -20,7 +20,16 @@ import friendsIcon from '../../assets/icons/friends-icon--min.png';
 function FriendsUi({ friends }: { friends: friend[] | null }) {
   return (
     <View style={{ gap: 10 }}>
-      {friends?.map((friend, index) => <FriendCard key={friend.username} player={friend} />)}
+      {friends && friends?.length > 0 && (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 15 }}>Friends</Text>
+          <Text style={{ fontSize: 15 }}>{friends?.length}</Text>
+        </View>
+      )}
+      {friends?.length === 0 && (
+        <Text style={{ color: 'black', fontSize: 20, textAlign: 'center' }}>No friends yet</Text>
+      )}
+      {friends?.map((friend) => <FriendCard key={friend.username} player={friend} />)}
     </View>
   );
 }
@@ -85,6 +94,12 @@ export function ResultsUi({
 }) {
   return (
     <View style={{ gap: 10 }}>
+      {results && results?.length > 0 && (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 15 }}>Results</Text>
+          <Text style={{ fontSize: 15 }}>{results?.length}</Text>
+        </View>
+      )}
       {results?.map((result) => (
         <PlayerResultItem onPress={onPress} key={result.username} player={result} online={false} />
       ))}
@@ -170,10 +185,6 @@ function FriendListScreen({ navigation }: any) {
             style={styles.searchInput}
           />
           {!query && <CreateMatchCard onPress={() => setCreatingMatch(true)} />}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 15 }}>{query ? 'Results' : 'Friends'}</Text>
-            <Text style={{ fontSize: 15 }}>{query ? results?.length : friends?.length}</Text>
-          </View>
           {results && <ResultsUi onPress={() => addFriendMutation(query)} results={results} />}
           <FriendsUi friends={friends} />
         </View>
