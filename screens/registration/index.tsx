@@ -4,24 +4,11 @@ import Input from 'components/ui/Input';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  ImageBackground,
-  Keyboard,
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ActivityIndicator, ImageBackground, Pressable, StyleSheet, View } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 import UserAvatarCreator from 'screens/user-avatar-creator/UserAvatarCreator';
 
 import { checkIfemailExists, checkIfUsernameExists } from './features';
-import Animated, {
-  FadeIn,
-  FadeOut,
-  SlideInDown,
-  SlideInUp,
-  SlideOutDown,
-} from 'react-native-reanimated';
 
 const Stack = createStackNavigator();
 

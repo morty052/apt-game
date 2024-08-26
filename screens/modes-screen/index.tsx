@@ -1,9 +1,11 @@
+import { checkEnergy } from 'api/index';
+import { ModalComponent } from 'components/ui/ModalComponent';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
-import React, { ReactNode, useContext, useEffect } from 'react';
+import { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
 import { playerProps } from 'types';
@@ -13,13 +15,6 @@ type gameModeProps = {
   value: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
   title: string;
 };
-
-const gameModes: gameModeProps[] = [
-  { value: 'HEAD_TO_HEAD', title: 'Head to Head' },
-  { value: 'FULL_HOUSE', title: 'Full House' },
-  // { value: 'PRIVATE_MATCH', title: 'Private Match' },
-  { value: 'SURVIVAL_MATCH', title: 'Survival Match' },
-];
 
 function ModeSelectBox({
   handleSelect,
@@ -83,12 +78,34 @@ export const ModeSelectWindow = ({
   );
 };
 
+const MatchLoadingModal = ({ visible }: { visible: boolean }) => {
+  return (
+    <ModalComponent visible={visible}>
+      <View>
+        <Text>Checking Energy</Text>
+      </View>
+    </ModalComponent>
+  );
+};
+
+const LowEnergyModal = ({ visible }: { visible: boolean }) => {
+  return (
+    <ModalComponent visible={visible}>
+      <View>
+        <Text>Checking Energy</Text>
+      </View>
+    </ModalComponent>
+  );
+};
+
 export const ModeScreen = ({ navigation }: any) => {
   const { socket } = useContext(SocketContext);
   const { initGame } = useGameStore();
   const { character, matchmaking } = useAppStore();
+  const [loading, setLoading] = useState(true);
+  const [energyLow, setEnergyLow] = useState(false);
 
-  const handleFindMatch = React.useCallback(
+  const handleFindMatch = useCallback(
     (mode: gameModeProps['value']) => {
       if (matchmaking) {
         return;
@@ -122,6 +139,26 @@ export const ModeScreen = ({ navigation }: any) => {
     // navigation.navigate('GameScreen', { room });
   }
 
+  const handleStartSinglePlayer = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+
+    navigation.navigate('SinglePlayerGameScreen');
+  }, [navigation]);
+
+  useEffect(() => {
+    checkEnergy().then((canPlay) => {
+      console.log({ canPlay });
+      if (canPlay) {
+        setLoading(false);
+      } else {
+        setEnergyLow(true);
+        setLoading(false);
+      }
+    });
+  }, []);
+
   useEffect(() => {
     socket?.on('MATCH_FOUND', (data: { queue: playerProps[]; room: string }) => {
       handleMatchFound(data.queue, data.room);
@@ -132,7 +169,7 @@ export const ModeScreen = ({ navigation }: any) => {
     <View style={{ flex: 1, backgroundColor: Colors.plain }}>
       <View style={styles.container}>
         <LimitedTimeMode />
-        <ModeSelectBox handleSelect={() => navigation.navigate('SinglePlayerGameScreen')}>
+        <ModeSelectBox handleSelect={() => handleStartSinglePlayer()}>
           <Text>Single Player</Text>
         </ModeSelectBox>
         <ModeSelectBox handleSelect={() => handleFindMatch('HEAD_TO_HEAD')}>
@@ -140,6 +177,7 @@ export const ModeScreen = ({ navigation }: any) => {
         </ModeSelectBox>
       </View>
       {matchmaking && <PendingMatchScreen />}
+      <LowEnergyModal visible={energyLow} />
     </View>
   );
 };

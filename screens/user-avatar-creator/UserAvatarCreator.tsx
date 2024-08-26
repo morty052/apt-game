@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { PlayerAvatar } from 'components/Avatar';
 import {
   RiveAvatarComponent,
   RiveAvatarComponentPreview,

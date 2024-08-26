@@ -375,3 +375,33 @@ export const handleSignup = async ({
     console.error(error);
   }
 };
+
+export const checkEnergy = async () => {
+  const username = getItem('USERNAME') || '';
+  try {
+    const url = `${baseUrl}/api/check-energy`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+      },
+      body: JSON.stringify({ username }),
+    };
+    const response = await fetch(url, options);
+    const { canPlay, error } = await response.json();
+
+    if (error) {
+      throw error;
+    }
+
+    if (canPlay) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
