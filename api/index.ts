@@ -406,3 +406,28 @@ export const checkEnergy = async () => {
     return false;
   }
 };
+export const depleteEnergy = async () => {
+  const username = getItem('USERNAME') || '';
+  try {
+    const url = `${baseUrl}/api/decrease-energy`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+      },
+      body: JSON.stringify({ username }),
+    };
+    const response = await fetch(url, options);
+    const { error } = await response.json();
+
+    if (error) {
+      throw error;
+    }
+
+    return { error: null };
+  } catch (error) {
+    console.error(error);
+    return { error };
+  }
+};

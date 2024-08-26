@@ -1,4 +1,5 @@
 import { checkEnergy } from 'api/index';
+import { Button } from 'components/ui/Button';
 import { ModalComponent } from 'components/ui/ModalComponent';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
@@ -6,10 +7,13 @@ import SocketContext from 'contexts/SocketContext';
 import { useAppStore } from 'models/appStore';
 import { useGameStore } from 'models/gameStore';
 import { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import PendingMatchScreen from 'screens/pending-match-screen/PendingMatchScreen';
 import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
+
+import energyBar from '../../assets/icons/thunderbolt-icon--min.png';
+import { Ionicons } from '@expo/vector-icons';
 
 type gameModeProps = {
   value: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
@@ -78,21 +82,46 @@ export const ModeSelectWindow = ({
   );
 };
 
-const MatchLoadingModal = ({ visible }: { visible: boolean }) => {
+const LowEnergyModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
   return (
-    <ModalComponent visible={visible}>
-      <View>
-        <Text>Checking Energy</Text>
-      </View>
-    </ModalComponent>
-  );
-};
-
-const LowEnergyModal = ({ visible }: { visible: boolean }) => {
-  return (
-    <ModalComponent visible={visible}>
-      <View>
-        <Text>Checking Energy</Text>
+    <ModalComponent transparent style={{ backgroundColor: 'rgba(0,0,0,0.6)' }} visible={visible}>
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View
+          style={{
+            flex: 0.7,
+            backgroundColor: Colors.plain,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            paddingBottom: 30,
+            gap: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'relative',
+          }}>
+          <Image source={energyBar} style={{ width: 100, height: 100 }} />
+          <Text>Out of Energy</Text>
+          <Text style={{ textAlign: 'center', fontSize: 12 }}>
+            You need at least one energy bar to play
+          </Text>
+          <Button
+            fontSize={18}
+            style={{ width: 200, height: 40, paddingVertical: 0 }}
+            title="Refuel"
+          />
+          <Text style={{ textAlign: 'center', fontSize: 12 }}>Watch videos to refuel</Text>
+          <Pressable
+            style={{
+              position: 'absolute',
+              top: -50,
+              right: 10,
+              backgroundColor: 'white',
+              borderRadius: 100,
+              padding: 10,
+            }}
+            onPress={onClose}>
+            <Ionicons name="close" size={24} color="red" />
+          </Pressable>
+        </View>
       </View>
     </ModalComponent>
   );
@@ -102,7 +131,7 @@ export const ModeScreen = ({ navigation }: any) => {
   const { socket } = useContext(SocketContext);
   const { initGame } = useGameStore();
   const { character, matchmaking } = useAppStore();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [energyLow, setEnergyLow] = useState(false);
 
   const handleFindMatch = useCallback(
@@ -177,7 +206,13 @@ export const ModeScreen = ({ navigation }: any) => {
         </ModeSelectBox>
       </View>
       {matchmaking && <PendingMatchScreen />}
-      <LowEnergyModal visible={energyLow} />
+      <LowEnergyModal
+        onClose={() => {
+          setEnergyLow(false);
+          navigation.goBack();
+        }}
+        visible={energyLow}
+      />
     </View>
   );
 };

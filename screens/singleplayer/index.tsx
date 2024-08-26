@@ -14,6 +14,7 @@ import SinglePlayerLetterSelect from './components/SinglePlayerLetterSelect';
 import { SinglePlayerTallyScreen } from './components/SinglePlayerTallyScreen';
 import SinglePlayerGameOverModal from './partials/SinglePlayerGameOverModal';
 import SinglePlayerScoreForRoundModal from './partials/SinglePlayerScoreForRoundModal';
+import { depleteEnergy } from 'api';
 
 const Stack = createStackNavigator();
 
@@ -22,15 +23,20 @@ function PreLoadGameScreen({ navigation }: any) {
 
   const isFocused = useIsFocused();
 
+  const prepareGame = async () => {
+    await loadGameSoundtrack(true);
+    await depleteEnergy();
+    console.log('game loaded');
+    navigation.navigate('SinglePlayerGameScreenMain');
+  };
+
   useEffect(() => {
     if (!isFocused) {
       return;
     }
-    loadGameSoundtrack(true).then(() => {
-      console.log('game loaded');
-      navigation.navigate('SinglePlayerGameScreenMain');
-    });
-  }, [loadGameSoundtrack, isFocused, navigation]);
+
+    prepareGame();
+  }, [isFocused]);
 
   return <LoadingScreen />;
 }
