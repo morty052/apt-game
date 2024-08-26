@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Rive from 'rive-react-native';
 
@@ -16,5 +16,3 @@ export default function LoadingScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

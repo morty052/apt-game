@@ -1,6 +1,7 @@
 import { useGameStore } from 'models/gameStore';
+import { useSinglePlayerStore } from 'models/singlePlayerStore';
 import { ReactNode, useMemo } from 'react';
-import { Pressable, StyleSheet, View, Image, ImageSourcePropType } from 'react-native';
+import { StyleSheet, View, Image, ImageSourcePropType } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 import AnimalIcon from '../../assets/icons/animal-icon.png';
@@ -9,7 +10,6 @@ import PlaceIcon from '../../assets/icons/place-icon.png';
 import ThingIcon from '../../assets/icons/thing-icon.png';
 import Avatar from '../Avatar';
 import { Text } from '../ui/Text';
-import { useSinglePlayerStore } from 'models/singlePlayerStore';
 
 const avatarObject = {
   BodyColor: 1,

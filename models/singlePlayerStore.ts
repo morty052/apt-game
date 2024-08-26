@@ -180,7 +180,7 @@ export const useSinglePlayerStore = create<GameProps>((set, state) => ({
       totalScore: newScore,
       player: {
         ...state.player,
-        answers: { Name: '', Animal: '', Place: '', Thing: '' },
+        answers: { Animal: '', Place: '', Thing: '' },
       },
       round,
     }));
