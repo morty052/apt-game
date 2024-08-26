@@ -11,8 +11,8 @@ import { BackButton } from 'components/ui/BackButton';
 import { Colors } from 'constants/colors';
 import dayjs from 'dayjs';
 import { useAvatarStateContext } from 'models/avatarStateContext';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RiveRef } from 'rive-react-native';
 import { getItem, setItem } from 'utils/storage';
@@ -116,41 +116,51 @@ export const UserAvatarEditor = ({ navigation, route }: any) => {
 };
 
 const UserAvatarCreator = ({ navigation, route }: any) => {
-  const { password, username, email } = route.params;
+  const [loading, setLoading] = useState(false);
+  const { password, username, email, referralCode } = route.params ?? {};
   const riveRef = React.useRef<RiveRef>(null);
 
   const { riveAvatarSelections, setRiveAvatarSelection } = useAvatarStateContext();
 
   async function handleSubmit() {
-    console.log(riveAvatarSelections);
-    const expo_push_token = getItem('expo_push_token') as string;
-    const id = await handleSignup({
-      email,
-      password,
-      username,
-      expo_push_token,
-      avatar: riveAvatarSelections,
-    });
-    const now = dayjs();
-    setItem('LAST_LOGIN', `${now.format('YYYY-MM-DD HH:mm:ss')}`);
-    setItem('LOGIN_COUNT', `${1}`);
-    setItem('ID', id);
-    setItem('USERNAME', username);
-    setItem('EMAIL', email);
-    setItem('PASSWORD', password);
-    setItem('ONBOARDED', 'TRUE');
-    setItem('AVATAR', JSON.stringify(riveAvatarSelections));
+    if (loading) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const expo_push_token = getItem('expo_push_token') as string;
+      const id = await handleSignup({
+        email,
+        password,
+        username,
+        expo_push_token,
+        avatar: riveAvatarSelections,
+        referralCode,
+      });
+      const now = dayjs();
+      setItem('LAST_LOGIN', `${now.format('YYYY-MM-DD HH:mm:ss')}`);
+      setItem('LOGIN_COUNT', `${1}`);
+      setItem('ID', id);
+      setItem('USERNAME', username);
+      setItem('EMAIL', email);
+      setItem('PASSWORD', password);
+      setItem('ONBOARDED', 'TRUE');
+      setItem('AVATAR', JSON.stringify(riveAvatarSelections));
 
-    const settings = {
-      soundOn: true,
-      vibrations: true,
-      friendRequest: true,
-      gameInvites: true,
-    };
+      const settings = {
+        soundOn: true,
+        vibrations: true,
+        friendRequest: true,
+        gameInvites: true,
+      };
 
-    setItem('SETTINGS', JSON.stringify(settings));
-
-    navigation.navigate('GameStack');
+      setItem('SETTINGS', JSON.stringify(settings));
+      setLoading(false);
+      navigation.navigate('GameStack');
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
   }
 
   return (
@@ -176,8 +186,13 @@ const UserAvatarCreator = ({ navigation, route }: any) => {
             gap: 5,
           }}
           onPress={handleSubmit}>
-          <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }}>Done</Text>
-          <Ionicons name="checkmark-circle-outline" size={24} color="white" />
+          {!loading && (
+            <>
+              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }}>Done</Text>
+              <Ionicons name="checkmark-circle-outline" size={24} color="white" />
+            </>
+          )}
+          {loading && <ActivityIndicator size="small" color="white" />}
         </Pressable>
       </View>
       <View style={{ paddingHorizontal: 10, flex: 1 }}>

@@ -305,27 +305,55 @@ export const updatePlayerHighScore = async ({
   }
 };
 
+const handleReferral = async ({ referralCode }: { referralCode: string }) => {
+  try {
+    const url = `${baseUrl}/api/handle-referral`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ referralCode }),
+    };
+    const response = await fetch(url, options);
+    const { error } = await response.json();
+
+    if (error) {
+      throw error;
+    }
+    return { error: null };
+  } catch (error) {
+    console.error(error);
+    return { data: null, error };
+  }
+};
+
 export const handleSignup = async ({
   username,
   email,
   password,
   expo_push_token,
   avatar,
+  referralCode,
 }: {
   username: string;
   email: string;
   password: string;
   expo_push_token: string;
   avatar: AvatarObject;
+  referralCode?: string;
 }) => {
   const url = `${baseUrl}/api/sign-up`;
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Accept: '*/*',
     },
-    body: JSON.stringify({ username, email, password, expo_push_token, avatar }),
+    body: JSON.stringify({ username, email, password, expo_push_token, avatar, referralCode }),
   };
+
+  console.log({ username, email, password, expo_push_token, avatar, referralCode });
 
   try {
     const response = await fetch(url, options);
@@ -334,6 +362,12 @@ export const handleSignup = async ({
     if (error) {
       console.log(error);
       throw error;
+    }
+
+    if (referralCode) {
+      const { data, error } = await handleReferral({
+        referralCode,
+      });
     }
 
     return data;

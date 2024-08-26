@@ -4,7 +4,14 @@ import Input from 'components/ui/Input';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import { useState } from 'react';
-import { ActivityIndicator, ImageBackground, Keyboard, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  ImageBackground,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
 import UserAvatarCreator from 'screens/user-avatar-creator/UserAvatarCreator';
 
 import { checkIfemailExists, checkIfUsernameExists } from './features';
@@ -105,6 +112,8 @@ const RegisterForm = ({
 
 const UsernameScreen = ({ route, navigation }: any) => {
   const [username, setUsername] = useState('');
+  const [hasCode, setHasCode] = useState(false);
+  const [referralCode, setReferralCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -128,7 +137,7 @@ const UsernameScreen = ({ route, navigation }: any) => {
     }
 
     setLoading(false);
-    navigation.navigate('UserAvatarCreator', { email, password, username });
+    navigation.navigate('UserAvatarCreator', { email, password, username, referralCode });
   };
 
   return (
@@ -165,8 +174,30 @@ const UsernameScreen = ({ route, navigation }: any) => {
               }}
               maxLength={21}
             />
+            {hasCode && (
+              <Input
+                placeholder="Referral Code"
+                value={referralCode}
+                onChangeText={(code) => {
+                  if (error) {
+                    setError('');
+                  }
+                  // if (username.length + 1 > 21) {
+                  //   setError('Username cannot be longer than 20 characters');
+                  //   return;
+                  // }
+                  setReferralCode(code);
+                }}
+                maxLength={21}
+              />
+            )}
             <Text style={{ color: 'red', fontSize: 12, textAlign: 'center' }}>{error}</Text>
           </View>
+          <Pressable onPress={() => setHasCode(!hasCode)}>
+            <Text style={{ textAlign: 'center', color: 'blue', fontSize: 12 }}>
+              I have a referral code
+            </Text>
+          </Pressable>
           <Button onPress={handleButtonPress}>
             {loading ? <ActivityIndicator /> : <Text>Register</Text>}
           </Button>
