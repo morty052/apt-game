@@ -1,7 +1,7 @@
 import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Pressable, StyleSheet, View, Switch, Share } from 'react-native';
 import { getItem, setItem } from 'utils/storage';
 
@@ -55,7 +55,7 @@ const SettingsItem = ({
   return (
     <Pressable style={styles.settingsItem}>
       <View style={{ flex: 1, rowGap: 5 }}>
-        <Text>{title}</Text>
+        <Text style={{ fontSize: 16 }}>{title}</Text>
         <Text style={{ color: 'gray', fontSize: 14 }}>{subtitle}</Text>
       </View>
       <Switch
@@ -66,6 +66,29 @@ const SettingsItem = ({
         value={isEnabled}
       />
     </Pressable>
+  );
+};
+
+const ShareCard = () => {
+  const [link, setLink] = useState('');
+  useEffect(() => {
+    const link = generateReferralLink();
+    setLink(link);
+  }, []);
+
+  return (
+    <View style={styles.shareCard}>
+      <View style={{ gap: 10 }}>
+        <Text style={{ fontSize: 14, textAlign: 'center' }}>Referral Code</Text>
+        <Text style={{ fontSize: 20, textAlign: 'center' }}>{link}</Text>
+        <Text style={{ color: 'gray', fontSize: 14, textAlign: 'center' }}>
+          Invite friends to download apt using your referral code to earn coins{' '}
+        </Text>
+      </View>
+      <Pressable style={styles.shareButton} onPress={onShare}>
+        <Text style={{ color: 'white', fontSize: 16 }}>Send Invite</Text>
+      </Pressable>
+    </View>
   );
 };
 
@@ -134,7 +157,7 @@ const SettingsScreen = ({ navigation }: any) => {
           title="Game  invites"
           subtitle="Allow  users to challenge you to games"
         />
-        <Button onPress={onShare} title="Share App" />
+        <ShareCard />
       </View>
       {hasChanges ? (
         <Button style={{ backGroundColor: 'red' }} onPress={confirmChanges} title="Save Changes" />
@@ -199,5 +222,23 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderRightWidth: 4,
     borderColor: 'rgba(0,0,0,0.5)',
+  },
+  shareCard: {
+    alignItems: 'center',
+    gap: 10,
+    paddingTop: 10,
+  },
+  shareButton: {
+    alignItems: 'center',
+    backgroundColor: '#00c4ee',
+    borderRadius: 24,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderBottomWidth: 8,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderColor: '#00A4EE',
+    width: 150,
+    height: 50,
   },
 });

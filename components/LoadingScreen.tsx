@@ -4,7 +4,7 @@ import Rive from 'rive-react-native';
 
 export default function LoadingScreen() {
   return (
-    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }}>
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
       <SafeAreaView
         style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 100 }}>
         <Rive

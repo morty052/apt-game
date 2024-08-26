@@ -19,6 +19,7 @@ import { inviteProps } from 'types';
 import { getItem } from 'utils/storage';
 
 import * as SchemaProps from '../../schema';
+import LoadingScreen from 'components/LoadingScreen';
 
 function InvitationCard({
   invite,
@@ -99,12 +100,12 @@ const InvitationPanel = ({
 
 const RequestsPanel = () => {
   const [requests, setRequests] = useState([]);
-  const { isLoading, refetch } = useQuery({
+  const { isLoading, refetch, isRefetching } = useQuery({
     queryKey: ['friendRequests'],
     queryFn: async () => {
       const { friendRequests } = await getFriendRequests();
       console.log({ friendRequestsggg: friendRequests });
-      setRequests(friendRequests);
+      setRequests(friendRequests.data);
       return friendRequests;
     },
   });
@@ -128,21 +129,22 @@ const RequestsPanel = () => {
 
   useRefreshOnFocus(refetch);
 
-  if (isLoading) {
-    return null;
+  if (isLoading || isRefetching) {
+    return <LoadingScreen />;
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.backGround }}>
       <View style={styles.container}>
-        {requests?.map((sender: { username: string; avatar: AvatarObject }) => (
-          <FriendRequestCard
-            key={sender.username}
-            sender={sender}
-            acceptFriend={(username) => acceptFriend(username)}
-            accepting={isPending}
-          />
-        ))}
+        {requests &&
+          requests?.map((sender: { username: string; avatar: AvatarObject }) => (
+            <FriendRequestCard
+              key={sender.username}
+              sender={sender}
+              acceptFriend={(username) => acceptFriend(username)}
+              accepting={isPending}
+            />
+          ))}
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingBottom: 200 }}>
           {!isLoading && requests?.length === 0 && (
