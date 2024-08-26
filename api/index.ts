@@ -370,9 +370,10 @@ export const handleSignup = async ({
       });
     }
 
-    return data;
+    return { data, error: null };
   } catch (error) {
     console.error(error);
+    return { data: null, error };
   }
 };
 

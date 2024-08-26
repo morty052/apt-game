@@ -84,7 +84,7 @@ export default function App() {
         <React.Suspense>
           <SQLiteProvider databaseName="preloadedData.db" useSuspense>
             {/* <SinglePlayerGame /> */}
-            <RootStack onboarded={onboarded} />
+            <RootStack onboarded={false} />
           </SQLiteProvider>
         </React.Suspense>
       </NotificationsProvider>

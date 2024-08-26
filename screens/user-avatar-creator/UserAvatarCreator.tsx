@@ -128,7 +128,7 @@ const UserAvatarCreator = ({ navigation, route }: any) => {
     try {
       setLoading(true);
       const expo_push_token = getItem('expo_push_token') as string;
-      const id = await handleSignup({
+      const { data, error } = await handleSignup({
         email,
         password,
         username,
@@ -136,10 +136,15 @@ const UserAvatarCreator = ({ navigation, route }: any) => {
         avatar: riveAvatarSelections,
         referralCode,
       });
+      if (error) {
+        throw error;
+      }
+      const { user_id, stats_id } = data;
       const now = dayjs();
       setItem('LAST_LOGIN', `${now.format('YYYY-MM-DD HH:mm:ss')}`);
       setItem('LOGIN_COUNT', `${1}`);
-      setItem('ID', id);
+      setItem('ID', user_id);
+      setItem('STATS_ID', stats_id);
       setItem('USERNAME', username);
       setItem('EMAIL', email);
       setItem('PASSWORD', password);
