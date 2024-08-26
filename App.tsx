@@ -88,7 +88,7 @@ export default function App() {
           </SQLiteProvider>
         </React.Suspense>
       </NotificationsProvider>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
     </QueryClientProvider>
   );
 }

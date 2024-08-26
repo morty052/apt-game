@@ -89,10 +89,11 @@ const GameRoutes = ({ navigation }: any) => {
           options={{
             headerShown: true,
             headerTitleAlign: 'center',
-            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'black' },
             headerLeft: () => <BackButton onPress={() => navigation.navigate('HomeScreen')} />,
-            headerStyle: { backgroundColor: Colors.tertiary },
+            headerStyle: { backgroundColor: Colors.plain },
             headerTitle: 'Friends',
+            headerShadowVisible: false,
           }}
           name="FriendsList"
           component={FriendListScreen}
@@ -162,9 +163,10 @@ export default function GameStack({ navigation }: any) {
           options={{
             headerShown: true,
             headerTitleAlign: 'center',
-            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'black' },
             headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
-            headerStyle: { backgroundColor: Colors.tertiary },
+            headerStyle: { backgroundColor: Colors.plain },
+            headerShadowVisible: false,
           }}
           name="LeaderBoard"
           component={LeaderBoard}
@@ -176,8 +178,8 @@ export default function GameStack({ navigation }: any) {
             headerShown: true,
             headerTitle: 'Settings',
             headerTitleAlign: 'center',
-            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
-            headerStyle: { backgroundColor: Colors.tertiary },
+            headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'black' },
+            headerStyle: { backgroundColor: Colors.plain },
             headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerShadowVisible: false,
           }}
@@ -192,6 +194,7 @@ export default function GameStack({ navigation }: any) {
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
             headerLeft: () => <BackButton onPress={() => navigation.navigate('GameTabs')} />,
             headerStyle: { backgroundColor: Colors.tertiary },
+            headerShadowVisible: false,
           }}
           name="Store"
           component={MarketScreen}

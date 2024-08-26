@@ -2,7 +2,7 @@ import { Button } from 'components/ui/Button';
 import { Text } from 'components/ui/Text';
 import { Colors } from 'constants/colors';
 import { useState, useMemo, useCallback } from 'react';
-import { Pressable, StyleSheet, View, Switch } from 'react-native';
+import { Pressable, StyleSheet, View, Switch, Share } from 'react-native';
 import { getItem, setItem } from 'utils/storage';
 
 type SettingsProps = {
@@ -10,6 +10,35 @@ type SettingsProps = {
   vibrations: boolean;
   friendRequest: boolean;
   gameInvites: boolean;
+};
+
+const generateReferralLink = () => {
+  const id = getItem('ID') as string;
+  const username = getItem('USERNAME') as string;
+
+  const slicedId = id.slice(0, 4);
+
+  return `${slicedId}-${username}`;
+};
+
+const onShare = async () => {
+  try {
+    const link = generateReferralLink();
+    const result = await Share.share({
+      message: `Lets play apt together!, sign up using my referral link ${link} click this link to download the app https://apt-server.onrender.com`,
+    });
+    if (result.action === Share.sharedAction) {
+      if (result.activityType) {
+        // shared with activity type of result.activityType
+      } else {
+        // shared
+      }
+    } else if (result.action === Share.dismissedAction) {
+      // dismissed
+    }
+  } catch (error: any) {
+    console.log(error.message);
+  }
 };
 
 const SettingsItem = ({
@@ -105,6 +134,7 @@ const SettingsScreen = ({ navigation }: any) => {
           title="Game  invites"
           subtitle="Allow  users to challenge you to games"
         />
+        <Button onPress={onShare} title="Share App" />
       </View>
       {hasChanges ? (
         <Button style={{ backGroundColor: 'red' }} onPress={confirmChanges} title="Save Changes" />
