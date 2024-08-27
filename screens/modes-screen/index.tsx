@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { checkEnergy } from 'api/index';
 import { Button } from 'components/ui/Button';
 import { ModalComponent } from 'components/ui/ModalComponent';
@@ -13,7 +14,6 @@ import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 
 import energyBar from '../../assets/icons/thunderbolt-icon--min.png';
-import { Ionicons } from '@expo/vector-icons';
 
 type gameModeProps = {
   value: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
@@ -131,7 +131,7 @@ export const ModeScreen = ({ navigation }: any) => {
   const { socket } = useContext(SocketContext);
   const { initGame } = useGameStore();
   const { character, matchmaking } = useAppStore();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [energyLow, setEnergyLow] = useState(false);
 
   const handleFindMatch = useCallback(
@@ -170,11 +170,12 @@ export const ModeScreen = ({ navigation }: any) => {
 
   const handleStartSinglePlayer = useCallback(async () => {
     if (loading) {
+      console.log('loading', loading);
       return;
     }
 
     navigation.navigate('SinglePlayerGameScreen');
-  }, [navigation]);
+  }, [navigation, loading]);
 
   useEffect(() => {
     checkEnergy().then((canPlay) => {
@@ -186,7 +187,7 @@ export const ModeScreen = ({ navigation }: any) => {
         setLoading(false);
       }
     });
-  }, []);
+  }, [setLoading]);
 
   useEffect(() => {
     socket?.on('MATCH_FOUND', (data: { queue: playerProps[]; room: string }) => {

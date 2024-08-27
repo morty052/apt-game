@@ -1,4 +1,5 @@
 import { supabase } from 'utils/supabase';
+import { baseUrl } from 'constants/index';
 
 export const checkIfemailExists = async (email: string) => {
   try {

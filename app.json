@@ -23,6 +23,13 @@
         {
           "fonts": ["./assets/font/Crispy-Tofu.ttf"]
         }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-6732542371862010~7026251072",
+          "iosAppId": "ca-app-pub-6732542371862010~7026251072"
+        }
       ]
     ],
     "orientation": "portrait",
