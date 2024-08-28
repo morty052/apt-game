@@ -117,7 +117,7 @@ const GameRoutes = ({ navigation }: any) => {
             headerShown: true,
             headerTitleAlign: 'center',
             headerTitleStyle: { fontFamily: 'Crispy-Tofu', color: 'white' },
-            headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+            headerLeft: () => <BackButton onPress={() => navigation.navigate('HomeScreen')} />,
             headerStyle: { backgroundColor: Colors.tertiary },
             headerTitle: 'Game Modes',
           }}

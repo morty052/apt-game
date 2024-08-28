@@ -15,6 +15,7 @@ import { getItem } from 'utils/storage';
 
 import energyBar from '../../assets/icons/thunderbolt-icon--min.png';
 import AdComponent, { BannerAdComponent } from 'components/AdComponent';
+import { PlayerAvatar } from 'components/Avatar';
 
 type gameModeProps = {
   value: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
@@ -28,22 +29,7 @@ function ModeSelectBox({
   handleSelect: () => void;
   children: ReactNode;
 }) {
-  return (
-    <Pressable
-      onPress={handleSelect}
-      style={{
-        borderWidth: 1,
-        borderColor: 'black',
-        padding: 10,
-        borderRadius: 40,
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'yellow',
-      }}>
-      {children}
-    </Pressable>
-  );
+  return <Pressable onPress={handleSelect}>{children}</Pressable>;
 }
 function LimitedTimeMode() {
   return (
@@ -213,7 +199,25 @@ export const ModeScreen = ({ navigation }: any) => {
       <View style={styles.container}>
         <LimitedTimeMode />
         <ModeSelectBox handleSelect={() => handleStartSinglePlayer()}>
-          <Text>Single Player</Text>
+          <View
+            style={{
+              gap: 10,
+              backgroundColor: '#00c4ee',
+              padding: 10,
+              borderRadius: 10,
+              alignItems: 'center',
+            }}>
+            <Text style={{ textAlign: 'center', color: 'white' }}>Single Player Mode</Text>
+            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', height: 60 }}>
+              <PlayerAvatar />
+              <Text>Vs</Text>
+              <PlayerAvatar />
+            </View>
+            <Text style={{ fontSize: 14, textAlign: 'center', color: 'white' }}>
+              Play alone against the wizard of words in a quick game of 6 rounds
+            </Text>
+            <Button style={{ width: 200, selfAlign: 'center' }} title="Play" />
+          </View>
         </ModeSelectBox>
         <ModeSelectBox handleSelect={() => handleFindMatch('HEAD_TO_HEAD')}>
           <Text>Head to Head</Text>
