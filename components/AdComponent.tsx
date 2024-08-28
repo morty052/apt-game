@@ -1,5 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Platform, View } from 'react-native';
 import {
   useInterstitialAd,
@@ -8,8 +7,6 @@ import {
   BannerAdSize,
   useForeground,
 } from 'react-native-google-mobile-ads';
-
-import { Button } from './ui/Button';
 
 export function BannerAdComponent() {
   const bannerRef = useRef<BannerAd>(null);
@@ -28,12 +25,6 @@ export function BannerAdComponent() {
     />
   );
 }
-
-const useADComponent = () => {
-  const { isLoaded, isClosed, load, show } = useInterstitialAd(TestIds.INTERSTITIAL);
-
-  return { isLoaded, isClosed, load, show };
-};
 
 export default function AdComponent({
   visible,
