@@ -8,7 +8,7 @@ import { ActivityIndicator, ImageBackground, Pressable, StyleSheet, View } from 
 import Animated, { SlideInDown } from 'react-native-reanimated';
 import UserAvatarCreator from 'screens/user-avatar-creator/UserAvatarCreator';
 
-import { checkIfemailExists, checkIfUsernameExists } from './features';
+import { checkIfemailExists, checkIfUsernameExists } from '../../api/index';
 
 const Stack = createStackNavigator();
 
@@ -48,9 +48,9 @@ const RegisterForm = ({
 }) => {
   return (
     <Animated.View entering={SlideInDown} style={styles.form}>
-      <View>
-        <Text style={{ color: 'black', fontSize: 30 }}>Welcome</Text>
-        <Text style={{ color: 'black', fontSize: 16 }}>Create a new account to play</Text>
+      <View style={{ gap: 2 }}>
+        <Text style={{ color: 'black', fontSize: 25 }}>Welcome</Text>
+        <Text style={{ color: 'black', fontSize: 14 }}>Create a new account to play</Text>
       </View>
       <View style={{ gap: 10 }}>
         <Input
@@ -261,5 +261,12 @@ const RegistrationScreen = () => {
 export default RegistrationScreen;
 
 const styles = StyleSheet.create({
-  form: { gap: 20, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 20 },
+  form: {
+    gap: 20,
+    backgroundColor: 'white',
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
 });

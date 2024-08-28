@@ -12,7 +12,6 @@ import GameLoadingScreen from 'screens/game-loading-screen/GameLoadingScreen';
 import { inviteProps, StatsProps } from 'types';
 
 import GameBackgroundImage from '../../assets/game-background-image--min.jpg';
-import { useEffect, useState } from 'react';
 
 function RightNav() {
   return (

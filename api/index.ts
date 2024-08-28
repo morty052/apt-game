@@ -2,6 +2,62 @@ import { AvatarObject } from 'components/Avatar';
 import { baseUrl } from 'constants/index';
 import { getItem } from 'utils/storage';
 
+export const checkIfemailExists = async (email: string) => {
+  try {
+    const url = `${baseUrl}/api/check-email-exists`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    };
+
+    const response = await fetch(url, options);
+    const { data: emailExists, error } = await response.json();
+
+    if (error) {
+      throw error;
+    }
+
+    if (emailExists) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const checkIfUsernameExists = async (username: string) => {
+  try {
+    const url = `${baseUrl}/api/check-username-exists`;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username }),
+    };
+
+    const response = await fetch(url, options);
+    const { data: usernameExists, error } = await response.json();
+
+    if (error) {
+      throw error;
+    }
+
+    if (usernameExists) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    return error;
+  }
+};
+
 export async function getLeaderBoard(): Promise<any> {
   try {
     const url = `${baseUrl}/user/leaderboard`;

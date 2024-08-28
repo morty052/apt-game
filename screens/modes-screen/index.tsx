@@ -14,6 +14,7 @@ import { playerProps } from 'types';
 import { getItem } from 'utils/storage';
 
 import energyBar from '../../assets/icons/thunderbolt-icon--min.png';
+import AdComponent, { BannerAdComponent } from 'components/AdComponent';
 
 type gameModeProps = {
   value: 'HEAD_TO_HEAD' | 'FULL_HOUSE' | 'PRIVATE_MATCH' | 'SURVIVAL_MATCH';
@@ -82,7 +83,15 @@ export const ModeSelectWindow = ({
   );
 };
 
-const LowEnergyModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
+const LowEnergyModal = ({
+  visible,
+  onClose,
+  onWatchAds,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onWatchAds: () => void;
+}) => {
   return (
     <ModalComponent transparent style={{ backgroundColor: 'rgba(0,0,0,0.6)' }} visible={visible}>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -108,7 +117,9 @@ const LowEnergyModal = ({ visible, onClose }: { visible: boolean; onClose: () =>
             style={{ width: 200, height: 40, paddingVertical: 0 }}
             title="Refuel"
           />
-          <Text style={{ textAlign: 'center', fontSize: 12 }}>Watch videos to refuel</Text>
+          <Pressable onPress={onWatchAds}>
+            <Text style={{ textAlign: 'center', fontSize: 12 }}>Watch videos to refuel</Text>
+          </Pressable>
           <Pressable
             style={{
               position: 'absolute',
@@ -133,6 +144,7 @@ export const ModeScreen = ({ navigation }: any) => {
   const { character, matchmaking } = useAppStore();
   const [loading, setLoading] = useState(true);
   const [energyLow, setEnergyLow] = useState(false);
+  const [viewingAds, setViewingAds] = useState(false);
 
   const handleFindMatch = useCallback(
     (mode: gameModeProps['value']) => {
@@ -197,6 +209,7 @@ export const ModeScreen = ({ navigation }: any) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.plain }}>
+      <BannerAdComponent />
       <View style={styles.container}>
         <LimitedTimeMode />
         <ModeSelectBox handleSelect={() => handleStartSinglePlayer()}>
@@ -208,12 +221,14 @@ export const ModeScreen = ({ navigation }: any) => {
       </View>
       {matchmaking && <PendingMatchScreen />}
       <LowEnergyModal
+        onWatchAds={() => setViewingAds(true)}
         onClose={() => {
           setEnergyLow(false);
           navigation.goBack();
         }}
         visible={energyLow}
       />
+      <AdComponent visible={viewingAds} setVisible={setViewingAds} />
     </View>
   );
 };

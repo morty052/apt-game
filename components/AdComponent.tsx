@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Platform, View } from 'react-native';
 import {
   useInterstitialAd,
@@ -11,7 +11,7 @@ import {
 
 import { Button } from './ui/Button';
 
-function BannerAdComponent() {
+export function BannerAdComponent() {
   const bannerRef = useRef<BannerAd>(null);
 
   // (iOS) WKWebView can terminate if app is in a "suspended state", resulting in an empty banner when app returns to foreground.
@@ -29,8 +29,30 @@ function BannerAdComponent() {
   );
 }
 
-export default function AdComponent() {
+const useADComponent = () => {
   const { isLoaded, isClosed, load, show } = useInterstitialAd(TestIds.INTERSTITIAL);
+
+  return { isLoaded, isClosed, load, show };
+};
+
+export default function AdComponent({
+  visible,
+  setVisible,
+}: {
+  visible: boolean;
+  setVisible: (visible: boolean) => void;
+}) {
+  const { isLoaded, isClosed, load, show } = useInterstitialAd(TestIds.INTERSTITIAL);
+
+  const handleShow = () => {
+    setVisible(false);
+    if (isLoaded) {
+      show();
+    } else {
+      // No advert ready to show yet
+      // navigation.navigate('NextScreen');
+    }
+  };
 
   //   const navigation = useNavigation<any>();
 
@@ -40,26 +62,23 @@ export default function AdComponent() {
   }, [load]);
 
   useEffect(() => {
+    // show when visible is true
+    if (visible) {
+      handleShow();
+    }
+  }, [visible, handleShow]);
+
+  useEffect(() => {
     if (isClosed) {
       // Action after the ad is closed
       //   navigation.navigate('NextScreen');
+      load();
     }
   }, [isClosed]);
 
-  return (
-    <View style={{}}>
-      <BannerAdComponent />
-      <Button
-        title="Navigate to next screen"
-        onPress={() => {
-          if (isLoaded) {
-            show();
-          } else {
-            // No advert ready to show yet
-            // navigation.navigate('NextScreen');
-          }
-        }}
-      />
-    </View>
-  );
+  //   if (!visible) {
+  //     return null;
+  //   }
+
+  return <View style={{}}></View>;
 }
